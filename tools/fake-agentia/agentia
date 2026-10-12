@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# MIT License. See LICENSE in the repository root.
+"""Fake ``agentia`` executable for offline tests and demos.
+
+It replays recorded JSON answers instead of calling Copado. The fixture folder is given by
+``AGENTIA_FAKE_FIXTURES`` and must contain ``index.json``::
+
+    {
+      "cicd work get US-0001": {"file": "work-get-US-0001.json", "exit": 0},
+      "cicd work list --title Missing --page-size 50": {"file": "work-list-empty.json"}
+    }
+
+Keys are the command arguments joined by single spaces, without ``--json``. A key can end
+with ``*`` to match any arguments after that prefix. Every call is appended to the file
+named by ``AGENTIA_FAKE_LOG`` (one JSON line per call) so tests can assert what ran.
+Unknown commands answer with the CLI's error envelope and exit code 1.
+"""
+import json
+import os
+import sys
+
+
+def main(argv):
+    args = [a for a in argv if a != "--json"]
+    key = " ".join(args)
+    fixtures = os.environ.get("AGENTIA_FAKE_FIXTURES")
+    log = os.environ.get("AGENTIA_FAKE_LOG")
+    if log:
+        with open(log, "a", encoding="utf-8") as handle:
+            handle.write(json.dumps(args) + "\n")
+    if not fixtures:
+        return fail("fake agentia: AGENTIA_FAKE_FIXTURES is not set")
+    try:
+        with open(os.path.join(fixtures, "index.json"), encoding="utf-8") as handle:
+            index = json.load(handle)
+    except OSError as exc:
+        return fail("fake agentia: cannot read index.json: %s" % exc)
+    entry = index.get(key)
+    if entry is None:
+        for pattern, candidate in index.items():
+            if pattern.endswith("*") and key.startswith(pattern[:-1]):
+                entry = candidate
+                break
+    if entry is None:
+        return fail("fake agentia: no fixture for: %s" % key)
+    path = os.path.join(fixtures, entry["file"])
+    with open(path, encoding="utf-8") as handle:
+        sys.stdout.write(handle.read())
+    return int(entry.get("exit", 0))
+
+
+def fail(message):
+    sys.stdout.write(json.dumps({"error": {"message": message, "name": "FakeAgentiaError"},
+                                 "transactionId": "fake-0000"}))
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

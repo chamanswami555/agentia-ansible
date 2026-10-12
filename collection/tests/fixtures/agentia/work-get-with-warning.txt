@@ -1,0 +1,2 @@
+ ›   Warning: Agentia CLI beta update available from 1.0.0-beta.4 to 1.0.0-beta.5. Run `agentia update`.
+{"result": {"id": "a1Y000000000003EAA", "name": "US-WARN", "title": "Story behind a warning", "status": "Draft"}, "status": 0, "transactionId": "01a1-warn"}

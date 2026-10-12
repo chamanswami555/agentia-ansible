@@ -1,0 +1,23 @@
+namespace: chamanswami555
+name: agentia
+version: 0.1.0
+readme: README.md
+authors:
+  - Chaman Swami <chamanswami555@gmail.com>
+description: Ansible modules, playbooks and an Event-Driven Ansible source for Copado Agentia CLI
+license:
+  - MIT
+tags:
+  - copado
+  - salesforce
+  - devops
+  - agentia
+  - cicd
+  - release
+repository: https://github.com/chamanswami555/agentia-ansible
+documentation: https://github.com/chamanswami555/agentia-ansible/tree/main/collection/docs
+issues: https://github.com/chamanswami555/agentia-ansible/issues
+build_ignore:
+  - tests/output
+  - "*.pyc"
+  - "__pycache__"

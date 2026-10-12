@@ -1,0 +1,18 @@
+{
+  "result": {
+    "id": "a1Y000000000001EAA",
+    "name": "US-0001",
+    "title": "Improve deployment validation",
+    "status": "Development In Progress",
+    "acceptanceCriteria": "Validation runs on every submit",
+    "project": "a0w000000000001AAA",
+    "projectName": "Example Project",
+    "pipelineId": "a0M000000000001EAA",
+    "sourceEnvironment": "a0S000000000001EAA",
+    "baseBranch": "main",
+    "epic": {"id": "a0E000000000001EAA", "name": "EPIC-1", "title": "Example epic"},
+    "feature": {"id": "aDs000000000001EAA", "title": "Example feature"}
+  },
+  "status": 0,
+  "transactionId": "01a1-get-0001"
+}

@@ -1,0 +1,4 @@
+{
+  "error": {"message": "User story US-9999 not found", "name": "Error"},
+  "transactionId": "01a1-get-missing"
+}

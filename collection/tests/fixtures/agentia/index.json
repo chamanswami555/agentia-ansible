@@ -1,0 +1,11 @@
+{
+  "cicd work get US-0001": {"file": "work-get-US-0001.json", "exit": 0},
+  "cicd work get US-9999": {"file": "work-get-missing.json", "exit": 1},
+  "cicd work list --title Improve deployment validation --page-size 50": {"file": "work-list-found.json", "exit": 0},
+  "cicd work list --title Brand new story --page-size 50": {"file": "work-list-empty.json", "exit": 0},
+  "cicd work create *": {"file": "work-create.json", "exit": 0},
+  "cicd work update a1Y000000000001EAA *": {"file": "work-update-US-0001.json", "exit": 0},
+  "cicd work delete a1Y000000000001EAA": {"file": "work-delete.json", "exit": 0},
+  "cicd work get US-WARN": {"file": "work-get-with-warning.txt", "exit": 0},
+  "cicd work get US-BROKEN": {"file": "work-get-broken.txt", "exit": 0}
+}

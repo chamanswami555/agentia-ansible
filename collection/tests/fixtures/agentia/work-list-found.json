@@ -1,0 +1,16 @@
+{
+  "result": {
+    "items": [
+      {
+        "id": "a1Y000000000001EAA",
+        "name": "US-0001",
+        "title": "Improve deployment validation",
+        "status": "Development In Progress",
+        "acceptanceCriteria": "Validation runs on every submit"
+      }
+    ],
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a1-list-found"
+}

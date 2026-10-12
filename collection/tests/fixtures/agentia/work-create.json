@@ -1,0 +1,11 @@
+{
+  "result": {
+    "id": "a1Y000000000002EAA",
+    "name": "US-0002",
+    "title": "Brand new story",
+    "status": "Draft",
+    "acceptanceCriteria": "Created by Ansible"
+  },
+  "status": 0,
+  "transactionId": "01a1-create-0002"
+}
