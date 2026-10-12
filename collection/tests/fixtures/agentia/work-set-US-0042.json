@@ -1,0 +1,13 @@
+{
+  "result": {
+    "id": "a1Y000000000042EAA",
+    "name": "US-0042",
+    "title": "Account service hardening",
+    "status": "Development In Progress",
+    "baseBranch": "main",
+    "featureBranch": "feature/US-0042",
+    "devOrgBranch": "dev1"
+  },
+  "status": 0,
+  "transactionId": "01a1-work-set"
+}

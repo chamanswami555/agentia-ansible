@@ -1,0 +1,12 @@
+{
+  "result": {
+    "agent": "operate",
+    "workspaceId": "42d0b908-37b7-4565-9ec9-86eda40c9782",
+    "dialogueId": "5f1c2a0e-1111-2222-3333-444455556666",
+    "answer": "The deploy step failed because AccountServiceTest asserts a discount of 10 percent while the new formula returns 12. Fix the test expectation or the formula, then resume job JE-0002.",
+    "followups": ["Show the failing assertion", "Resume the job"],
+    "links": []
+  },
+  "status": 0,
+  "transactionId": "01a1-ai-ask"
+}

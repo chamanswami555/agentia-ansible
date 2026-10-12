@@ -1,11 +1,105 @@
 {
-  "cicd work get US-0001": {"file": "work-get-US-0001.json", "exit": 0},
-  "cicd work get US-9999": {"file": "work-get-missing.json", "exit": 1},
-  "cicd work list --title Improve deployment validation --page-size 50": {"file": "work-list-found.json", "exit": 0},
-  "cicd work list --title Brand new story --page-size 50": {"file": "work-list-empty.json", "exit": 0},
-  "cicd work create *": {"file": "work-create.json", "exit": 0},
-  "cicd work update a1Y000000000001EAA *": {"file": "work-update-US-0001.json", "exit": 0},
-  "cicd work delete a1Y000000000001EAA": {"file": "work-delete.json", "exit": 0},
-  "cicd work get US-WARN": {"file": "work-get-with-warning.txt", "exit": 0},
-  "cicd work get US-BROKEN": {"file": "work-get-broken.txt", "exit": 0}
+  "auth get": {
+    "file": "auth-get-configured.json"
+  },
+  "cicd health-check": {
+    "file": "health-check.json"
+  },
+  "cicd health-check *": {
+    "file": "health-check.json"
+  },
+  "cicd work get US-0001": {
+    "file": "work-get-US-0001.json",
+    "exit": 0
+  },
+  "cicd work get US-9999": {
+    "file": "work-get-missing.json",
+    "exit": 1
+  },
+  "cicd work list --title Improve deployment validation --page-size 50": {
+    "file": "work-list-found.json",
+    "exit": 0
+  },
+  "cicd work list --title Brand new story --page-size 50": {
+    "file": "work-list-empty.json",
+    "exit": 0
+  },
+  "cicd work create *": {
+    "file": "work-create.json",
+    "exit": 0
+  },
+  "cicd work update a1Y000000000001EAA *": {
+    "file": "work-update-US-0001.json",
+    "exit": 0
+  },
+  "cicd work delete a1Y000000000001EAA": {
+    "file": "work-delete.json",
+    "exit": 0
+  },
+  "cicd work get US-WARN": {
+    "file": "work-get-with-warning.txt",
+    "exit": 0
+  },
+  "cicd work get US-BROKEN": {
+    "file": "work-get-broken.txt",
+    "exit": 0
+  },
+  "cicd work set US-0042": {
+    "file": "work-set-US-0042.json"
+  },
+  "cicd work submit --done --skip-pull-request": {
+    "file": "work-submit-done.json"
+  },
+  "cicd work submit *": {
+    "file": "work-submit.json"
+  },
+  "cicd promotion run a0B000000000001EAA --resume a4N000000000001AAA --wait --wait-timeout 900": {
+    "file": "promotion-resume.json"
+  },
+  "cicd promotion run a0B000000000001EAA *": {
+    "file": "promotion-run.json"
+  },
+  "cicd job get a4N000000000001AAA": {
+    "files": [
+      "job-get-inprogress.json",
+      "job-get-success.json"
+    ]
+  },
+  "cicd job get a4N000000000002AAA": {
+    "file": "job-get-error.json"
+  },
+  "cicd job log get a4N000000000001AAA": {
+    "file": "job-log.json"
+  },
+  "cicd job log get a4N000000000002AAA": {
+    "file": "job-log.json"
+  },
+  "cicd job resume a4N000000000002AAA": {
+    "file": "job-resume.json"
+  },
+  "cicd job list --page-size 100": {
+    "files": [
+      "job-list-cycle1.json",
+      "job-list-cycle2.json"
+    ]
+  },
+  "cicd job list *": {
+    "file": "job-list.json"
+  },
+  "cicd metadata index compare *": {
+    "file": "metadata-compare.json"
+  },
+  "testing test run 196473 --project 112901 --wait-for-result --timeout 1800": {
+    "file": "test-run-pass.json"
+  },
+  "testing test run 196474 --project 112901 --wait-for-result --timeout 1800": {
+    "file": "test-run-fail.json",
+    "exit": 1
+  },
+  "ai agent ask *": {
+    "file": "ai-ask.json"
+  },
+  "cicd job get a4N000000000004AAA": {
+    "file": "job-get-deploy-success.json"
+  }
 }

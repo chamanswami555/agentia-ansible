@@ -1,0 +1,26 @@
+---
+# Event-Driven Ansible rulebook: react to Copado job status changes reported by Agentia CLI.
+# Run with: ansible-rulebook --rulebook copado_release.yml -i inventory.yml
+- name: Copado release events
+  hosts: all
+  sources:
+    - chamanswami555.agentia.agentia_jobs:
+        interval: 30
+        kinds: [job]
+        statuses: [Error, Failed, Successful, Success, Completed]
+  rules:
+    - name: Remediate a failed Copado job
+      condition: event.agentia.kind == "job" and event.agentia.status in ["Error", "Failed"]
+      action:
+        run_playbook:
+          name: chamanswami555.agentia.remediate_failed_job
+          extra_vars:
+            job_id: "{{ event.agentia.id }}"
+            job_name: "{{ event.agentia.name }}"
+            previous_status: "{{ event.agentia.previous_status }}"
+
+    - name: Record a successful Copado job
+      condition: event.agentia.kind == "job" and event.agentia.status in ["Successful", "Success", "Completed"]
+      action:
+        debug:
+          msg: "Copado job {{ event.agentia.name }} ({{ event.agentia.id }}) finished with {{ event.agentia.status }}"

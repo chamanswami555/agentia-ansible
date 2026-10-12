@@ -1,0 +1,12 @@
+{
+  "result": {
+    "workItem": "US-0042",
+    "action": "validate",
+    "jobExecutionId": "a4N000000000001AAA",
+    "storiesAhead": 0,
+    "storiesBehind": 1,
+    "warnings": ["1 user story behind the next environment might cause promotion conflicts; consider agentia cicd work environment-sync"]
+  },
+  "status": 0,
+  "transactionId": "01a1-submit"
+}

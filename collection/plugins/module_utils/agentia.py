@@ -63,6 +63,7 @@ class AgentiaCli:
         self.working_dir = module.params.get("working_dir")
         self.timeout = module.params.get("timeout") or 900
         self.calls = []
+        self.last_rc = None
 
     def run(self, args, ok_exit_codes=(0,)):
         """Run one command and return the parsed ``result`` value.
@@ -78,6 +79,7 @@ class AgentiaCli:
         env = dict(os.environ)
         env.setdefault("CI", "1")
         rc, stdout, stderr = self.module.run_command(argv, cwd=self.working_dir, environ_update=env)
+        self.last_rc = rc
         data = self._parse(stdout, stderr, rc, command)
         if "error" in data and data["error"]:
             err = data["error"] if isinstance(data["error"], dict) else {"message": str(data["error"])}

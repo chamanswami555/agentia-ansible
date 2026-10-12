@@ -1,0 +1,11 @@
+{
+  "result": {
+    "workItem": "US-0042",
+    "action": "promote",
+    "jobExecutionId": "a4N000000000003AAA",
+    "storiesAhead": 0,
+    "storiesBehind": 0
+  },
+  "status": 0,
+  "transactionId": "01a1-submit-done"
+}

@@ -1,0 +1,121 @@
+---
+# Release window: validate, test, approve and promote Salesforce changes through Copado,
+# with evidence written to a folder. Run from the Git working copy of the Salesforce project
+# or set repo_dir. Required variables: story_ids, promotion_id. Optional: crt_job_id and
+# crt_project_id (Robotic Testing smoke suite), evidence_dir, approve (skip the pause).
+- name: Copado release window
+  hosts: localhost
+  gather_facts: false
+  vars:
+    agentia_cli: agentia
+    repo_dir: "{{ playbook_dir }}"
+    evidence_dir: "{{ playbook_dir }}/evidence/{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+    story_ids: []
+    promotion_id: ""
+    crt_job_id: ""
+    crt_project_id: ""
+    approve: false
+    wait_timeout: 1800
+  tasks:
+    - name: Check that the Agentia CLI is authenticated
+      chamanswami555.agentia.agentia_auth_info:
+        cli_path: "{{ agentia_cli }}"
+        require: [cicd]
+      register: auth
+
+    - name: Create the evidence folder
+      ansible.builtin.file:
+        path: "{{ evidence_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Governance health check before the release
+      chamanswami555.agentia.agentia_health_check:
+        cli_path: "{{ agentia_cli }}"
+      register: health
+
+    - name: Save the health check
+      ansible.builtin.copy:
+        content: "{{ health.health | to_nice_json }}"
+        dest: "{{ evidence_dir }}/health-check.json"
+        mode: "0644"
+
+    - name: Validate every story in the pipeline
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ agentia_cli }}"
+        working_dir: "{{ repo_dir }}"
+        set_story: "{{ item }}"
+      loop: "{{ story_ids }}"
+      register: validations
+
+    - name: Save the validation results
+      ansible.builtin.copy:
+        content: "{{ validations.results | map(attribute='submission') | list | to_nice_json }}"
+        dest: "{{ evidence_dir }}/validations.json"
+        mode: "0644"
+
+    - name: Merge the promotion (no deployment yet)
+      chamanswami555.agentia.agentia_promotion:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ promotion_id }}"
+        operation: merge
+        wait_timeout: "{{ wait_timeout }}"
+      register: merge
+
+    - name: Run the Robotic Testing smoke suite
+      chamanswami555.agentia.agentia_test_run:
+        cli_path: "{{ agentia_cli }}"
+        job_id: "{{ crt_job_id }}"
+        project_id: "{{ crt_project_id }}"
+        wait_timeout: "{{ wait_timeout }}"
+      when: crt_job_id | length > 0
+      register: smoke
+
+    - name: Save the smoke test result
+      ansible.builtin.copy:
+        content: "{{ smoke.run | to_nice_json }}"
+        dest: "{{ evidence_dir }}/smoke-tests.json"
+        mode: "0644"
+      when: smoke is not skipped
+
+    - name: Wait for a human before deploying to the next environment
+      ansible.builtin.pause:
+        prompt: "Validation and smoke tests passed for {{ story_ids | join(', ') }}. Deploy promotion {{ promotion_id }}? Press Enter to continue or Ctrl-C to abort"
+      when: not approve
+
+    - name: Merge and deploy the promotion
+      chamanswami555.agentia.agentia_promotion:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ promotion_id }}"
+        operation: merge_and_deploy
+        wait_timeout: "{{ wait_timeout }}"
+      register: deploy
+
+    - name: Wait for the deployment job to finish
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ deploy.promotion.deploymentJobExecutionId | default(deploy.promotion.jobExecutionId) }}"
+        timeout: "{{ wait_timeout }}"
+      when: deploy.promotion.deploymentJobExecutionId is defined or deploy.promotion.jobExecutionId is defined
+      register: deploy_job
+
+    - name: Save the deployment result
+      ansible.builtin.copy:
+        content: "{{ {'promotion': deploy.promotion, 'job': deploy_job.job | default({})} | to_nice_json }}"
+        dest: "{{ evidence_dir }}/deployment.json"
+        mode: "0644"
+
+    - name: Governance health check after the release
+      chamanswami555.agentia.agentia_health_check:
+        cli_path: "{{ agentia_cli }}"
+      register: health_after
+
+    - name: Save the post-release health check
+      ansible.builtin.copy:
+        content: "{{ health_after.health | to_nice_json }}"
+        dest: "{{ evidence_dir }}/health-check-after.json"
+        mode: "0644"
+
+    - name: Release summary
+      ansible.builtin.debug:
+        msg: "Stories {{ story_ids | join(', ') }} deployed through promotion {{ promotion_id }}. Evidence in {{ evidence_dir }}"

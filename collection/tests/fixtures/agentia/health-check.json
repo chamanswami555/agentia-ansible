@@ -1,0 +1,12 @@
+{
+  "result": {
+    "organization": "00D000000000001",
+    "checks": [
+      {"name": "Pipelines have a main branch", "status": "pass"},
+      {"name": "Environments have default credentials", "status": "warn", "details": "QA has no default credential"}
+    ],
+    "summary": {"pass": 1, "warn": 1, "fail": 0}
+  },
+  "status": 0,
+  "transactionId": "01a1-health"
+}

@@ -1,0 +1,10 @@
+{
+  "result": {
+    "promotionId": "a0B000000000001EAA",
+    "resumedJobExecutionId": "a4N000000000001AAA",
+    "status": "Completed",
+    "waited": true
+  },
+  "status": 0,
+  "transactionId": "01a1-promotion-resume"
+}

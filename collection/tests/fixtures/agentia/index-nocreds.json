@@ -1,0 +1,4 @@
+{
+  "auth get": {"file": "auth-get-missing.json"},
+  "cicd work get US-0001": {"file": "work-get-nocreds.json", "exit": 1}
+}

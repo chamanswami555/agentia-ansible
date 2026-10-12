@@ -1,0 +1,14 @@
+{
+  "result": {
+    "id": "a4N000000000001AAA",
+    "name": "JE-0001",
+    "template": "Promotion Deploy",
+    "status": "In Progress",
+    "steps": [
+      {"id": "a4O000000000001AAA", "name": "Merge", "status": "Success"},
+      {"id": "a4O000000000002AAA", "name": "Deploy", "status": "In Progress"}
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a1-job-1"
+}

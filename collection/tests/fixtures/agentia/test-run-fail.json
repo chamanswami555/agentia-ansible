@@ -1,0 +1,12 @@
+{
+  "result": {
+    "buildId": "b-20261012-0002",
+    "jobId": "196474",
+    "projectId": "112901",
+    "status": "finished",
+    "result": "failed",
+    "tests": {"total": 12, "passed": 10, "failed": 2}
+  },
+  "status": 1,
+  "transactionId": "01a1-crt-fail"
+}

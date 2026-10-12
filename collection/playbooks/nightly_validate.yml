@@ -1,0 +1,58 @@
+---
+# Nightly validation: validate every story in flight and run the Robotic Testing smoke suite,
+# without deploying anything. Schedule it in Ansible Automation Platform or cron.
+- name: Copado nightly validation
+  hosts: localhost
+  gather_facts: false
+  vars:
+    agentia_cli: agentia
+    repo_dir: "{{ playbook_dir }}"
+    evidence_dir: "{{ playbook_dir }}/evidence/nightly-{{ lookup('pipe', 'date +%Y%m%d') }}"
+    story_ids: []
+    crt_job_id: ""
+    crt_project_id: ""
+    wait_timeout: 1800
+  tasks:
+    - name: Check that the Agentia CLI is authenticated
+      chamanswami555.agentia.agentia_auth_info:
+        cli_path: "{{ agentia_cli }}"
+        require: [cicd]
+
+    - name: Create the evidence folder
+      ansible.builtin.file:
+        path: "{{ evidence_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Validate every story (no promotion)
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ agentia_cli }}"
+        working_dir: "{{ repo_dir }}"
+        set_story: "{{ item }}"
+      loop: "{{ story_ids }}"
+      register: validations
+      ignore_errors: true
+
+    - name: Run the Robotic Testing smoke suite
+      chamanswami555.agentia.agentia_test_run:
+        cli_path: "{{ agentia_cli }}"
+        job_id: "{{ crt_job_id }}"
+        project_id: "{{ crt_project_id }}"
+        wait_timeout: "{{ wait_timeout }}"
+        fail_on_test_failure: false
+      when: crt_job_id | length > 0
+      register: smoke
+
+    - name: Save the nightly report
+      ansible.builtin.copy:
+        content: "{{ {'validations': validations.results | default([]), 'smoke': smoke.run | default({})} | to_nice_json }}"
+        dest: "{{ evidence_dir }}/nightly-report.json"
+        mode: "0644"
+
+    - name: Fail the run when a validation failed
+      ansible.builtin.assert:
+        that:
+          - validations.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | list | length == 0
+          - smoke is skipped or smoke.passed
+        fail_msg: "Nightly validation found failures; see {{ evidence_dir }}/nightly-report.json"
+        success_msg: "All stories validated and smoke tests passed"

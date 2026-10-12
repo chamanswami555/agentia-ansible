@@ -1,0 +1,12 @@
+{
+  "result": {
+    "promotionId": "a0B000000000001EAA",
+    "operation": "merge_and_deploy",
+    "status": "Completed",
+    "jobExecutionId": "a4N000000000001AAA",
+    "deploymentJobExecutionId": "a4N000000000004AAA",
+    "waited": true
+  },
+  "status": 0,
+  "transactionId": "01a1-promotion-run"
+}

@@ -1,0 +1,59 @@
+---
+# Remediate a failed Copado job: collect its steps and logs, ask the Copado AI Operate
+# agent for a diagnosis when AI credentials exist, write an incident file, and resume the
+# job when resume_on_failure is true. Triggered by the copado_release rulebook with job_id.
+- name: Remediate a failed Copado job
+  hosts: localhost
+  gather_facts: false
+  vars:
+    agentia_cli: agentia
+    job_id: ""
+    job_name: "{{ job_id }}"
+    incident_dir: "{{ playbook_dir }}/evidence/incidents"
+    resume_on_failure: false
+  tasks:
+    - name: Read the job with its steps and logs
+      chamanswami555.agentia.agentia_job_info:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ job_id }}"
+        logs: true
+      register: job
+
+    - name: Check which credentials exist
+      chamanswami555.agentia.agentia_auth_info:
+        cli_path: "{{ agentia_cli }}"
+      register: auth
+
+    - name: Ask the Copado AI Operate agent for a diagnosis
+      chamanswami555.agentia.agentia_ai_ask:
+        cli_path: "{{ agentia_cli }}"
+        agent: operate
+        prompt: >-
+          Copado job {{ job_name }} ({{ job_id }}) ended with status {{ job.job.status }}.
+          Steps: {{ job.job.steps | default([]) | to_json }}.
+          Explain the most likely cause in three sentences and name the next action.
+      when: auth.configured.ai
+      register: diagnosis
+
+    - name: Create the incident folder
+      ansible.builtin.file:
+        path: "{{ incident_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Write the incident file
+      ansible.builtin.copy:
+        content: "{{ {'job': job.job, 'log': job.log | default({}), 'diagnosis': diagnosis.answer | default('AI credentials not configured')} | to_nice_json }}"
+        dest: "{{ incident_dir }}/{{ job_name | regex_replace('[^A-Za-z0-9_.-]', '_') }}.json"
+        mode: "0644"
+
+    - name: Resume the outstanding steps
+      chamanswami555.agentia.agentia_job_action:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ job_id }}"
+        action: resume
+      when: resume_on_failure
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: "Incident recorded for {{ job_name }}: {{ diagnosis.answer | default('no AI diagnosis') }}"

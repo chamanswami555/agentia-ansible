@@ -11,13 +11,28 @@ It replays recorded JSON answers instead of calling Copado. The fixture folder i
     }
 
 Keys are the command arguments joined by single spaces, without ``--json``. A key can end
-with ``*`` to match any arguments after that prefix. Every call is appended to the file
-named by ``AGENTIA_FAKE_LOG`` (one JSON line per call) so tests can assert what ran.
-Unknown commands answer with the CLI's error envelope and exit code 1.
+with ``*`` to match any arguments after that prefix. An entry may carry ``files`` (a list)
+instead of ``file``: the n-th call with the same key answers with the n-th file and the
+last file repeats, which lets tests simulate a job moving from running to finished.
+``AGENTIA_FAKE_INDEX`` selects another index file in the same folder (default
+``index.json``). Every call is appended to the file named by ``AGENTIA_FAKE_LOG`` (one
+JSON line per call) so tests can assert what ran. Unknown commands answer with the CLI's
+error envelope and exit code 1.
 """
 import json
 import os
 import sys
+
+
+def previous_calls(log, args):
+    if not log or not os.path.exists(log):
+        return 0
+    count = 0
+    with open(log, encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip() and json.loads(line) == args:
+                count += 1
+    return count
 
 
 def main(argv):
@@ -25,16 +40,18 @@ def main(argv):
     key = " ".join(args)
     fixtures = os.environ.get("AGENTIA_FAKE_FIXTURES")
     log = os.environ.get("AGENTIA_FAKE_LOG")
+    earlier = previous_calls(log, args)
     if log:
         with open(log, "a", encoding="utf-8") as handle:
             handle.write(json.dumps(args) + "\n")
     if not fixtures:
         return fail("fake agentia: AGENTIA_FAKE_FIXTURES is not set")
+    index_name = os.environ.get("AGENTIA_FAKE_INDEX", "index.json")
     try:
-        with open(os.path.join(fixtures, "index.json"), encoding="utf-8") as handle:
+        with open(os.path.join(fixtures, index_name), encoding="utf-8") as handle:
             index = json.load(handle)
     except OSError as exc:
-        return fail("fake agentia: cannot read index.json: %s" % exc)
+        return fail("fake agentia: cannot read %s: %s" % (index_name, exc))
     entry = index.get(key)
     if entry is None:
         for pattern, candidate in index.items():
@@ -43,7 +60,12 @@ def main(argv):
                 break
     if entry is None:
         return fail("fake agentia: no fixture for: %s" % key)
-    path = os.path.join(fixtures, entry["file"])
+    if "files" in entry:
+        files = entry["files"]
+        name = files[min(earlier, len(files) - 1)]
+    else:
+        name = entry["file"]
+    path = os.path.join(fixtures, name)
     with open(path, encoding="utf-8") as handle:
         sys.stdout.write(handle.read())
     return int(entry.get("exit", 0))

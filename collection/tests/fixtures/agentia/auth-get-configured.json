@@ -1,0 +1,17 @@
+{
+  "result": {
+    "configFiles": [
+      {"exists": true, "label": "Project config", "path": "/srv/crm/.agentia/config.json", "scope": "project"},
+      {"exists": true, "label": "User config", "path": "/srv/crm/.agentia/config.user.json", "scope": "user"}
+    ],
+    "credentials": [
+      {"label": "Copado API key (CICD)", "set": true, "type": "cicd", "region": "na"},
+      {"label": "PAK (AI)", "set": true, "type": "ai", "domain": "robotic.copado.com", "organization": "42888"},
+      {"label": "PAK (CRT)", "set": false, "type": "crt", "domain": null,
+       "issues": [{"field": "domain", "kind": "missing"}, {"field": "org", "kind": "missing"}, {"field": "pak", "kind": "missing"}],
+       "missing": ["domain", "org", "pak"]}
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a1-auth-get"
+}

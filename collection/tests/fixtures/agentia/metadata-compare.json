@@ -1,0 +1,13 @@
+{
+  "result": {
+    "comparisonMode": "INDEX_FILE",
+    "filterType": "ApexClass",
+    "differences": [
+      {"type": "ApexClass", "name": "AccountService", "status": "modified"},
+      {"type": "ApexClass", "name": "LeadScoring", "status": "missing_in_target"}
+    ],
+    "summary": {"modified": 1, "missingInTarget": 1, "missingInSource": 0}
+  },
+  "status": 0,
+  "transactionId": "01a1-compare"
+}

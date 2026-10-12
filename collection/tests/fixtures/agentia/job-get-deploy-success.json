@@ -1,0 +1,14 @@
+{
+  "result": {
+    "id": "a4N000000000004AAA",
+    "name": "JE-0004",
+    "template": "Promotion Deploy",
+    "status": "Successful",
+    "steps": [
+      {"id": "a4O000000000007AAA", "name": "Deploy", "status": "Success"},
+      {"id": "a4O000000000008AAA", "name": "Run Apex tests", "status": "Success"}
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a1-job-4"
+}

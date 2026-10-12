@@ -1,0 +1,11 @@
+{
+  "result": {
+    "items": [
+      {"id": "a4N000000000002AAA", "name": "JE-0002", "template": "Promotion Deploy", "status": "Error"},
+      {"id": "a4N000000000005AAA", "name": "JE-0005", "template": "Promotion Deploy", "status": "Error"}
+    ],
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a1-job-list"
+}

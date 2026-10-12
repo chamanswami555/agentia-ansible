@@ -1,0 +1,11 @@
+{
+  "result": {
+    "items": [
+      {"id": "a4N000000000001AAA", "name": "JE-0001", "template": "Promotion Deploy", "status": "Successful"},
+      {"id": "a4N000000000006AAA", "name": "JE-0006", "template": "Promotion Deploy", "status": "Error"}
+    ],
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a1-cycle-2"
+}
