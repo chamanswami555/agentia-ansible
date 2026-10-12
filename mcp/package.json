@@ -1,0 +1,22 @@
+{
+  "name": "agentia-ansible-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that lets AI agents run and inspect Copado release playbooks from the chamanswami555.agentia Ansible collection",
+  "type": "module",
+  "license": "MIT",
+  "author": "Chaman Swami <chamanswami555@gmail.com>",
+  "bin": {
+    "agentia-ansible-mcp": "server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  }
+}
