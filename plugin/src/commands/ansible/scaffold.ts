@@ -71,12 +71,15 @@ export default class AnsibleScaffold extends AgentiaCommand {
       if (!promotionId) this.warn('No promotion found; set promotion_id in the playbook before running it.')
     }
 
+    const repoDir = path.resolve(flags['repo-dir'])
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     const playbook = renderReleasePlaybook({
       storyIds,
       promotionId: promotionId ?? '',
       crtJobId: flags['crt-job'],
       crtProjectId: flags['crt-project'],
-      repoDir: path.resolve(flags['repo-dir']),
+      repoDir,
+      evidenceDir: path.join(repoDir, 'evidence', stamp),
       generatedAt: new Date().toISOString(),
     })
 

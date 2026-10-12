@@ -9,7 +9,8 @@
     agentia_cli: agentia
     job_id: ""
     job_name: "{{ job_id }}"
-    incident_dir: "{{ playbook_dir }}/evidence/incidents"
+    repo_dir: "{{ lookup('env', 'PWD') }}"
+    incident_dir: "{{ repo_dir }}/evidence/incidents"
     resume_on_failure: false
   tasks:
     - name: Read the job with its steps and logs

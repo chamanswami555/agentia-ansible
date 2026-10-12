@@ -7,12 +7,16 @@
   vars:
     agentia_cli: agentia
     repo_dir: "{{ playbook_dir }}"
-    evidence_dir: "{{ playbook_dir }}/evidence/nightly-{{ lookup('pipe', 'date +%Y%m%d') }}"
+    evidence_root: "{{ repo_dir }}/evidence"
     story_ids: []
     crt_job_id: ""
     crt_project_id: ""
     wait_timeout: 1800
   tasks:
+    - name: Fix the evidence folder name for this run
+      ansible.builtin.set_fact:
+        evidence_dir: "{{ evidence_dir | default(evidence_root ~ '/nightly-' ~ lookup('pipe', 'date +%Y%m%d-%H%M%S')) }}"
+
     - name: Check that the Agentia CLI is authenticated
       chamanswami555.agentia.agentia_auth_info:
         cli_path: "{{ agentia_cli }}"
