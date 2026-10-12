@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.3 |
-| Date | 2026-10-12 19:26 IST |
+| Version | 1.4 |
+| Date | 2026-10-12 19:44 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
@@ -51,6 +51,9 @@ Build progress, offline (no Copado access needed), all pushed to main (commits c
 - Fake CLI `tools/fake-agentia/agentia` replaying fixtures from `collection/tests/fixtures/agentia` (all synthetic so far; table in its README); 43 unit tests, pyflakes clean, `ansible-doc` valid for all modules (`make check`); two mutation checks proved key tests go red without their code.
 - Offline demo `tools/demo/offline-demo.sh` runs the three playbooks end to end against the fake CLI and writes evidence JSON files to `var/demo` (verified locally on 12 October).
 - Agent Skill `skills/agentia-ansible/SKILL.md`. GitHub Actions workflow `.github/workflows/ci.yml` (setup, check, offline demo, evidence artifact); its first run was not yet verified from this machine (no gh CLI here).
+- Agentia plugin `plugin/` (generated with @copado/create-agentia-plugin 0.4.0, SDK 0.1.1, TypeScript): commands `agentia ansible scaffold` (reads the active story through the SDK host or takes `--stories`, finds the promotion through the public CLI, writes a playbook that imports the collection's release window) and `agentia ansible run` (runs ansible-playbook, `--check`, `--approve`, `--json`); linked into the real CLI with `agentia plugins link`; 3 unit tests; verified end to end against the fake CLI (commit 2bf74b2).
+- MCP server `mcp/` (Node, @modelcontextprotocol/sdk): tools list_playbooks, run_release_playbook (stops at the approval pause unless approve=true), run_playbook, list_evidence, release_status; 3 smoke tests over stdio (commit 3a15df5).
+- Bugs found and fixed by the tests and runs: explicit story id that does not exist must fail, not create (agentia_work); event source treated interval 0 as missing (30 s sleeps); release playbook was not check-mode safe; plugin run must return structured JSON on failure.
 - Python environment `.venv` (ansible-core 2.18.19, pytest 9, pyflakes) via uv, ignored by Git; `var/` ignored. Java is not installed on this Mac, so ansible-rulebook has not been run yet.
 
 Next, in order: (1) owner confirms the CI run is green on GitHub; (2) root README (needs owner approval to replace the GitHub stub); (3) Agentia plugin command `agentia ansible scaffold|run` with the official generator; (4) our MCP server (run release playbook, release status); (5) Java 17 + ansible-rulebook to run the rulebook for real; (6) when Copado answers: `agentia auth set --cicd`, record real fixtures, replace synthetic ones, feasibility probe for the stretch playbook; (7) second Developer Edition org, pipeline, live demo; (8) video, deck, submission by 25 October.
