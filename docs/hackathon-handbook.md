@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.2 |
-| Date | 2026-10-11 03:55 IST |
+| Version | 1.3 |
+| Date | 2026-10-12 19:26 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
@@ -44,9 +44,16 @@ Not decided yet (owner's call): project name, open-source licence, content of th
 
 Done: all research in this file; Agentia CLI installed on this Mac (section 5.10); registration completed by the owner on 10 October 2026 with the company email and the idea text of section 7.10 (idea fixed: Ansible collection plus Event-Driven Ansible; AWX job template kept as a stretch goal); nothing else submitted; nothing deleted.
 
-Where we are (status written 2026-10-11 03:55 IST): registration done; trial started 11 October (Agentia Pipeline); the CLI API key is blocked on Copado (email to hackathon@copado.com from chamanswami555@gmail.com, AppExchange request, community group). Git is initialised with the SSH alias github-agentia and remote chamanswami555/agentia-ansible (private); nothing committed yet because the owner has not yet said yes to the first commit. Offline build (repo skeleton, collection structure, replay test harness, Agent Skill draft) not started yet.
+Where we are (status written 2026-10-12 19:26 IST): registration done (10 October); idea locked; trial started 11 October (Agentia Pipeline) but the CLI API key is blocked on Copado (email from chamanswami555@gmail.com, AppExchange request, community); Git repository chamanswami555/agentia-ansible (private) with SSH alias github-agentia, author Chaman Swami <chamanswami555@gmail.com>.
 
-Next, in order: (1) owner says yes to the first commit and push; (2) start the offline build; (3) when Copado answers, set the key with `agentia auth set --cicd <key> --region na`, run `agentia cicd health-check --json`, record fixtures, run the feasibility probe for the stretch playbook; (4) second Developer Edition org for the pipeline; (5) follow the two-week plan in 7.7.
+Build progress, offline (no Copado access needed), all pushed to main (commits c2a2531, 0c0ba56, 4a3b421):
+- Ansible collection `chamanswami555.agentia` in `collection/`: 11 modules (agentia_auth_info, agentia_work, agentia_work_submit, agentia_promotion, agentia_job_info, agentia_job_wait, agentia_job_action, agentia_test_run, agentia_metadata_compare, agentia_health_check, agentia_ai_ask), shared CLI helper in `plugins/module_utils/agentia.py` (JSON envelope parsing, warning-line tolerance, error mapping with transaction id), three playbooks (`release_window.yml`, `nightly_validate.yml`, `remediate_failed_job.yml`), an Event-Driven Ansible source `agentia_jobs` with the rulebook `copado_release.yml`, and `collection/README.md`.
+- Fake CLI `tools/fake-agentia/agentia` replaying fixtures from `collection/tests/fixtures/agentia` (all synthetic so far; table in its README); 43 unit tests, pyflakes clean, `ansible-doc` valid for all modules (`make check`); two mutation checks proved key tests go red without their code.
+- Offline demo `tools/demo/offline-demo.sh` runs the three playbooks end to end against the fake CLI and writes evidence JSON files to `var/demo` (verified locally on 12 October).
+- Agent Skill `skills/agentia-ansible/SKILL.md`. GitHub Actions workflow `.github/workflows/ci.yml` (setup, check, offline demo, evidence artifact); its first run was not yet verified from this machine (no gh CLI here).
+- Python environment `.venv` (ansible-core 2.18.19, pytest 9, pyflakes) via uv, ignored by Git; `var/` ignored. Java is not installed on this Mac, so ansible-rulebook has not been run yet.
+
+Next, in order: (1) owner confirms the CI run is green on GitHub; (2) root README (needs owner approval to replace the GitHub stub); (3) Agentia plugin command `agentia ansible scaffold|run` with the official generator; (4) our MCP server (run release playbook, release status); (5) Java 17 + ansible-rulebook to run the rulebook for real; (6) when Copado answers: `agentia auth set --cicd`, record real fixtures, replace synthetic ones, feasibility probe for the stretch playbook; (7) second Developer Edition org, pipeline, live demo; (8) video, deck, submission by 25 October.
 
 Not done, needs the owner: CI/CD API key (waiting on Copado), Red Hat nomination form (has a reCAPTCHA on page 1).
 
