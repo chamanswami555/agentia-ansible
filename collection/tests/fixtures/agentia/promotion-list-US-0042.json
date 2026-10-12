@@ -1,0 +1,10 @@
+{
+  "result": {
+    "items": [
+      {"id": "a0B000000000001EAA", "name": "P-0001", "status": "Draft", "sourceEnvironment": "dev1", "destinationEnvironment": "qa", "userStories": ["US-0042"]}
+    ],
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a1-promotion-list"
+}

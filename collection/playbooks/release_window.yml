@@ -50,7 +50,7 @@
 
     - name: Save the validation results
       ansible.builtin.copy:
-        content: "{{ validations.results | map(attribute='submission') | list | to_nice_json }}"
+        content: "{{ validations.results | map(attribute='submission', default={}) | list | to_nice_json }}"
         dest: "{{ evidence_dir }}/validations.json"
         mode: "0644"
 
@@ -73,7 +73,7 @@
 
     - name: Save the smoke test result
       ansible.builtin.copy:
-        content: "{{ smoke.run | to_nice_json }}"
+        content: "{{ smoke.run | default({}) | to_nice_json }}"
         dest: "{{ evidence_dir }}/smoke-tests.json"
         mode: "0644"
       when: smoke is not skipped
@@ -94,14 +94,14 @@
     - name: Wait for the deployment job to finish
       chamanswami555.agentia.agentia_job_wait:
         cli_path: "{{ agentia_cli }}"
-        id: "{{ deploy.promotion.deploymentJobExecutionId | default(deploy.promotion.jobExecutionId) }}"
+        id: "{{ deploy.promotion.deploymentJobExecutionId | default(deploy.promotion.jobExecutionId | default('')) }}"
         timeout: "{{ wait_timeout }}"
-      when: deploy.promotion.deploymentJobExecutionId is defined or deploy.promotion.jobExecutionId is defined
+      when: (deploy.promotion | default({})).deploymentJobExecutionId is defined or (deploy.promotion | default({})).jobExecutionId is defined
       register: deploy_job
 
     - name: Save the deployment result
       ansible.builtin.copy:
-        content: "{{ {'promotion': deploy.promotion, 'job': deploy_job.job | default({})} | to_nice_json }}"
+        content: "{{ {'promotion': deploy.promotion | default({}), 'job': deploy_job.job | default({})} | to_nice_json }}"
         dest: "{{ evidence_dir }}/deployment.json"
         mode: "0644"
 

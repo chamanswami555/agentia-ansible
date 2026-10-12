@@ -18,7 +18,7 @@ Origin of every file, because synthetic and recorded answers must never be confu
 | work-get-broken.txt | Synthetic; non-JSON output |
 | auth-get-configured.json, auth-get-missing.json | Synthetic, shaped after the real `auth get --json` output seen on 9 October 2026 (config files, credentials with set, type, issues, missing) |
 | health-check.json | Synthetic |
-| promotion-run.json, promotion-resume.json | Synthetic; field names guessed |
+| promotion-run.json, promotion-resume.json, promotion-list-US-0042.json | Synthetic; field names guessed |
 | job-get-inprogress.json, job-get-success.json, job-get-error.json, job-get-deploy-success.json, job-log.json, job-list.json, job-list-cycle1.json, job-list-cycle2.json, job-resume.json | Synthetic |
 | metadata-compare.json | Synthetic |
 | test-run-pass.json, test-run-fail.json | Synthetic |

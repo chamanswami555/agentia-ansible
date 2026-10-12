@@ -109,7 +109,7 @@ async def run_cli(cli_path: str, args: List[str], working_dir: Optional[str]) ->
 async def main(queue: asyncio.Queue, args: Dict[str, Any]) -> None:
     cli_path = args.get("cli_path") or "agentia"
     working_dir = args.get("working_dir")
-    interval = float(args.get("interval") or 30)
+    interval = float(args["interval"]) if args.get("interval") is not None else 30.0
     kinds = [k for k in (args.get("kinds") or ["job"]) if k in COMMANDS]
     page_size = str(args.get("page_size") or 100)
     statuses = args.get("statuses")

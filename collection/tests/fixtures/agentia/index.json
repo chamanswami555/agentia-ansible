@@ -101,5 +101,8 @@
   },
   "cicd job get a4N000000000004AAA": {
     "file": "job-get-deploy-success.json"
+  },
+  "cicd promotion list --work-id US-0042": {
+    "file": "promotion-list-US-0042.json"
   }
 }

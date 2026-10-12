@@ -1,0 +1,72 @@
+{
+  "name": "agentia-plugin-ansible",
+  "description": "Agentia CLI plugin: scaffold and run Ansible release playbooks for Copado",
+  "version": "0.1.0",
+  "author": "Chaman Swami",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "license": "MIT",
+  "repository": "https://github.com/chamanswami555/agentia-ansible",
+  "keywords": [
+    "oclif-plugin",
+    "agentia",
+    "ansible",
+    "copado"
+  ],
+  "files": [
+    "/dist",
+    "/oclif.manifest.json"
+  ],
+  "dependencies": {
+    "@copado/agentia-plugin-sdk": "^0.1.1"
+  },
+  "peerDependencies": {
+    "@oclif/core": "^4"
+  },
+  "devDependencies": {
+    "@oclif/core": "^4",
+    "@types/node": "^22",
+    "oclif": "^4",
+    "shx": "^0.3.3",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "agentia": {
+    "hostApi": 1,
+    "requires": [
+      "auth.status",
+      "format.table",
+      "work.getWorkItem"
+    ],
+    "permissions": {
+      "network": [],
+      "files": "write",
+      "commands": [
+        "agentia",
+        "ansible-playbook"
+      ],
+      "env": []
+    }
+  },
+  "oclif": {
+    "bin": "agentia",
+    "dirname": "agentia-cli",
+    "commands": "./dist/commands",
+    "topics": {
+      "ansible": {
+        "description": "Scaffold and run Ansible release playbooks for Copado"
+      }
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "clean": "shx rm -f oclif.manifest.json",
+    "test": "npm run build && node --test dist/lib/*.test.js",
+    "prepack": "npm run build && oclif manifest",
+    "postpack": "npm run clean"
+  }
+}
