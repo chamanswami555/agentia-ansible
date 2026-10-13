@@ -3,11 +3,11 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.9 |
-| Date | 2026-10-14 00:16 IST |
+| Version | 2.0 |
+| Date | 2026-10-14 01:39 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
-| Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
+| Status | Working draft. Facts marked "verified" were checked against the source on the date given next to them (9 October 2026 where no date is given). Facts marked "not verified" were not. |
 
 How to read this file: Section 1 says where we are and what to do today. Section 10 (Terminology) explains every technical word used anywhere in this file. Section 11 (Command log) lists every command that was run, where, why, and what its output meant. Everything else is reference.
 
@@ -40,25 +40,26 @@ Decided so far:
 | Red Hat award | Handle separately. Do not merge it with the hackathon project. | Section 8 |
 | Build start | Allowed now. The rules only fix the submission window (12 to 26 October 2026). | Official Rules, section 3.2 |
 
-Not decided yet (owner's call): project name, open-source licence, content of the Red Hat nomination.
+Not decided yet (owner's call): the content of the Red Hat nomination, the repository's visibility (section 13, item 9), the full root README (13, item 10), and when to reset the Copado API key (13, item 11).
 
 Done: all research in this file; Agentia CLI installed on this Mac (section 5.10); registration completed by the owner on 10 October 2026 with the company email and the idea text of section 7.10 (idea fixed: Ansible collection plus Event-Driven Ansible; AWX job template kept as a stretch goal); nothing else submitted; nothing deleted.
 
-Where we are (status written 2026-10-12 19:26 IST): registration done (10 October); idea locked; trial started 11 October (Agentia Pipeline) but the CLI API key is blocked on Copado (email from chamanswami555@gmail.com, AppExchange request, community); Git repository chamanswami555/agentia-ansible (private) with SSH alias github-agentia, author Chaman Swami <chamanswami555@gmail.com>.
+Where we are (status written 2026-10-14 01:39 IST): registration done (10 October); idea locked (10 October); real Copado access since 14 October 00:10 IST through the playground CS261013SFP (section 4.4), CLI 1.0.0-beta.5 authenticated with the key in the macOS keychain (nothing of it in the repository); the collection, the plugin and the Event-Driven Ansible source have all run against the real org; the MCP server has run over stdio against the fake CLI. Repository chamanswami555/agentia-ansible on GitHub (the owner's repository list of 14 October shows it as Public; see section 13, item 9).
 
-Build progress, offline (no Copado access needed), all pushed to main (commits c2a2531, 0c0ba56, 4a3b421):
-- Ansible collection `chamanswami555.agentia` in `collection/`: 11 modules (agentia_auth_info, agentia_work, agentia_work_submit, agentia_promotion, agentia_job_info, agentia_job_wait, agentia_job_action, agentia_test_run, agentia_metadata_compare, agentia_health_check, agentia_ai_ask), shared CLI helper in `plugins/module_utils/agentia.py` (JSON envelope parsing, warning-line tolerance, error mapping with transaction id), three playbooks (`release_window.yml`, `nightly_validate.yml`, `remediate_failed_job.yml`), an Event-Driven Ansible source `agentia_jobs` with the rulebook `copado_release.yml`, and `collection/README.md`.
-- Fake CLI `tools/fake-agentia/agentia` replaying fixtures from `collection/tests/fixtures/agentia` (all synthetic so far; table in its README); 43 unit tests, pyflakes clean, `ansible-doc` valid for all modules (`make check`); two mutation checks proved key tests go red without their code.
-- Offline demo `tools/demo/offline-demo.sh` runs the three playbooks end to end against the fake CLI and writes evidence JSON files to `var/demo` (verified locally on 12 October).
-- Agent Skill `skills/agentia-ansible/SKILL.md`. GitHub Actions workflow `.github/workflows/ci.yml` (setup, check, offline demo, evidence artifact); its first run was not yet verified from this machine (no gh CLI here).
-- Agentia plugin `plugin/` (generated with @copado/create-agentia-plugin 0.4.0, SDK 0.1.1, TypeScript): commands `agentia ansible scaffold` (reads the active story through the SDK host or takes `--stories`, finds the promotion through the public CLI, writes a playbook that imports the collection's release window) and `agentia ansible run` (runs ansible-playbook, `--check`, `--approve`, `--json`); linked into the real CLI with `agentia plugins link`; 3 unit tests; verified end to end against the fake CLI (commit 2bf74b2).
-- MCP server `mcp/` (Node, @modelcontextprotocol/sdk): tools list_playbooks, run_release_playbook (stops at the approval pause unless approve=true), run_playbook, list_evidence, release_status; 3 smoke tests over stdio (commit 3a15df5).
-- Bugs found and fixed by the tests and runs: explicit story id that does not exist must fail, not create (agentia_work); event source treated interval 0 as missing (30 s sleeps); release playbook was not check-mode safe; plugin run must return structured JSON on failure.
-- Python environment `.venv` (ansible-core 2.18.19, pytest 9, pyflakes) via uv, ignored by Git; `var/` ignored. Java is not installed on this Mac, so ansible-rulebook has not been run yet.
+Build progress (everything under the project folder; committed and pushed to main unless stated):
 
-Next, in order: (1) owner confirms the CI run is green on GitHub; (2) root README (needs owner approval to replace the GitHub stub); (3) Agentia plugin command `agentia ansible scaffold|run` with the official generator; (4) our MCP server (run release playbook, release status); (5) Java 17 + ansible-rulebook to run the rulebook for real; (6) when Copado answers: `agentia auth set --cicd`, record real fixtures, replace synthetic ones, feasibility probe for the stretch playbook; (7) second Developer Edition org, pipeline, live demo; (8) video, deck, submission by 25 October.
+- Collection `chamanswami555.agentia`: 12 modules (agentia_promotion_info added on 14 October: one promotion with its deployment job id, or a list by story or status), the shared CLI helper, three playbooks, the event source and the rulebook. `release_window.yml` was redesigned on 14 October into a story mode (default): validate each story (`work submit`), wait for the validation's promote job and then for its check-only deployment job, optional smoke suite, pause for approval, Copado Submit per story (`work submit --done`), wait for the promote job, read the promotion until its deployment job exists, wait for that job, write the evidence, health check after. Promotion mode (merge_and_deploy on an existing, non-validation promotion) is kept. Variables poll_interval and wait_timeout were added, and assertions that every submit returned a job.
+- Fixtures: 45 scrubbed real recordings in `collection/tests/fixtures/agentia/live` (the scrubber replaces every email address and Salesforce username with user@example.com and redacts oauthSignature, apiKey and token fields); synthetic submit files reshaped to the real shape; 59 unit tests including real-shape and error-path tests; pyflakes clean; `ansible-doc` valid (`make check`).
+- Live verification on the playground, 14 October (details in 4.4 and 11): smoke playbook for the modules (story US-0000025 created, re-run unchanged, updated, deleted); story flow by hand for US-0000024 (work set, commit of a custom label, publish, submit: validation promotion P00001; then submit --done: promotion P00004, promote job JE-008 and deployment job JE-009 Successful, label in INT-SFP); the complete release window through the plugin: `agentia ansible scaffold --stories US-0000024`, `agentia ansible run --check` (14 ok, 7 changed, 0 failed), `agentia ansible run --approve` with skip_local_tests (validation promotion P00005 with promote job JE-010; Copado Submit: promotion P00006 from INT-SFP to UAT-SFP, promote job JE-012 and deployment job JE-013 Successful; four evidence files; 17 ok, 7 changed, 0 failed; summary "Stories US-0000024 released (story mode)"). A fourth rehearsal at 01:31 to 01:38 IST, after the validation-deployment fix, took the new demo story US-0000026 (a custom permission) from Dev1-SFP to INT-SFP: validation promotion P00007 with promote job JE-015 and check-only deployment job JE-016, then the Copado Submit promotion P00008 with promote job JE-017 and deployment job JE-018, all Successful; check run 14 ok, 7 changed, 0 failed; approved run 21 ok, 7 changed, 0 failed.
+- Event-Driven Ansible: Java 17 (Homebrew openjdk@17) and ansible-rulebook 1.3.2 installed; the source ran inside ansible-rulebook against the playground at 01:15 IST (two polls, 11 job events, the rule fired for each, exit 0). The shipped rulebook `copado_release.yml` also ran live for eight minutes during the fourth rehearsal (`ansible-rulebook --rulebook collection/extensions/eda/rulebooks/copado_release.yml -i inventory.yml`): it received four status-change events (jobs JE-015 to JE-018 going from In Progress to Successful), its success rule fired 4 times, and no remediation started because nothing failed.
+- Plugin `agentia ansible scaffold|run`: scaffold writes a story-mode playbook (no promotion lookup; `--promotion` switches to promotion mode and needs an 18-character id); run passes `--check`, `--approve`, `--extra-vars` and `--ansible-playbook-bin`; 3 tests.
+- Offline demo: two defects found on 14 October by reading what actually ran rather than the green recap: the fake CLI's call log was not set, so a job polled "In Progress" until the 30-minute timeout; and the Copado Submit fixture key did not match the flags the playbook sends, so the deploy stage silently did nothing while the recap was green. Both fixed; the demo now fails unless the release reaches a successful deployment job; three playbooks in about 6 seconds, 27 replayed calls.
+- MCP server unchanged (5 tools, 3 tests).
+- Defects found by the live runs and fixed: `promotion list --work-id` needs the 18-character story id, not the name; the modules crashed with a duplicate `command` argument when the CLI returned an error (key renamed to cli_command, error-path tests added); `promotion run --operation merge` on a validation promotion is refused by Copado ("Promotion context flags do not match the merge operation"), which is why the playbook uses the Copado Submit; `work test` fails on the playground's sample quality gate (Code Analyzer), hence skip_local_tests for now; the evidence folder name with a date lookup was re-evaluated per task (now set once); oauthSignature values were committed inside live fixtures once and removed with an amended, force-pushed commit (00:21 IST); the release playbook waited only for the validation's promote job and not for the check-only deployment (fixed on 14 October, see above).
 
-Not done, needs the owner: CI/CD API key (waiting on Copado), Red Hat nomination form (has a reCAPTCHA on page 1).
+Next, in order: (1) owner: repository visibility (13.9), README replacement (13.10), API key reset once the live work is over (13.11); (2) a real `.agentia_quality_gates.sh` so `work test` passes without skip_local_tests; (3) record the flows that are still synthetic when the playground allows it (promotion run on a non-validation promotion, Robotic Testing, Copado AI); (4) stretch goals only if time allows (ephemeral environment playbook, AWX job template); (5) video (5 minutes or less, 300 MB or less), deck (50 MB or less), submission form, Galaxy publish, all by 25 October India time; (6) Red Hat nomination by 31 October (owner).
+
+Not done, needs the owner: the three decisions above, the Red Hat form.
 
 ## 2. Actions, in order, with dates
 
@@ -73,6 +74,14 @@ Not done, needs the owner: CI/CD API key (waiting on Copado), Red Hat nomination
 | 12 to 23 October | Build (section 7.7) | Build side with owner | |
 | 24 to 25 October | Demo video (5 minutes or less), deck, README, submit | Owner with the build side | Do not wait for 26 October in Central time |
 | By 31 October 2026 | Red Hat nomination form, if the owner wants to enter | Owner | Section 8 |
+| Done 11 October | Dedicated SSH key and host alias github-agentia for the repository; the owner added the public key on GitHub | Build side, owner | Verified with `ssh -T` and `git ls-remote` |
+| Done 12 October | Collection, fake CLI, tests, playbooks, skill, CI, plugin and MCP server built offline and pushed | Build side | 12 CI runs green (owner's check) |
+| Done 13 October | Copado Playground CS261013SFP created with the Success Community wizard | Owner | Section 4.4; a first attempt was deleted after a login failure |
+| Done 14 October 00:10 | CI/CD API key stored in the keychain; first live CLI calls | Build side | Key shared in plain text by the owner; reset pending (13.11) |
+| Done 14 October 00:14 to 00:47 | Live smoke of the modules, story flow for US-0000024 up to a real deployment to INT-SFP, 45 recordings scrubbed into fixtures | Build side | Section 11 |
+| Done 14 October 01:13 to 01:18 | Release window rehearsal through the plugin (check run, then approved run) taking US-0000024 to UAT-SFP | Build side | Section 11 |
+| Done 14 October 01:15 | Event source run inside ansible-rulebook against the playground | Build side | Section 11 |
+| Done 14 October 01:31 to 01:38 | Fourth rehearsal with the validation-deployment wait: demo story US-0000026 from Dev1-SFP to INT-SFP through the plugin | Build side | Section 11 |
 
 ## 3. The hackathon, complete
 
@@ -298,6 +307,8 @@ Live verification on 14 October 2026 (all recorded under var/live, scrubbed copi
 4. Build side: `agentia auth get --json`, `agentia cicd health-check --json`, `agentia cicd environment list --json`, `agentia cicd pipeline list --json`. If these answer, access is real.
 5. Build side: record real JSON outputs as fixtures (secrets scrubbed) for offline tests.
 
+All five steps are done as of 14 October 2026, through the playground of section 4.4 rather than the trial of 4.3 (the trial never gave the managed package). Recordings: var/live on this Mac (ignored by Git) and the scrubbed copies in the repository.
+
 ## 5. Agentia Headless explained
 
 ### 5.1 What it is
@@ -379,7 +390,9 @@ The CLI is not open source. It is licensed "only for your internal business purp
 
 ### 5.10 What is installed on this Mac (verified)
 
-Node v26.6.0, npm 11.18.0, npm prefix /opt/homebrew (writable, no sudo). `npm install -g @copado/agentia-cli@beta` added 366 packages in 22 seconds, exit code 0, with deprecation warnings (rimraf, fstream, inflight, lodash.isequal, glob, uuid) and an allow-scripts notice about yarn's preinstall script. `agentia --version` prints `@copado/agentia-cli/1.0.0-beta.4 darwin-arm64 node-v26.6.0`. Package folder: /opt/homebrew/lib/node_modules/@copado/agentia-cli (CHANGELOG.md, LICENSE.md, README.md, bin, dist, node_modules, oclif.manifest.json, package.json, templates, theme.json, vendor). npm registry: @copado/agentia-cli dist-tags latest 1.0.0-beta.0, beta 1.0.0-beta.4 (package created 28 July 2026, modified 7 October 2026; homepage github.com/Copado/agentia-cli returns 404, so the source is private). Nothing else was installed. Nothing was written outside the project folder except throwaway files in a temporary folder.
+Node v26.6.0, npm 11.18.0, npm prefix /opt/homebrew (writable, no sudo). `npm install -g @copado/agentia-cli@beta` added 366 packages in 22 seconds, exit code 0, with deprecation warnings (rimraf, fstream, inflight, lodash.isequal, glob, uuid) and an allow-scripts notice about yarn's preinstall script. `agentia --version` prints `@copado/agentia-cli/1.0.0-beta.4 darwin-arm64 node-v26.6.0`. Package folder: /opt/homebrew/lib/node_modules/@copado/agentia-cli (CHANGELOG.md, LICENSE.md, README.md, bin, dist, node_modules, oclif.manifest.json, package.json, templates, theme.json, vendor). npm registry: @copado/agentia-cli dist-tags latest 1.0.0-beta.0, beta 1.0.0-beta.4 (package created 28 July 2026, modified 7 October 2026; homepage github.com/Copado/agentia-cli returns 404, so the source is private). Nothing else was installed at that time.
+
+Updated 14 October 2026: Agentia CLI 1.0.0-beta.5 (`npm install -g @copado/agentia-cli@beta`, 11 October); Salesforce CLI @salesforce/cli 2.153.5 (global npm, 14 October), needed by the local quality gates and scratch orgs; Homebrew openjdk@17 (`brew install openjdk@17`, 14 October); Python environments inside the project, created with uv and ignored by Git: .venv with ansible-core 2.18.19, pytest 9, pyflakes and ansible-rulebook 1.3.2, and .venv-tools with markdown for the PDF build; the plugin is linked into the CLI with `agentia plugins link plugin`. The CLI's global project defaults point at the playground project, the Dev1-SFP environment and its credential (`agentia cicd project default set`). Outside the project folder only these were written: the global npm packages, the Homebrew formula, the SSH key and host alias in ~/.ssh, the CLI's own configuration and keychain entry, and throwaway files in a temporary folder.
 
 ## 6. Competition map (GitHub, searched 9 October 2026)
 
@@ -532,8 +545,8 @@ Verdict: do not merge the two efforts. The award judges a person's certification
 | Risk | Effect | Mitigation |
 | --- | --- | --- |
 | No acceptable registration email | Cannot enter | Decide on 9 October; write to hackathon@copado.com if needed |
-| Trial does not provide a CI/CD key or a pipeline | No live demo; only fixtures | Ask hackathon@copado.com for participant access; keep the offline demo first-class and label it honestly |
-| Trial expires before 26 October | Live demo lost | Start the trial on or just before 12 October; record the live run early |
+| No Copado access | No live demo; only fixtures | Closed on 14 October: the playground gives a key and a pipeline. The offline demo stays first-class and is labelled as replayed |
+| Playground expires (community reports say about 30 days, so around 13 November) or is reset | Live demo lost | Every live run is recorded (fixtures, evidence, logs); record the video before 25 October |
 | CLI changes during beta | Tests break | Pin `@copado/agentia-cli@1.0.0-beta.4` in tests; re-record fixtures after upgrades |
 | Judges' taste | Lower innovation or impact score | Lead the video with a platform-team pain, show a real failure handled; state why Copado inside Ansible matters to Copado customers |
 | Scope creep | Nothing finished | Hold the box in 7.4; cut the plugin command and our MCP server first if time runs out, never the tests |
@@ -541,6 +554,8 @@ Verdict: do not merge the two efforts. The award judges a person's certification
 | Central time deadline | Late submission | Submit on 25 October India time |
 | Exclusive IP licence | Cannot licence the same work elsewhere | Decide before submitting; keep anything you want to reuse out of the submitted work |
 | EULA | Building on CLI internals would breach it | Use public commands, JSON output and the SDK only |
+| Public repository with the owner's identifiers in this handbook | Privacy | Owner decides (13.9): make the repository private until submission, or move the handbook out and rewrite history |
+| Playground sample quality gate fails (Code Analyzer) | `work test` blocks the submit | skip_local_tests for now; write a real gate script |
 
 ## 10. Terminology
 
@@ -695,6 +710,23 @@ Each row: what the word means, and what it means for this project.
 | Sprint, epic, feature, release (Copado) | Planning records a user story can belong to | Flags on `work create` and project defaults |
 | Approval pause | A playbook step that waits for a human yes before continuing | The release-window playbook uses one before deploying to production |
 | Evidence | Saved proof of what ran and what happened (logs, JSON results, transaction ids) | Our playbooks write it to a folder for audits |
+| Copado Playground | A Copado-provided trial Salesforce org with Copado Pipelines installed, seven environments, credentials and a GitHub repository, created from the Success Community wizard; lives about 30 days | Our only working path to a CI/CD API key and a real pipeline (section 4.4) |
+| Account Summary | A page of the Copado managed package with the licence, credits and the API Key tab | Where the CI/CD API key for the CLI comes from |
+| Copado Submit | The Copado action that moves a user story to the next environment: it creates a promotion, merges the story branch into the promotion branch and deploys; `agentia cicd work submit --done` is the headless form | The story mode of the release playbook uses it for the real deployment |
+| Validation promotion | A promotion created by `work submit` without `--done`; it runs a check-only deployment and can never be merged or deployed afterwards (`isValidationRun: true`) | Why the first design (merge an existing promotion) failed and why the playbook submits with `--done` |
+| Story mode, promotion mode | The two ways the release playbook deploys: per story through the Copado Submit (default), or by running merge_and_deploy on an existing promotion id | Story mode matches what the playground produces; promotion mode serves teams that already have a promotion |
+| Promote job, deployment job | The two Copado job executions behind one promotion: the promote job merges branches (template SFDX Promote), the deployment job pushes metadata to the target org (template SFDX Deploy); the promotion record names both (lastPromotionExecutionId, lastDeploymentExecutionId) | The playbook waits for both; agentia_promotion_info reads the deployment job id |
+| Custom label, custom permission | Small Salesforce metadata types: a named text value, and a named permission that permission sets can grant | The changes committed on the demo story branches so that there is something real to deploy; static resources could not be used because the playground repository ignores them |
+| Code Analyzer | Salesforce's static analysis tool, run by the sample local quality gate that the Agentia CLI generates | It fails in the playground project, which is why the live runs skip local tests |
+| Local quality gates | The script `.agentia_quality_gates.sh` that `agentia cicd work test` runs before a submit | A real gate script for this project is still to be written |
+| Scrubbing | Replacing personal and secret values in recorded CLI outputs before they enter the repository (emails and usernames to user@example.com, oauthSignature and token fields to REDACTED) | Lets real recordings be committed to a public repository |
+| Drools | The Java rules engine inside ansible-rulebook that matches events against rule conditions | Why ansible-rulebook needs Java 17 |
+| JAVA_HOME | The environment variable that tells Java programs where the JDK is | ansible-rulebook loads Drools in-process; with the Homebrew formula folder instead of the JDK home it starts silently without an engine |
+| Homebrew | The package manager for macOS | Installed openjdk@17 |
+| uv | A fast Python package and environment manager | Creates .venv and installs ansible-core, pytest and ansible-rulebook (house rule: uv, not pip) |
+| Force push (--force-with-lease) | Replacing a branch's history on the remote with the local one, refused if someone else pushed in between | Used once to remove committed signature values from the fixtures |
+| Pull request | A request on GitHub to merge one branch into another, usually reviewed by a person | Copado opens one per promotion; `--skip-pull-request` keeps the headless flow going without waiting for a reviewer |
+| Poll interval | How often a waiting task asks Copado for a job's status | 15 seconds by default (`poll_interval`), 1 second in the offline demo |
 
 ## 11. Command log
 
@@ -740,8 +772,44 @@ Where: "Mac" means this laptop's terminal; "web" means a page fetch or a web sea
 | `curl` of the CopadoCON Bangalore June 2026 spec (twice) | Mac | Earlier Copado hackathon spec | HTTP 503 both times; not available |
 | Wrote a temporary cdp-dump.mjs (Node script: launch Brave headless, load URL, scroll, capture text, form fields, console, screenshot, shadow DOM and iframes) | Mac | Read pages that only render with JavaScript | Used for the three browser renders above |
 | `mkdir -p /Users/chaman/copado-agentia-hackathon/docs` | Mac | Project folder (owner's pick) | This file lives there |
+| `uv venv --python 3.12 .venv-tools`, `uv pip install markdown`, `tools/md2html.py`, `tools/html2pdf.mjs` | Mac | Rebuild the PDF from tools kept in the project after the temporary folder was purged overnight (10 October) | PDF built; the tools and `var/` now live in the project |
+| `git init`, author config, `git remote add origin git@github-agentia:chamanswami555/agentia-ansible.git`, `ssh -T` | Mac | Repository setup over SSH (10 and 11 October) | The first SSH test failed (no key for this account); a dedicated key `~/.ssh/agentia_ansible_ed25519` with the host alias github-agentia fixed it once the owner added the public key |
+| `agentia setup` driven with printf and expect | Mac | Read what the setup asks for the API key (11 October) | It asks for the CICD API key and region and gives no hint where to get the key |
+| `node tools/page-dump.mjs` on docs.copado.com (API key, personal access token, playground articles) and AppExchange listings | browser | Find where the key lives and how to get a licence (11 and 13 October) | Account Summary > API Key (needs the managed package); AppExchange "Get It Now" is a contact form; the playground article only rendered on the third attempt with shadow DOM capture |
+| `npm install -g @copado/agentia-cli@beta` | Mac | Update to the newest beta (11 October) | 1.0.0-beta.5 |
+| `uv venv --python 3.12 .venv`, `uv pip install ansible-core pytest pyflakes`, symlink `var/ansible_collections/chamanswami555/agentia -> collection` | Mac | Ansible test environment (12 October) | ansible-core 2.18.19; the collection resolves under its namespace |
+| `.venv/bin/python -m pytest`, `make check` (pyflakes, pytest, ansible-doc) | Mac | Unit tests and documentation checks (12 to 14 October) | 43 tests on 12 October, 59 on 14 October, all passing |
+| `var/mutation-check.py` (remove a fix, run the test, restore the file byte for byte) | Mac | Prove the key tests fail without their code (12 October) | Two mutations went red |
+| `bash tools/demo/offline-demo.sh` | Mac | Three playbooks against the fake CLI (12 to 14 October) | Green on 12 October; on 14 October found hanging for 22 minutes (call log unset) and, after that fix, silently skipping the Copado Submit stage (fixture key mismatch); now guarded and green in 6 seconds |
+| `@copado/create-agentia-plugin` through expect, then through its exported `main(argv, {prompt})` from a Node script | Mac | Generate the plugin without interactive prompts (12 October) | The programmatic call worked; `plugin/` created |
+| `npm run build`, `node --test`, `agentia plugins link plugin`, `agentia ansible scaffold` and `run` against the fake | Mac | Plugin end to end (12 October) | JSON envelopes on success and failure; 3 tests |
+| `cd mcp && npm install && npm test` | Mac | MCP server smoke tests (12 October) | 3 pass |
+| `.venv/bin/python -m pytest --durations=5` | Mac | Find slow tests (12 October) | The event source treated interval 0 as missing (60 s); fixed, tests under one second |
+| `git commit`, `git push` after every step; CI runs on GitHub | Mac, web | Persist and verify (12 to 14 October) | 12 CI runs green (owner's check on 14 October) |
+| `agentia auth set --cicd <key> --region na --json`, `agentia auth get --json` | Mac | Store the playground key in the keychain (14 October 00:10) | cicd configured; nothing written to the repository |
+| `agentia cicd health-check`, `pipeline list/get`, `environment list`, `credential list`, `project list`, `repository list`, `function list`, `work list/get`, `job list/get`, `job log get`, `user get`, all `--json`, saved under var/live | Mac | Record real shapes (14 October 00:10 to 00:13) | Lists come back as `result.data` with pagination; jobs carry `steps` and a `template` object; a job log is `{jobId, log, resultId, stepId}` |
+| `agentia cicd project default set` (project, environment, credential) | Mac | Let the `work` commands find the project (14 October) | Global defaults stored by the CLI |
+| `git clone git@github-agentia:chamanswami555/Copado-CS261013SFPSFP.git var/playground-repo` | Mac | Local working copy for the story flow (14 October) | Branches main, dev1-sfp, dev2-sfp, hotfix-sfp, int-sfp, uat-sfp |
+| `.venv/bin/python -I tools/record-fixtures.py var/live collection/tests/fixtures/agentia/live` | Mac | Scrubbed fixtures from the recordings (14 October, repeated after every recording) | 45 files; the scrubber was extended to redact oauthSignature after a signature reached a commit, and generalised to every email address (regeneration then changed only a placeholder address in one function log) |
+| `ansible-playbook var/live-smoke.yml` | Mac | Modules against the real org (14 October 00:14) | 8 ok, 3 changed: US-0000025 created, unchanged on re-run, updated, deleted |
+| `agentia cicd work set US-0000024`, commit of a custom label, `agentia cicd work test`, `work publish`, `work status` | Mac | Local story flow in the clone (14 October 00:15 to 00:21) | `work test` failed on the sample gate (Code Analyzer); publish registered the commit |
+| `npm install -g @salesforce/cli` | Mac | The gates and scratch orgs need sf (14 October) | 2.153.5 |
+| `agentia cicd work submit --skip-local-tests --skip-pull-request --json`, then `ansible-playbook var/live-wait*.yml` | Mac | First real validation (14 October 00:21 to 00:26) | Validation promotion P00001; promote job and check-only deployment job Successful |
+| `git commit --amend`, `git push --force-with-lease` | Mac | Remove committed oauthSignature values (14 October 00:21) | HEAD became 2f18d06 |
+| `agentia cicd promotion list --work-id US-0000024` then with the 18-character id | Mac | Promotions of a story (14 October 00:42) | The name is rejected; the id works |
+| `agentia cicd promotion run <validation promotion> --operation merge` | Mac | Rehearsal of the first playbook design (14 October 00:41) | "Promotion context flags do not match the merge operation": validation promotions cannot be merged; the playbook was redesigned to the Copado Submit |
+| `agentia cicd work submit --done --skip-local-tests --skip-pull-request --json`, then `ansible-playbook var/live-done.yml` | Mac | First real promote and deploy (14 October 00:42 to 00:47) | Promotion P00004; promote job JE-008 and deployment job JE-009 Successful; the label reached INT-SFP |
+| `brew install openjdk@17`; `uv pip install ansible-rulebook` | Mac | Event-Driven Ansible runtime (14 October 00:29 to 00:58) | Java 17; ansible-rulebook 1.3.2 |
+| `agentia ansible scaffold --stories US-0000024 --repo-dir var/playground-repo --out release-window.yml`; `agentia ansible run --check`; `agentia ansible run --approve --extra-vars '{"skip_local_tests": true}'` | Mac | Full rehearsal through the plugin (14 October 01:13 to 01:18) | Check run 14 ok, 7 changed, 0 failed; approved run 17 ok, 7 changed, 0 failed; P00005 validated, P00006 deployed US-0000024 from INT-SFP to UAT-SFP (promote job JE-012, deployment job JE-013) |
+| `ansible-rulebook --rulebook var/rulebook-live.yml -i var/inventory.yml --print-events`, three attempts | Mac | Event source inside the real engine (14 October 01:04 to 01:15) | 1: "ansible-galaxy is not installed" (the .venv was not on the PATH); 2: silent for 150 s (JAVA_HOME at the Homebrew formula folder); 3: JAVA_HOME at the JDK home: 11 job events, exit 0 |
+| `python collection/extensions/eda/plugins/event_source/agentia_jobs.py` | Mac | Source alone against the real CLI (14 October 01:13) | 10 events; proved the stall was in the engine start, not in the source |
+| `kill` of the stuck demo process tree; `ps`, `lsof` on the worker | Mac | Find what the hung demo was doing (14 October 01:11 to 01:13) | The worker sat in agentia_job_wait; the fake answered "In Progress" every time because its call log was unset |
+| `agentia cicd work update <id> --title`, `work set US-0000026`, commit of a custom permission, `work publish` | Mac | Demo story for the corrected playbook (14 October 01:26 to 01:30) | A static resource was tried first and is ignored by the playground repository's .gitignore; the custom permission published |
+| `agentia ansible scaffold --stories US-0000026 --repo-dir var/playground-repo --out release-window.yml`; `agentia ansible run --check`; `agentia ansible run --approve --extra-vars '{"skip_local_tests": true}'` | Mac | Rehearsal of the corrected playbook (14 October 01:31 to 01:38) | Check run 14 ok, 7 changed, 0 failed; approved run 21 ok, 7 changed, 0 failed; P00007 validated (JE-015, JE-016), P00008 deployed the custom permission from Dev1-SFP to INT-SFP (JE-017, JE-018) |
 
 Mistakes made and corrected during the research: the first MCP probe failed on my own path typo; `--help` after nested topics misled me for one round until `agentia help topic:command` worked; a first attempt to extract the Official Rules used the wrong text pattern and found nothing until the search anchor was changed; an early `grep` pattern was too complex for the Mac's grep and was replaced by a Python script.
+
+Mistakes made and corrected on 10 to 14 October: the offline demo passed green while the Copado Submit stage did nothing (fixture key mismatch), and before that hung for 22 minutes (call log unset); both were only found by reading the fake CLI's call log and the evidence files, not the recap. A syntax check run without ANSIBLE_COLLECTIONS_PATH reported a missing module (my environment, not the playbook). The first version of the demo script exported the call-log path before the variable it used existed (caught by reading the script back before running it). The rulebook was first started without the .venv on the PATH ("ansible-galaxy is not installed"), then with JAVA_HOME at the Homebrew formula folder (engine silent for 150 seconds); the JDK home path fixed it. A generalised email scrubber first mangled Salesforce usernames and SSH Git addresses; a word boundary and a colon exclusion fixed it; regenerating the fixtures then changed only a placeholder address inside a Copado function log. Static resources are ignored by the playground repository, so the demo story carries a custom permission instead. The release playbook waited for the validation's promote job only, which was noticed in the evidence file, not in the recap. A shell whose working directory resets between calls put one checkout in the wrong repository; every Git command now carries -C with an absolute path.
 
 ## 12. Sources
 
@@ -761,7 +829,7 @@ Mistakes made and corrected during the research: the first MCP probe failed on m
 
 ## 13. Open decisions
 
-1. Registration email: done, company email <registration email> used (10 October 2026). Submission must use the same address. Git author for the repository is Chaman Swami <chamanswami555@gmail.com> (owner's pick). GitHub repository: private chamanswami555/agentia-ansible, SSH access from this Mac still to be set up (no key for this account is configured yet). Name decided: repository agentia-ansible, collection chamanswami555.agentia, plugin command `agentia ansible`. Licence decided: MIT.
+1. Registration email: done, company email <registration email> used (10 October 2026). Submission must use the same address. Git author for the repository is Chaman Swami <chamanswami555@gmail.com> (owner's pick). GitHub repository: chamanswami555/agentia-ansible, SSH access from this Mac through a dedicated key and the host alias github-agentia since 11 October 2026; visibility: see item 9. Name decided: repository agentia-ansible, collection chamanswami555.agentia, plugin command `agentia ansible`. Licence decided: MIT.
 2. Project name: done (see item 1).
 3. Idea lock: done 10 October 2026 (section 1).
 4. Open-source licence: done, MIT.
@@ -769,3 +837,6 @@ Mistakes made and corrected during the research: the first MCP probe failed on m
 6. Working files of the build: kept on the owner's machine only, outside the repository (owner's instruction).
 7. Whether to enter the Red Hat award and what the real story is.
 8. When to create the project .docx (problem, market solutions, our solution, how it was built, setup guide) that every project folder keeps; proposed: at the end of the first build week.
+9. Repository visibility. The repository list the owner showed on 14 October marks agentia-ansible as Public, while this handbook, which is in the repository, names the owner's email addresses, Salesforce usernames and org ids. Options: (a) make the repository private now and public again for the submission (judges need the link by 26 October); (b) keep it public and move the handbook out of the repository, which also needs a history rewrite because earlier versions are in past commits; (c) leave it as it is. Nothing in the repository is a secret (the API key and the OAuth signatures are not in it).
+10. Root README: the GitHub stub is still the only README at the root; the full README for judges (what it is, install, demo, architecture, evidence) needs the owner's go-ahead to replace it.
+11. API key reset: the CI/CD key was shared in plain text; reset it on the Account Summary API Key tab once the live runs are over, then run `agentia auth set --cicd <new key> --region na`.
