@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.7 |
-| Date | 2026-10-14 00:04 IST |
+| Version | 1.8 |
+| Date | 2026-10-14 00:11 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
@@ -279,6 +279,8 @@ Docs article "Create a Copado Playground with the Setup Wizard" (Copado Pipeline
 Steps: Success Community, top menu Training > My Playgrounds > New Copado Org; accept terms; org name without spaces (convention initials + 6-digit date + pipeline, for example CS261013SFP); pipeline configuration Source Format (default); username in email format, unique, not a real mailbox (for example chaman@CS261013SFP.com); wait 3 to 4 minutes; verify the Salesforce account from the "Welcome to Salesforce" email and the "Verify your identity" code, set a password; back in the wizard, log in and give Copado access; connect GitHub (default branch must be main; free account repository limit and SSH key count can fail the last step); the wizard provisions licences, permissions, scratch orgs and credentials (ignore the "Sandbox: Finish resetting your Salesforce password" emails, resetting breaks the wizard); grant OAuth access to all seven environments; finalize. Afterwards install the Copado connected apps in every org (guide linked from the article). Open the playground from My Playgrounds or login.salesforce.com, then App Launcher > Copado > Account Summary > API Key.
 
 Outcome: on 14 October 2026 the playground CS261013SFP reached status Activated: Copado org username <registration email>.cs2 (a first attempt with the bare email as username ended in a login failure and was deleted; the Salesforce Environment Switcher at welcome.salesforce.com/environments lists every org tied to the owner's email, which is how the first playground org copadotrial142449141 was identified), six scratch orgs (production, hotfix, uat, int, dev1, dev2, usernames with the matching suffix), Git account chamanswami555. Next: open the Copado org, Account Summary, API Key; then `agentia auth set --cicd <key> --region na` and `agentia cicd health-check --json`; then install the Copado connected apps in the seven orgs (article section at the end) before the pipeline demo.
+
+Live access confirmed on 14 October 2026: Account Summary (Copado org copadotrial18423435, Server URL https://na.api.copado.com, Org Id 00Di8000003NzdlEAC, User Id 005i8000001xog9AAA, features incl. Apex Test, Continuous Integration, Git, Org Difference; Function credits 200, Classic credits 10100) gave the API key; `agentia auth set --cicd <key> --region na` stored it in the keychain; `agentia cicd health-check --json` returned real governance checks and `agentia cicd pipeline list --json` returned the playground pipeline "Trial - Salesforce Source Format Pipeline" (id a0Wi8000000Mr2TEAS, repository a0qi8000000LVlZAAW, main branch main, smart conflict resolution on). First real shape difference against the synthetic fixtures: list results come back as `result.data` with pagination fields (currentPage, pageSize, totalPages, totalRecords, hasMore, nextCursor). The key was shared in plain text by the owner; it should be reset on the API Key tab once the work is done. Nothing of the key is stored in the repository.
 
 ### 4.5 Other access paths
 
