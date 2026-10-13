@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.5 |
-| Date | 2026-10-13 18:13 IST |
+| Version | 1.6 |
+| Date | 2026-10-13 19:33 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
@@ -272,13 +272,19 @@ Reading: the "free for individuals" wording is about the IDE agents; the CLI's C
 - Observed on 11 October 2026 (owner's trial, started 11 October, 14 days): the trial opens "Agentia Pipeline" at us.pipeline.copado.com (Work Manager, Deployments, History, Automations, Back Deployments, Connections, Pipelines, Projects, AI Context Hub, Jira and Slack integrations). The onboarding asks for a Git repository, at least two Salesforce orgs and a pipeline. No API key page exists there or on app.copado.com. The CLI's own setup prompt says: "Create a Copado API key on the API Key tab of the Account Summary page" and links to the Salesforce tab copado__Account_Summary; that tab does not exist in the owner's Developer Edition org, so the trial did not install the Copado managed package. Result: the CI/CD key source is blocked until Copado answers (hackathon@copado.com asked on 11 October). The owner's Developer Edition org App Launcher confirmed no Copado app (11 October). AppExchange listing "Agentia by Copado AI-Powered Salesforce AgentOps" (Paid, managed package v27.41.0, listing a0N3000000B3dgGEAR): "Get It Now" opens a provider-assisted installation form; after submitting it the page said Copado will contact the owner (11 October). Copado Essentials (free, formerly ClickDeploy) is a different product and does not feed the CLI. Open channels to Copado: hackathon@copado.com email, the AppExchange request, and the Success Community group.
 - Copado replied on 13 October 2026 (Shubham Kolkar, to the Gmail address and hackathon@copado.com): review the documentation at developer.copado.com/docs for the key questions, and "you will not be able to get trial access without a corporate email address." Reading: the Gmail-based trial only gave Agentia Pipeline; the real trial with the Copado managed package (and therefore the Account Summary API key) needs a corporate-email sign-up. Next: create a Salesforce Developer Edition org with <registration email>, start the trial again from app.copado.com/trial with that org, and look for the Copado app and Account Summary tab; reply to Copado asking where the key is created after a corporate-email trial. CLI updated to 1.0.0-beta.5 on 11 October; its changelog adds nothing about trial authentication; `auth set` regions are na, emea, emea2, apac, apac2, plus `--custom-url`.
 
-### 4.4 Other access paths
+### 4.4 Copado Playground (the path found on 13 October 2026)
+
+Docs article "Create a Copado Playground with the Setup Wizard" (Copado Pipelines publication, updated 28 May 2026; body pasted by the owner on 13 October). A playground is a Copado-provided Salesforce trial org with Copado Pipelines installed, licences provisioned, seven environments (trial/Copado org, Production, Hotfix, UAT, INT, Dev1, Dev2 as scratch orgs), credentials and a GitHub repository created by the wizard. It expires after about 30 days (community reports). The owner's corporate-email trial (13 October) again gave only Agentia Pipeline, so the playground is the way to the Account Summary API key and to a real pipeline for the live demo.
+
+Steps: Success Community, top menu Training > My Playgrounds > New Copado Org; accept terms; org name without spaces (convention initials + 6-digit date + pipeline, for example CS261013SFP); pipeline configuration Source Format (default); username in email format, unique, not a real mailbox (for example chaman@CS261013SFP.com); wait 3 to 4 minutes; verify the Salesforce account from the "Welcome to Salesforce" email and the "Verify your identity" code, set a password; back in the wizard, log in and give Copado access; connect GitHub (default branch must be main; free account repository limit and SSH key count can fail the last step); the wizard provisions licences, permissions, scratch orgs and credentials (ignore the "Sandbox: Finish resetting your Salesforce password" emails, resetting breaks the wizard); grant OAuth access to all seven environments; finalize. Afterwards install the Copado connected apps in every org (guide linked from the article). Open the playground from My Playgrounds or login.salesforce.com, then App Launcher > Copado > Account Summary > API Key.
+
+### 4.5 Other access paths
 
 - Success Community "playground" (docs wording). Login required; not inspected.
 - Request an "Agentia Testing / AI trial" on copado.com (docs wording).
 - Ask hackathon@copado.com how participants without a licence are expected to get access.
 
-### 4.5 Steps
+### 4.6 Steps
 
 1. Owner: create a Salesforce Developer Edition org.
 2. Owner: app.copado.com/trial, "Connect with Salesforce", log in with that org, accept the trial agreement.

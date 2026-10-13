@@ -76,8 +76,13 @@ writeFileSync(`${outPrefix}.txt`, `TITLE: ${title}\nURL: ${url}\n\n${text}`);
 writeFileSync(`${outPrefix}.deep.txt`, deep);
 writeFileSync(`${outPrefix}.form.txt`, forms);
 writeFileSync(`${outPrefix}.console.txt`, consoleLines.join('\n'));
-const shot = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
-writeFileSync(`${outPrefix}.png`, Buffer.from(shot.result.data, 'base64'));
+try {
+  const shot = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
+  if (shot.result?.data) writeFileSync(`${outPrefix}.png`, Buffer.from(shot.result.data, 'base64'));
+  else console.error('screenshot unavailable:', JSON.stringify(shot).slice(0, 200));
+} catch (err) {
+  console.error('screenshot failed:', err.message);
+}
 console.log(`saved ${outPrefix}.txt (${text.length} chars), .deep.txt (${deep.length} chars), .form.txt, .png; title="${title}"`);
 ws.close();
 proc.kill('SIGKILL');
