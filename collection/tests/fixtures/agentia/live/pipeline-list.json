@@ -1,0 +1,29 @@
+{
+  "result": {
+    "data": [
+      {
+        "lastModifiedDate": "2026-10-13T18:31:27Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:10Z",
+        "createdBy": "chaman swami",
+        "name": "Trial - Salesforce Source Format Pipeline",
+        "mainBranch": "main",
+        "gitRepositoryId": "a0qi8000000LVlZAAW",
+        "active": true,
+        "blockCommits": false,
+        "enableSmartConflictResolution": true,
+        "calculateBasedOn": "User Story",
+        "platform": "SFDX",
+        "id": "a0Wi8000000Mr2TEAS"
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 1,
+    "totalRecords": 1,
+    "hasMore": false,
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a13690-acba-775c-87f9-43894b1b562b"
+}

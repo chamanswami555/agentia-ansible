@@ -1,0 +1,15 @@
+{
+  "auth get": {"file": "live/auth-get.json"},
+  "cicd health-check": {"file": "live/health-check.json"},
+  "cicd work get US-0000024": {"file": "live/work-get-US-0000024.json"},
+  "cicd job get a0si8000000CVeLAAW": {"file": "live/job-get.json"},
+  "cicd job log get a0si8000000CVeLAAW": {"file": "live/job-log-get.json"},
+  "cicd job list --page-size 10": {"file": "live/job-list.json"},
+  "cicd pipeline list": {"file": "live/pipeline-list.json"},
+  "cicd pipeline get a0Wi8000000Mr2TEAS": {"file": "live/pipeline-get.json"},
+  "cicd environment list": {"file": "live/environment-list.json"},
+  "cicd project list": {"file": "live/project-list.json"},
+  "cicd promotion list": {"file": "live/promotion-list.json"},
+  "cicd user get": {"file": "live/user-get.json"},
+  "cicd work list --page-size 10": {"file": "live/work-list.json"}
+}

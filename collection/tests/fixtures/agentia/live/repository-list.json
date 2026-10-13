@@ -1,0 +1,50 @@
+{
+  "result": {
+    "data": [
+      {
+        "lastModifiedDate": "2026-10-13T18:29:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:29:19Z",
+        "createdBy": "chaman swami",
+        "name": "Trial - Salesforce Source Format Copado-CS261013SFPSFP",
+        "sourceFormat": "DX",
+        "provider": "Github",
+        "authType": "SSH",
+        "uri": "git@github.com:chamanswami555/Copado-CS261013SFPSFP.git",
+        "tagBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/tags/",
+        "pullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+        "commitBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/commit/",
+        "branchBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/tree/",
+        "isCopadoTunnelEnabled": false,
+        "allowFunctionsGitCache": false,
+        "id": "a0qi8000000LVlZAAW",
+        "pipelines": [
+          {
+            "lastModifiedDate": "2026-10-13T18:31:27Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:31:10Z",
+            "createdBy": "chaman swami",
+            "name": "Trial - Salesforce Source Format Pipeline",
+            "mainBranch": "main",
+            "gitRepositoryId": "a0qi8000000LVlZAAW",
+            "active": true,
+            "blockCommits": false,
+            "enableSmartConflictResolution": true,
+            "calculateBasedOn": "User Story",
+            "platform": "SFDX",
+            "id": "a0Wi8000000Mr2TEAS"
+          }
+        ],
+        "snapshots": []
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 1,
+    "totalRecords": 1,
+    "hasMore": false,
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a13691-c5ed-70f0-8f6e-a3b13e57e766"
+}

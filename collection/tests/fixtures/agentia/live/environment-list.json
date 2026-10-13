@@ -1,0 +1,471 @@
+{
+  "result": {
+    "data": [
+      {
+        "lastModifiedDate": "2026-10-13T18:24:01Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:24:01Z",
+        "createdBy": "chaman swami",
+        "name": "Copado",
+        "type": "Production/Developer",
+        "platform": "Salesforce",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuUvAAK",
+        "orgId": "00Di8000003NzdlEAC",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:40:11Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:32Z",
+            "createdBy": "chaman swami",
+            "name": "Copado",
+            "orgType": "Production/Developer",
+            "defaultCredential": false,
+            "customDomain": null,
+            "id": "a11i8000000lS0rAAE",
+            "environment": "a0ci8000000FuUvAAK",
+            "environmentName": "Copado",
+            "signature": "f5fdf2dc266ecfda77aa8a2ab739990d63c298985c1439b6d7bd24d1a9cfc9aec9b6aeb308429f4aefc1038ccf452e1c969009779184d59fd9312b44c7951221fd9a6957b54f4317c1a794af35726926",
+            "orgId": "00Di8000003NzdlEAC",
+            "username": "user@example.com.cs2",
+            "lastValidationDate": "2026-10-13T18:40:10Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [],
+        "destinationPipelineConnections": [],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:27:27Z",
+        "createdBy": "chaman swami",
+        "name": "Dev1-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuczAAC",
+        "orgId": "00Ddq00000HZfT7EAL",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:27:27Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:31Z",
+            "createdBy": "chaman swami",
+            "name": "Dev1-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lRxdAAE",
+            "environment": "a0ci8000000FuczAAC",
+            "environmentName": "Dev1-SFP",
+            "signature": "e6afdd1bcf2ca2a75e29061db75810403b11c90a5cc6cd633a3763f2b6ce940e2c9bc82e80012d54bdbc99bcbfa3659551eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00Ddq00000HZfT7EAL",
+            "username": "user@example.com.cs2.dev1-sfp",
+            "lastValidationDate": "2026-10-13T18:27:27Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [
+          {
+            "id": "a0Vi8000001npNNEAY",
+            "name": "DFS-000011",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": null,
+            "destinationEnvironment": {
+              "id": "a0ci8000000FubNAAS",
+              "name": "INT-SFP"
+            },
+            "branch": "dev1-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "destinationPipelineConnections": [],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:28:04Z",
+        "createdBy": "chaman swami",
+        "name": "Dev2-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuebAAC",
+        "orgId": "00Dcb00000QjGCwEAN",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:28:04Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:31Z",
+            "createdBy": "chaman swami",
+            "name": "Dev2-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lRw1AAE",
+            "environment": "a0ci8000000FuebAAC",
+            "environmentName": "Dev2-SFP",
+            "signature": "13a54fafa6dace65693e06c53d370e04a922e575d5000987fa7d0ca8d7702a1cc147c67830e3760d724969d3773029bb51eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00Dcb00000QjGCwEAN",
+            "username": "user@example.com.cs2.dev2-sfp",
+            "lastValidationDate": "2026-10-13T18:28:03Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [
+          {
+            "id": "a0Vi8000001npNOEAY",
+            "name": "DFS-000012",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": null,
+            "destinationEnvironment": {
+              "id": "a0ci8000000FubNAAS",
+              "name": "INT-SFP"
+            },
+            "branch": "dev2-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "destinationPipelineConnections": [],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:25:30Z",
+        "createdBy": "chaman swami",
+        "name": "Hotfix-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuY9AAK",
+        "orgId": "00DEk00000oIajfMAC",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:25:31Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:32Z",
+            "createdBy": "chaman swami",
+            "name": "Hotfix-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lKg2AAE",
+            "environment": "a0ci8000000FuY9AAK",
+            "environmentName": "Hotfix-SFP",
+            "signature": "041945c689140a6985d7d77a688c3b241fcd9bb2ed17e41e53b1c806d51e89246f05f72c5cbd32455843df0b0bca00f451eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00DEk00000oIajfMAC",
+            "username": "user@example.com.cs2.hotfix-sfp",
+            "lastValidationDate": "2026-10-13T18:25:30Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [
+          {
+            "id": "a0Vi8000001npNREAY",
+            "name": "DFS-000015",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": null,
+            "destinationEnvironment": {
+              "id": "a0ci8000000FuWXAA0",
+              "name": "Production-SFP"
+            },
+            "branch": "hotfix-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "destinationPipelineConnections": [],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:26:55Z",
+        "createdBy": "chaman swami",
+        "name": "INT-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FubNAAS",
+        "orgId": "00DEk00000o9PFhMAM",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:26:55Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:32Z",
+            "createdBy": "chaman swami",
+            "name": "INT-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lS2TAAU",
+            "environment": "a0ci8000000FubNAAS",
+            "environmentName": "INT-SFP",
+            "signature": "eb9de3a9f279b3cf7b721ca338f8153c7d6b2e6806deceebf04037eede4ace35b967927a661e881d7a046cb010b79e8d51eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00DEk00000o9PFhMAM",
+            "username": "user@example.com.cs2.int-sfp",
+            "lastValidationDate": "2026-10-13T18:26:55Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [
+          {
+            "id": "a0Vi8000001npNPEAY",
+            "name": "DFS-000013",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": null,
+            "destinationEnvironment": {
+              "id": "a0ci8000000FuZlAAK",
+              "name": "UAT-SFP"
+            },
+            "branch": "int-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "destinationPipelineConnections": [
+          {
+            "id": "a0Vi8000001npNOEAY",
+            "name": "DFS-000012",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": {
+              "id": "a0ci8000000FuebAAC",
+              "name": "Dev2-SFP"
+            },
+            "destinationEnvironment": null,
+            "branch": "dev2-sfp",
+            "destinationBranch": null
+          },
+          {
+            "id": "a0Vi8000001npNNEAY",
+            "name": "DFS-000011",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": {
+              "id": "a0ci8000000FuczAAC",
+              "name": "Dev1-SFP"
+            },
+            "destinationEnvironment": null,
+            "branch": "dev1-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:24:41Z",
+        "createdBy": "chaman swami",
+        "name": "Production-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuWXAA0",
+        "orgId": "00Ddh00000DdgG3EAJ",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:24:41Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:31Z",
+            "createdBy": "chaman swami",
+            "name": "Production-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lQiJAAU",
+            "environment": "a0ci8000000FuWXAA0",
+            "environmentName": "Production-SFP",
+            "signature": "7363062a549705480df6834d86b902c4376abc45c92c4781eb8ff4105924f48e75097e56ec5be27c4ac3b505212eabbb51eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00Ddh00000DdgG3EAJ",
+            "username": "user@example.com.cs2.production-sfp",
+            "lastValidationDate": "2026-10-13T18:24:40Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [],
+        "destinationPipelineConnections": [
+          {
+            "id": "a0Vi8000001npNREAY",
+            "name": "DFS-000015",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": {
+              "id": "a0ci8000000FuY9AAK",
+              "name": "Hotfix-SFP"
+            },
+            "destinationEnvironment": null,
+            "branch": "hotfix-sfp",
+            "destinationBranch": null
+          },
+          {
+            "id": "a0Vi8000001npNQEAY",
+            "name": "DFS-000014",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": {
+              "id": "a0ci8000000FuZlAAK",
+              "name": "UAT-SFP"
+            },
+            "destinationEnvironment": null,
+            "branch": "uat-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "featureFlags": null
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:04Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:26:16Z",
+        "createdBy": "chaman swami",
+        "name": "UAT-SFP",
+        "type": "Sandbox",
+        "platform": "SFDX",
+        "namespace": null,
+        "runLocalTests": false,
+        "runSpecifiedTests": null,
+        "promotionDefaultCredential": "Always",
+        "validationPromotionDefaultCredential": "All Validation Promotions",
+        "indexBackPromotionMetadata": true,
+        "enableRollback": false,
+        "apexTestLevel": "No Test Run",
+        "id": "a0ci8000000FuZlAAK",
+        "orgId": "00Dhv000001Em7qEAC",
+        "lastRefreshDate": null,
+        "credentials": [
+          {
+            "lastModifiedDate": "2026-10-13T18:26:16Z",
+            "lastModifiedBy": "chaman swami",
+            "createdDate": "2026-10-13T18:19:32Z",
+            "createdBy": "chaman swami",
+            "name": "UAT-SFP",
+            "orgType": "Sandbox",
+            "defaultCredential": true,
+            "customDomain": null,
+            "id": "a11i8000000lRzFAAU",
+            "environment": "a0ci8000000FuZlAAK",
+            "environmentName": "UAT-SFP",
+            "signature": "3417974f90bdb8c053626fc743190b1b747791b90e4be1a60888f7027641273857ff4bffe43ecb4201556a1ea79ba0ec51eb96371bc9ab41a6fc334bf56d6da89575cb458007b5585fd95f827a6d9dcd",
+            "orgId": "00Dhv000001Em7qEAC",
+            "username": "user@example.com.cs2.uat-sfp",
+            "lastValidationDate": "2026-10-13T18:26:16Z",
+            "lastIndexRefreshDate": null,
+            "allowedMetadataTypes": null
+          }
+        ],
+        "systemProperties": [],
+        "environmentVariables": [],
+        "findAndReplaceRules": [],
+        "sourcePipelineConnections": [
+          {
+            "id": "a0Vi8000001npNQEAY",
+            "name": "DFS-000014",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": null,
+            "destinationEnvironment": {
+              "id": "a0ci8000000FuWXAA0",
+              "name": "Production-SFP"
+            },
+            "branch": "uat-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "destinationPipelineConnections": [
+          {
+            "id": "a0Vi8000001npNPEAY",
+            "name": "DFS-000013",
+            "pipelineId": "a0Wi8000000Mr2TEAS",
+            "sourceEnvironment": {
+              "id": "a0ci8000000FubNAAS",
+              "name": "INT-SFP"
+            },
+            "destinationEnvironment": null,
+            "branch": "int-sfp",
+            "destinationBranch": null
+          }
+        ],
+        "featureFlags": null
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 1,
+    "totalRecords": 7,
+    "hasMore": false,
+    "nextCursor": null
+  },
+  "status": 0,
+  "transactionId": "01a13691-77c5-7384-92b3-fa64026072dc"
+}

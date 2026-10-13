@@ -1,0 +1,203 @@
+{
+  "result": {
+    "checks": [
+      {
+        "checkId": "flow_user",
+        "description": "Verifies that the user has the required permissions to execute flows in Copado Functions.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/salesforce-source-format-pipelines-configuration-steps/a/h2_1644201065",
+        "fixGuidance": "Assign the Flow Run permission set to the integration user.",
+        "impact": "User has flow access permissions",
+        "lastRun": "2026-10-13T18:40:08.286382Z",
+        "name": "Flow User Permission",
+        "severity": "critical",
+        "status": "pass"
+      },
+      {
+        "checkId": "copado",
+        "description": "Verifies that the Copado managed package is installed.",
+        "fixGuidance": "Copado Deployer v25.0 is the minimum version recommended to ensure a successful migration.",
+        "impact": "Copado package is installed",
+        "lastRun": "2026-10-13T18:40:08.385987Z",
+        "name": "Copado",
+        "severity": "critical",
+        "status": "pass"
+      },
+      {
+        "checkId": "sfdx_extension_bundle",
+        "description": "Verifies that the DX Extension Bundle records are created.",
+        "docLink": "https://docs.copado.com/articles/#!copado-developer-center-publication/copado-extensions-overview",
+        "fixGuidance": "Update the extension bundle from Copado Extensions page.",
+        "impact": "SFDXExtensionBundle is up to date",
+        "lastRun": "2026-10-13T18:40:09.667696Z",
+        "name": "SFDX Extension Bundle",
+        "severity": "high",
+        "status": "pass"
+      },
+      {
+        "checkId": "extension_configurations",
+        "description": "Verifies that the \"Flow Tests\" and \"Apex Tests\" Extension Configuration are created.",
+        "docLink": "https://docs.copado.com/articles/#!release-notes-publication/salesforce-source-format-pipelines-v8-0-2026-01-21/a/h3__1987185232",
+        "fixGuidance": "\"Flow Tests\" or \"Apex Tests\" Extension Configurations are not created.",
+        "impact": "Flow Tests and Apex Tests extension configurations are created",
+        "lastRun": "2026-10-13T18:40:08.390527Z",
+        "name": "Extension Configurations",
+        "severity": "high",
+        "status": "pass"
+      },
+      {
+        "checkId": "salesforce_dx",
+        "description": "Verifies that Salesforce DX package is installed.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/salesforce-source-format-pipelines-configuration-steps/a/h2__1261794563",
+        "fixGuidance": "Copado DX v7.0 is the minimum version recommended to ensure a successful migration.",
+        "impact": "Salesforce DX package is installed",
+        "lastRun": "2026-10-13T18:40:08.386017Z",
+        "name": "Salesforce DX",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "quality_tools",
+        "description": "Verifies that Copado Quality Tools package is installed.",
+        "docLink": "https://docs.copado.com/health-checks/quality-tools",
+        "fixGuidance": "Install the Copado Quality Tools package from AppExchange.",
+        "impact": "Quality Tools package is installed",
+        "lastRun": "2026-10-13T18:40:08.386035Z",
+        "name": "Quality Tools",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "function_configuration",
+        "description": "Verifies that Copado Functions are enabled and have sufficient credits.",
+        "fixGuidance": "Contact your CSM or Copado Support to get Functions enabled in your organization.",
+        "impact": "Copado Functions are enabled, installed, and have credits",
+        "lastRun": "2026-10-13T18:40:12.859017Z",
+        "name": "Functions Enabled",
+        "severity": "critical",
+        "status": "pass"
+      },
+      {
+        "checkId": "functions_named_credential",
+        "description": "Verifies that Functions Named Credential is configured in Settings.",
+        "fixGuidance": "Contact your CSM or Copado Support to ensure the Function Named Credential is created in your organization.",
+        "impact": "Functions Named Credential is valid and configured",
+        "lastRun": "2026-10-13T18:40:08.546239Z",
+        "name": "Functions Named Credential",
+        "severity": "high",
+        "status": "pass"
+      },
+      {
+        "checkId": "permission_sets",
+        "description": "Verifies that the user has appropriate permission set assignments.",
+        "fixGuidance": "The following permission sets are required for the user running the migration: Copado User, Copado Functions Admin, Copado Job Engine, Git Snapshot Admin, Execute Automations, CMC SFDX Admin, Persona Management.",
+        "impact": "Persona Management permission set should be assigned",
+        "lastRun": "2026-10-13T18:40:08.383117Z",
+        "name": "Permission Sets (Assignments)",
+        "severity": "medium",
+        "status": "fail"
+      },
+      {
+        "checkId": "user_profile_permissions",
+        "description": "Verifies the running user has the Copado Admin License assigned in the Copado License Manager.",
+        "fixGuidance": "Ensure the running user has the Copado Admin License assigned in the Copado License Manager.",
+        "impact": "Copado Admin License is assigned to the user",
+        "lastRun": "2026-10-13T18:40:12.983649Z",
+        "name": "User License",
+        "severity": "high",
+        "status": "pass"
+      },
+      {
+        "checkId": "api_key",
+        "description": "Verifies that API Key is created under Account Summary.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/creating-an-api-key",
+        "fixGuidance": "Create an API Key under Account Summary.",
+        "impact": "API Key is configured",
+        "lastRun": "2026-10-13T18:40:08.320652Z",
+        "name": "API Key",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "picklist_values",
+        "description": "Validates that the Action picklist values are correct in the organization.",
+        "fixGuidance": "Ensure the \"copado__Action__c\" field in the \"copado__Pipeline_Action__c\" object, and the \"Copado_Actions\" Global Value Set has the following values: Promotion, PromotionDeployment, Commit, CreatePackage, CreatePackageVersion, PublishPackageVersion, ImportPackage, Rollback, TakeSnapshot, PackageDistribution, SubmitUserStories, InsightAppSec.",
+        "impact": "Required picklist values are active",
+        "lastRun": "2026-10-13T18:40:08.522259Z",
+        "name": "Picklist Values",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "platform_picklist_values",
+        "description": "Validates that the Platform picklist includes the SFDX value.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/salesforce-source-format-pipelines-configuration-steps/a/h3_294008195",
+        "fixGuidance": "Add the SFDX value to the Platform picklist.",
+        "impact": "Platform picklist contains 'SFDX'",
+        "lastRun": "2026-10-13T18:40:08.425721Z",
+        "name": "Platform Picklist Values",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "lightning_pages_layouts",
+        "description": "Verifies that the lightning record pages are activated.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/salesforce-source-format-pipelines-configuration-steps/a/h3_1173888793",
+        "fixGuidance": "Activate the required Lightning record pages for Pipeline, Promotion, and User Story.",
+        "impact": "Lightning pages are correctly configured",
+        "lastRun": "2026-10-13T18:40:11.134426Z",
+        "name": "Lightning Pages",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "governance_credential",
+        "description": "Verifies governance org credential is accessible.",
+        "docLink": "https://docs.copado.com/articles/#!copado-ci-cd-publication/credential-overview/a/h3__833723122",
+        "fixGuidance": "Configure governance org credential.",
+        "impact": "Governance org credential is validated",
+        "lastRun": "2026-10-13T18:40:11.580577Z",
+        "name": "Governance Org Credential",
+        "severity": "high",
+        "status": "pass"
+      },
+      {
+        "checkId": "org_session_timeout",
+        "description": "Verifies if the Salesforce Session Settings Timeout Value is 2 hours or higher.",
+        "fixGuidance": "Increase the value to at least 2 hours.",
+        "impact": "Org session timeout is 120 minutes",
+        "lastRun": "2026-10-13T18:40:08.407724Z",
+        "name": "Org Session Timeout",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "file_attachment_validations",
+        "description": "Verifies that there are no active custom triggers or validations in ContentVersion, ContentDocument, or ContentDocumentLink.",
+        "fixGuidance": "Make sure the triggers or validations don't block the creation or update of files and attachments in the org.",
+        "impact": "No active validations or triggers were found on Salesforce file objects",
+        "lastRun": "2026-10-13T18:40:08.474720Z",
+        "name": "Validations in File and Attachment",
+        "severity": "medium",
+        "status": "pass"
+      },
+      {
+        "checkId": "finish_migration_validation_risks",
+        "description": "Verifies that there are no active custom triggers or validations in User Stories and Promotions.",
+        "fixGuidance": "Make sure the triggers or validations don't block the update of user stories and promotions.",
+        "impact": "No active validations or triggers were found on Finish Migration objects",
+        "lastRun": "2026-10-13T18:40:08.501117Z",
+        "name": "Validations in Stories and Promotions",
+        "severity": "medium",
+        "status": "pass"
+      }
+    ],
+    "summary": {
+      "fail": 1,
+      "pass": 17,
+      "total": 18,
+      "warn": 0
+    }
+  },
+  "status": 0,
+  "transactionId": "01a13690-9015-7443-9aa7-de4e646691ed"
+}

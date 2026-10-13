@@ -1,0 +1,213 @@
+{
+  "result": {
+    "data": [
+      {
+        "name": "InsightAppSec Scan",
+        "apiName": "InsightAppSec_Scan",
+        "imageName": "copado-multicloud-mulesoft:v1",
+        "type": "Custom",
+        "size": "S",
+        "version": "1",
+        "timeout": 60,
+        "id": "a0li8000000xofYAAQ",
+        "options": [],
+        "parameters": [
+          {
+            "name": "region",
+            "defaultValue": "{$Pipeline.Property.Rapid7_Region}",
+            "required": false
+          },
+          {
+            "name": "apiKey",
+            "defaultValue": "{$Pipeline.Property.xAPIKey}",
+            "required": false
+          },
+          {
+            "name": "appSecFileId",
+            "defaultValue": "{$Pipeline.Property.InsightAppSecFileId}",
+            "required": false
+          },
+          {
+            "name": "swagerFileVersionId",
+            "defaultValue": "{$Context.Apex.cmcMule.GetSwagerFileVersionId}",
+            "required": false
+          },
+          {
+            "name": "rapid7InsightAppSecAppId",
+            "defaultValue": "{$Pipeline.Property.InsightAppSecAppId}",
+            "required": false
+          },
+          {
+            "name": "insightAppSec_Scan_Config_Id",
+            "defaultValue": "{$Pipeline.Property.InsightAppSec_Scan_Config_Id}",
+            "required": false
+          }
+        ],
+        "script": {
+          "runtime": "bash",
+          "content": "#!/bin/bash    \nset -euo pipefail # set up error handling: fail on any command with exit code !=0 , fail with undefined variables.\nexport SHELLOPTS # export the settings for all subshells. Be careful with the \"u\" (undefined variables) flag, some tools (such as maven) fail. \n\ncd /app\nsource copado_init\nfunction_parameter region '{$Pipeline.Property.Rapid7_Region}'\nfunction_parameter apiKey '{$Pipeline.Property.xAPIKey}'\nfunction_parameter appSecFileId '{$Pipeline.Property.InsightAppSecFileId}'\nfunction_parameter swagerFileVersionId '{$Context.Apex.cmcMule.GetSwagerFileVersionId}'\nfunction_parameter rapid7InsightAppSecAppId '{$Pipeline.Property.InsightAppSecAppId}'\nfunction_parameter insightAppSec_Scan_Config_Id '{$Pipeline.Property.InsightAppSec_Scan_Config_Id}'\n#region='us3'\n#apiKey='c70d0fc1-7b41-41c2-9857-0daeb716af6a'\n#appSecFileId='d8579880-29c3-4a77-888c-6824c6bf604b'\n#swagerFileVersionId='0681w000002WKHiAAO'\n#rapid7InsightAppSecAppId='6b76f574-c63a-419f-9b95-8e1076402f24'\n#rapid7InsightAppSecScanConfigId='b9add2c3-030b-4bd8-a50f-b867f647989b'\n\nvalidationUrl=\"https://${region}.api.insight.rapid7.com/validate\"\n\necho \"$SHELLOPTS\"\n\nif [ -z \"$swagerFileVersionId\" ]\nthen\n    copado -p \"Skipping InsightAppSec Scan\"\n    copado_finish 0 \"Swagger file is not attached\" \"\" \" Skipped Scan\"\nfi\n\ncopado -p \"Authenticating Rapid7\"\n    authResponse=$(curl --location \"${validationUrl}\" \\\n--header \"X-Api-Key: ${apiKey}\") || {\n        echo $authResponse\n        copado_finish 1 \"Authentication failed\" \"\" \"$authResponse\"\n    }\n    echo $authResponse\n    authMessage=$(echo $authResponse | jq -r '.message')\n    if [[ \"$authMessage\" == \"Unauthorized\" ]]; then\n        copado_finish 1 \"Unable to authenticate Rapid7\" \"\" \"$authResponse\"\n    fi\n    echo $authMessage\n    \ncopado -p \"Uploading Swagger File to InsightAppSec\"\ncopado --downloadfiles \"$swagerFileVersionId\"\nvalue=$(<InsightAppSecSwagger)\ncontentUploadUrl=\"https://${region}.api.insight.rapid7.com:443/ias/v1/apps/${rapid7InsightAppSecAppId}/files/${appSecFileId}\"\ncontentUploadResponse=$(curl -w \"%{response_code}\" --location \"${contentUploadUrl}\" \\\n--header \"X-Api-Key: ${apiKey}\" \\\n--header 'Content-Type: application/octet-stream' \\\n--data-raw \"$value\") || {\n        echo $contentUploadResponse\n        copado_finish 1 \"File Content upload failed\" \"\" \"$contentUploadResponse\"\n    }\necho $contentUploadResponse\n\nif [[ \"$contentUploadResponse\" != \"201\" ]]; then\n        copado_finish 1 \"Failed to upload swagger file content\" \"\" \"$contentUploadResponse\"\nfi\n#Submit scan\ncopado -p \"Submitting Scan request\"\nvalue=\"{\\\"scan_config\\\": {\\\"id\\\": \\\"${insightAppSec_Scan_Config_Id}\\\"}, \\\"scan_type\\\": \\\"REGULAR\\\"}\"\necho $value\nscanURL=\"https://${region}.api.insight.rapid7.com/ias/v1/scans\"\nscanResponse=$(curl -w \"%{response_code}\" --location \"${scanURL}\" \\\n--header \"X-Api-Key: ${apiKey}\" \\\n--header 'Content-Type: application/json' \\\n--data-raw \"$value\") || {\n        echo $scanResponse\n        copado_finish 1 \"Rapid7 Scan request submitted successfully \" \"\" \"$scanResponse\"\n    }\necho $scanResponse\n\nif [[ \"$scanResponse\" != \"201\" ]]; then\n        copado_finish 1 \"Failed submit Rapid7 scan request\" \"\" \"$scanResponse\"\nfi",
+          "extension": "sh"
+        },
+        "ownerName": "Copado System Admin"
+      },
+      {
+        "name": "metadata_report_hs",
+        "apiName": "metadata_report_hs",
+        "imageName": "copado-function-core:v1",
+        "type": "Custom",
+        "size": "S",
+        "version": "1",
+        "timeout": 60,
+        "apexClass": "mdreporths.UpdateTestResultFromResult",
+        "callback": "ApexClass",
+        "id": "a0li8000000xofUAAQ",
+        "options": [],
+        "parameters": [
+          {
+            "name": "parentId",
+            "defaultValue": "",
+            "required": false
+          },
+          {
+            "name": "sourceSessionId",
+            "defaultValue": "",
+            "required": true
+          },
+          {
+            "name": "sourceEndpoint",
+            "defaultValue": "",
+            "required": true
+          }
+        ],
+        "script": {
+          "runtime": "node",
+          "content": "const { execSync } = require(\"child_process\");\nconst fs = require('fs');\n\nexecSync(\"npm install --no-audit --progress=false sfdc-soup@18.4.0 jsforce\", {stdio: 'inherit'});\n\nconst sfdcSoup = require('/app/node_modules/sfdc-soup');\nconst jsforce = require('/app/node_modules/jsforce');\n\nconst copadoConn = new jsforce.Connection({\n    serverUrl : 'https://'+ new URL(process.env.CF_SF_ENDPOINT).hostname,\n    sessionId : process.env.CF_SF_SESSIONID\n});\n\nconst sandboxConn = new jsforce.Connection({\n    serverUrl : 'https://'+ new URL(process.env.sourceEndpoint).hostname,\n    sessionId : process.env.sourceSessionId\n});\n\nconst sfdcConnection = {\n    url: 'https://'+ new URL(process.env.sourceEndpoint).hostname, \n    token: process.env.sourceSessionId,\n    apiVersion: '56.0'\n};\n\nasync function getMetadataItemsOfType(type, names) {\n    console.time(\"listmetadata\");\n    let metadataItems = await sandboxConn.metadata.list([{type: type}], '56.0');\n    // we need to check if .list() returns an array\n    // https://github.com/jsforce/jsforce/issues/871\n    if(!Array.isArray(metadataItems)) {\n        metadataItems = [metadataItems];\n    }\n    console.timeEnd(\"listmetadata\");\n\n    const matches = metadataItems.filter( item => names.includes(item.fullName) );\n    if(!matches.length) {\n        console.log('cannot find item ', names);\n        for(const item of metadataItems) {\n            console.debug(item.id, item.type, item.fullName);\n        }\n    }\n    return matches;\n}\n\nasync function getListOfMetadataFromUserStory(userStoryId) {\n    let metadataList = [];\n    let metadataListMap = {};\n    let response;\n\n    response = await copadoConn.query(\"SELECT ContentDocument.LatestPublishedVersionId FROM ContentDocumentLink WHERE LinkedEntityId = '\"+userStoryId+\"' AND ContentDocument.Title = 'Copado Commit changes' ORDER BY ContentDocument.ContentModifiedDate DESC LIMIT 1\");\n    if(response.records.length && response.records[0].ContentDocument.LatestPublishedVersionId) {\n        const contentVersionId = response.records[0].ContentDocument.LatestPublishedVersionId;\n\n        const result = await copadoConn.request('/services/data/v56.0/sobjects/ContentVersion/'+contentVersionId+'/VersionData');\n        metadataList = JSON.parse(result);\n \n        // generate a map of the metadata items, to avoid duplicates when merging with the US metadata\n        metadataListMap = metadataList.reduce((group, item) => {\n            const key = `${item.t}.${item.n}`\n            group[key] = group[key] ?? [];\n            group[key].push(item);\n            return group;\n          }, {});\n    }\n\n    response = await copadoConn.query(\"SELECT copado__Type__c, copado__Metadata_API_Name__c FROM copado__User_Story_Metadata__c WHERE copado__User_Story__c = '\"+userStoryId+\"' ORDER BY copado__Type__c, copado__Metadata_API_Name__c\");\n    for(const item of response.records) {\n        const key = `${item.copado__Type__c}.${item.copado__Metadata_API_Name__c}`;\n        if( !(key in metadataListMap) ) {\n            metadataList.push({t: item.copado__Type__c, n: item.copado__Metadata_API_Name__c})\n        }\n    }\n    return metadataList;\n}\n\nasync function getUserStoryAndResult(parentId) {\n    let resp;\n    let resultId;\n    let userStoryId;\n    resp = await copadoConn.query(\"SELECT Id FROM copado__Result__c WHERE copado__Test__c = '\"+parentId+\"' ORDER BY CreatedDate DESC LIMIT 1\");\n    if(resp.records.length) {\n        // parentId is a Test object (used as a Test Tool)\n        resultId = resp.records[0].Id;\n        resp = await copadoConn.query(\"SELECT copado__User_Story__c FROM copado__Test__c WHERE Id = '\"+parentId+\"'\");\n        if(!resp.records.length || !resp.records[0].copado__User_Story__c) {\n            throw new Error('Could not find the User Story (1)');\n        }\n        userStoryId = resp.records[0].copado__User_Story__c;\n    }else{\n        // parentId is a UserStoryCommit object (used as a Quality Gate)\n        resp = await copadoConn.query(\"SELECT copado__User_Story__c FROM copado__User_Story_Commit__c WHERE Id = '\"+parentId+\"'\");\n        if(!resp.records.length || !resp.records[0].copado__User_Story__c) {\n            throw new Error('Could not find the User Story (2)');\n        }\n        userStoryId = resp.records[0].copado__User_Story__c;\n\n        resp = await copadoConn.query(\"SELECT copado__Result__c FROM copado__JobStep__c WHERE copado__JobExecution__r.copado__UserStoryCommit__c = '\"+parentId+\"' ORDER BY CreatedDate DESC LIMIT 1\");\n        if(!resp.records.length || !resp.records[0].copado__Result__c) {\n            throw new Error('Could not find the Result');\n        }\n        resultId = resp.records[0].copado__Result__c;\n    }\n    return {userStoryId, resultId}\n}\n\nconst start = async () => {\n    console.log('[param] parentId=', process.env.parentId);\n\n    const {userStoryId, resultId} = await getUserStoryAndResult(process.env.parentId)\n    const changes = await getListOfMetadataFromUserStory(userStoryId);\n\n    if(!changes.length) {\n        throw new Error('The user story has no metadata items to scan');\n    }\n\n    let items = [];\n    for(const c of changes) {\n        console.log(c);\n        items = items.concat(await getMetadataItemsOfType(c.t, [c.n]));\n    }\n\n    if(!items.length) {\n        throw new Error('Could not find any metadata items to scan');\n    }\n\n    let result = {\n        \"version\": \"2.1.0\",\n        \"$schema\": \"http://json.schemastore.org/sarif-2.1.0\",\n        \"runs\": [\n            {\n            \"tool\": {\n                \"driver\": {\n                \"name\": \"happy-soup\",\n                \"rules\": []\n                }\n            },\n            \"results\": [],\n            \"invocations\": [\n                {\n                \"executionSuccessful\": true,\n                \"toolExecutionNotifications\": []\n                }\n            ]\n            }\n        ]\n    };\n\n\n    for(const item of items) {\n        console.debug(item.id, item.type, item.fullName);\n\n        const request = {\n            name: item.fullName, \n            type: item.type, \n            id: item.id\n        };\n        const soupApi = sfdcSoup(sfdcConnection, request);\n    \n        console.time(\"getUsage\");\n        const ur = await soupApi.getUsage();\n        console.timeEnd(\"getUsage\");\n\n        console.log('##### USAGE OF', item.fullName)\n        console.log(ur.csv);\n\n        let usagesBuf = [];\n        const usageTree = Object.values(ur.usageTree);\n        if(usageTree.length) {\n            for( const subitems of usageTree ) {\n                for(const item of subitems) {\n                    const ns = item.namespace? `${item.namespace}__` : '';\n                    usagesBuf.push(`referenced at ${ns}${item.name} (${item.type})`);\n                }\n            }\n        }else{\n            usagesBuf.push('(no referenced found)');\n        }\n\n        result.runs[0].results.push({\n            \"level\": \"info\",\n            \"ruleId\": `${ur.entryPoint.name} (${ur.entryPoint.type})`,\n            \"locations\": [],\n            \"message\": usagesBuf.join('\\n')\n        });\n    }\n\n    let data = JSON.stringify(result);\n    fs.writeFileSync('/tmp/metadata_report_hs.json', data);\n\n    execSync(\"copado -p 'uploading results to \"+resultId+\"'\", {stdio: 'inherit'});\n\n    execSync(\"copado -u /tmp/metadata_report_hs.json --parentid \"+resultId, {stdio: 'inherit'});\n};\n\n// never fail, because we do not want to interrupt the copado action if there is a problem.\nstart().catch((e) => { console.error('there was a problem executing the scan', e); });",
+          "extension": "js"
+        },
+        "ownerName": "Copado System Admin"
+      },
+      {
+        "name": "Setup Audit Log Trail",
+        "apiName": "setup_audit_trail",
+        "imageName": "copado-multicloud-metadata:v1",
+        "type": "Custom",
+        "size": "S",
+        "version": "1",
+        "timeout": 60,
+        "callback": "Flow",
+        "flowHandler": "Monitor_Environments_Callback",
+        "id": "a0li8000000xofRAAQ",
+        "options": [],
+        "parameters": [
+          {
+            "name": "SessionID",
+            "defaultValue": "{$Context.Credential.SessionId}",
+            "required": false
+          },
+          {
+            "name": "Endpoint",
+            "defaultValue": "{$Context.Credential.Endpoint}",
+            "required": false
+          },
+          {
+            "name": "IntegrationUsername",
+            "defaultValue": "",
+            "required": false
+          }
+        ],
+        "script": {
+          "runtime": "bash",
+          "content": "#!/usr/bin/env bash\nset -eo pipefail\n\nexport baseUrl=\"https://$(echo $Endpoint | sed -e 's/[^/]*\\/\\/\\([^@]*@\\)\\?\\([^:/]*\\).*/\\2/')\"\ncopado -p \"setting up sfdx context\"\nsfdx force:project:create -n monitor\ncd monitor\nsfdx force:config:set instanceUrl=${baseUrl} || echo \"error setting instanceUrl\"\n\n## Query SFDC for impersonations\nquery=\"select Name from User where Username='$IntegrationUsername'\"\ncopado -p \"executing User query\"\nsfdx force:data:soql:query -u $SessionID -q \"$query\" --json |jq --raw-output '.result' > userDetails.json  || echo \"error executing User query\"\n\n## Query SFDC for impersonations\nquery=\"SELECT ID, CreatedDate, CreatedBy.Name, CreatedBy.Username, Display from SetupAuditTrail WHERE createddate >= LAST_N_DAYS:3 AND Action = 'suOrgAdminLogin'\"\ncopado -p \"executing Impersonation query\"\nsfdx force:data:soql:query -u $SessionID -q \"$query\" --json |jq --raw-output '.result' > impersonations.json  || echo \"error executing Impersonation query\"\n\n\n## Query SFDC for metadata changes NOT made by the integration user OR they were made by impersonation\nquery=\"SELECT ID, CreatedDate, CreatedBy.Name, CreatedBy.Username, Action, Section, Display, DelegateUser FROM SetupAuditTrail WHERE createddate >= LAST_N_DAYS:3 AND CreatedByID !=null AND CreatedBy.Name !='Automated+Process'  AND ((CreatedBy.Username != '$IntegrationUsername') OR DelegateUser != null)\"\ncopado -p \"executing Metadata query\"\nsfdx force:data:soql:query -u $SessionID -q \"$query\" --json |jq --raw-output '.result' > metadatachanges.json  || echo \"error executing Metadata query\"\n\n## Save impersonation file back to Copado Salesforce Org so it can be processed\ncopado -p \"Uploading result files\"\ncopado -u impersonations.json\ncopado -u metadatachanges.json\ncopado -u userDetails.json",
+          "extension": "sh"
+        },
+        "ownerName": "Copado System Admin"
+      },
+      {
+        "name": "Swagger File Download",
+        "apiName": "Swagger_File_Download",
+        "imageName": "copado-multicloud-mulesoft:v1",
+        "type": "Custom",
+        "size": "M",
+        "version": "1",
+        "timeout": 60,
+        "id": "a0li8000000xofWAAQ",
+        "options": [],
+        "parameters": [
+          {
+            "name": "client_id",
+            "defaultValue": "{$Pipeline.Property.Mule_Client_Id}",
+            "required": false
+          },
+          {
+            "name": "client_secret",
+            "defaultValue": "{$Pipeline.Property.Mule_Client_Secret}",
+            "required": false
+          },
+          {
+            "name": "anypoint_region",
+            "defaultValue": "{$Pipeline.Property.anypoint_region}",
+            "required": false
+          },
+          {
+            "name": "promotion_id",
+            "defaultValue": "{$Context.JobExecution__r.Promotion__c}",
+            "required": false
+          },
+          {
+            "name": "group_id",
+            "defaultValue": "{$Pipeline.Property.group_id}",
+            "required": false
+          },
+          {
+            "name": "asset_id",
+            "defaultValue": "{$Pipeline.Property.asset_id}",
+            "required": false
+          }
+        ],
+        "script": {
+          "runtime": "bash",
+          "content": "#!/bin/bash\nset -euo pipefail # set up error handling: fail on any command with exit code !=0 , fail with undefined variables.\nexport SHELLOPTS # export the settings for all subshells. Be careful with the \"u\" (undefined variables) flag, some tools (such as maven) fail.\n\ncd /app\nsource copado_init\nfunction_parameter promotion_id '{$Context.JobExecution__r.Promotion__c}' --optional\n# Define an empty access token variable\naccess_token=\"\"\n\nfunction verify_client_id_secret() {\n\n    copado -p \"Authenticating Mulesoft Anypoint Platform\"\n\n    # Define the validation URLs in an associative array for easy access\n    declare -A validation_urls=(\n        [\"US\"]=\"https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token\"\n        [\"EU\"]=\"https://eu1.anypoint.mulesoft.com/accounts/api/v2/oauth2/token\"\n        [\"GOV\"]=\"https://gov.anypoint.mulesoft.com/accounts/api/v2/oauth2/token\"\n    )\n\n    # Check if the anypoint_region value is a valid key in the validation_urls array\n    if [[ -v validation_urls[\"$anypoint_region\"] ]]; then \n        authenticate_credentials \"${validation_urls[$anypoint_region]}\" \"$client_id\" \"$client_secret\"\n    else \n        copado -p 'Invalid region entered' --error-message 'Invalid region selected' \n        exit 1\n    fi\n}\n\n\n# This function is to authenticate the user credentials\nfunction authenticate_credentials {\n    local auth_http_code\n    local json_response\n\n    auth_http_code=$(curl --silent --output /dev/stderr --write-out \"%{http_code}\" --location --request POST \"$1\" \\\n                      --header 'Content-Type: application/x-www-form-urlencoded' \\\n                      --data-urlencode \"client_id=$2\" \\\n                      --data-urlencode \"client_secret=$3\" \\\n                      --data-urlencode 'grant_type=client_credentials')\n\n    if [[ $auth_http_code -ne 200 ]]; then\n        copado -p 'Invalid credential error' --error-message 'Invalid Client Id or Client Secret'\n        exit 1\n    fi\n\n    json_response=$(curl --silent --location --request POST \"$1\" \\\n                 --header 'Content-Type: application/x-www-form-urlencoded' \\\n                 --data-urlencode \"client_id=$2\" \\\n                 --data-urlencode \"client_secret=$3\" \\\n                 --data-urlencode 'grant_type=client_credentials')\n\n    access_token=$(echo \"$json_response\" | jq -r '.access_token')\n}\n\nfunction download_swagger_file(){\n      response=$(curl --location --request GET \"https://anypoint.mulesoft.com/exchange/api/v1/assets/${group_id}/${asset_id}/\"\\\n      --header \"Authorization: Bearer $access_token\")\n\n      external_link=$(echo \"$response\" | jq -r '.files[] | select(.classifier == \"oas\").externalLink')\n      \n      cd /app\n\n      # URL of the zip file to download\n      zip_url=$external_link\n\n      # Destination directory for the extracted files\n      destination_dir=\"/app\"\n\n      # Download the zip file\n      copado -p \"Downloading the zip file...\" \n      curl -sS -o temp.zip \"$zip_url\"\n\n      # Extract the contents of the zip file\n      copado -p \"Extracting the zip file...\"  \n      unzip -q temp.zip -d \"$destination_dir\"\n\t  \n      # Uploading the swagger file \n      copado -p \"Uploading the swagger file ...\"  \n      copado -u /app/api.json -n \"swagger.json\" -i \"$promotion_id\"\n\n\t  # Removing the zip folder\n      rm temp.zip\n}\n\nprofiler verify_client_id_secret\nprofiler download_swagger_file",
+          "extension": "sh"
+        },
+        "ownerName": "Copado System Admin"
+      },
+      {
+        "name": "Sync Data Templates",
+        "apiName": "Sync_Data_Templates",
+        "imageName": "copado-multicloud-dx:v6",
+        "type": "Custom",
+        "size": "S",
+        "version": "1",
+        "timeout": 60,
+        "apexClass": "cmcSf.SyncDataTemplatesCallback",
+        "id": "a0li8000000xofvAAA",
+        "options": [],
+        "parameters": [
+          {
+            "name": "dataTemplatesSyncConfigIds",
+            "defaultValue": "{$Context.apex.cmcSf.GetDataTemplatesSyncConfigIds}",
+            "required": true
+          },
+          {
+            "name": "environmentId",
+            "defaultValue": "{$Source.Id}",
+            "required": true
+          }
+        ],
+        "script": {
+          "runtime": "node",
+          "content": "'use strict';\n\n/**\n * Syncs data template field selections for the current environment.\n *\n * Downloads DataTemplatesSyncConfig ContentVersions, merges them, keeps only\n * the not-yet-synced entries for the current environmentId, deduplicates, and\n * POSTs the payload to the CICD gateway /data-templates/sync endpoint.\n *\n * @param environmentId - Environment Id of the org where commit/deploy is running\n * @param dataTemplatesSyncConfigIds - Stringified JSON array of ContentVersion Ids\n */\n\nconst child_process = require('child_process');\nconst crypto = require('crypto');\nconst fs = require('fs');\nconst path = require('path');\nconst process = require('process');\n\nconst { environmentId, dataTemplatesSyncConfigIds, CF_SF_ENDPOINT, locale, isTest } = process.env;\n\nconst TEMP_DIRECTORY = getPath('/tmp/sync_data_templates');\nconst SYNC_CONFIG_FILE_NAME = 'DataTemplatesSyncConfig';\nconst SYNC_RESULT_FILE_NAME = 'DataTemplatesSyncResult.json';\nconst COPADO_INFO_PREFIX = 'CopadoFunction INFO';\nconst VALID_OPERATIONS = new Set(['add', 'delete']);\nconst SYNC_PAYLOAD_FIELDS = [\n\t'mainTemplateId',\n\t'templateId',\n\t'objectApiName',\n\t'fieldApiName',\n\t'fieldType',\n\t'operation',\n\t'column',\n\t'environmentId'\n];\n\nconst CUSTOM_ERROR = {\n\tCOMMAND_EXECUTION_ERROR: 'CommandExecutionError',\n\tVALIDATION_ERROR: 'ValidationError',\n\tSYNC_ERROR: 'SyncError'\n};\n\n// EXECUTION\n\nasync function execute() {\n\ttry {\n\t\tthis.logger('Starting Sync Data Templates');\n\n\t\tconst contentVersionIds = this.parseContentVersionIds(dataTemplatesSyncConfigIds);\n\t\tthis.logger(`Downloading ${contentVersionIds.length} DataTemplatesSyncConfig file(s)`);\n\t\tconst syncConfigs = await this.downloadAndReadSyncConfigs(contentVersionIds);\n\n\t\tconst payload = this.buildSyncPayload(syncConfigs, environmentId);\n\t\tthis.logger(`Prepared ${payload.length} sync operation(s) for environment ${environmentId}`);\n\n\t\tif (!payload.length) {\n\t\t\tthis.logger('No matching sync operations for this environment. Skipping gateway call.');\n\t\t\treturn;\n\t\t}\n\n\t\tconst syncResponse = await this.callDataTemplatesSync(payload);\n\t\tawait this.handleSyncResponse(syncResponse);\n\n\t\tthis.logger('Sync Data Templates completed');\n\t} catch (err) {\n\t\tthis.logger(`Error: ${err.message}`);\n\t\tprocess.exit(1);\n\t}\n}\n\n// SCRIPT FUNCTIONS\n\nfunction parseContentVersionIds(rawIds) {\n\tlet contentVersionIds;\n\ttry {\n\t\tcontentVersionIds = JSON.parse(rawIds);\n\t} catch (error) {\n\t\tthrow new ValidationError(`dataTemplatesSyncConfigIds must be a JSON array: ${error.message}`);\n\t}\n\n\tif (!Array.isArray(contentVersionIds)) {\n\t\tthrow new ValidationError('dataTemplatesSyncConfigIds must be a JSON array');\n\t}\n\n\tconst normalizedIds = contentVersionIds\n\t\t.map(id => (typeof id === 'string' ? id.trim() : id))\n\t\t.filter(id => typeof id === 'string' && id.length > 0);\n\n\tif (!normalizedIds.length) {\n\t\tthrow new ValidationError('dataTemplatesSyncConfigIds must contain at least one ContentVersion Id');\n\t}\n\n\treturn [...new Set(normalizedIds)];\n}\n\nasync function downloadAndReadSyncConfigs(contentVersionIds) {\n\tconst mergedConfigs = [];\n\n\tfor (const contentVersionId of contentVersionIds) {\n\t\tconst downloadDir = path.join(TEMP_DIRECTORY, contentVersionId);\n\t\tawait this.downloadContentVersion(contentVersionId, downloadDir);\n\t\tconst fileContent = this.readDownloadedSyncConfig(downloadDir, contentVersionId);\n\t\tif (!Array.isArray(fileContent)) {\n\t\t\tthrow new ValidationError(\n\t\t\t\t`ContentVersion ${contentVersionId} must contain a JSON array of sync config entries`\n\t\t\t);\n\t\t}\n\t\tmergedConfigs.push(...fileContent);\n\t}\n\n\treturn mergedConfigs;\n}\n\nasync function downloadContentVersion(contentVersionId, downloadDir) {\n\tfs.mkdirSync(downloadDir, { recursive: true });\n\tawait this.executeCommand(\n\t\t`copado --downloadfiles \"${contentVersionId}\" --downloaddir \"${downloadDir}\"`\n\t);\n}\n\nfunction readDownloadedSyncConfig(downloadDir, contentVersionId) {\n\tconst preferredPaths = [\n\t\tpath.join(downloadDir, SYNC_CONFIG_FILE_NAME),\n\t\tpath.join(downloadDir, `${SYNC_CONFIG_FILE_NAME}.json`)\n\t];\n\n\tfor (const preferredPath of preferredPaths) {\n\t\tif (fs.existsSync(preferredPath) && fs.statSync(preferredPath).isFile()) {\n\t\t\treturn this.readJsonFile(preferredPath);\n\t\t}\n\t}\n\n\tconst files = fs\n\t\t.readdirSync(downloadDir)\n\t\t.map(fileName => path.join(downloadDir, fileName))\n\t\t.filter(filePath => fs.statSync(filePath).isFile());\n\n\tif (!files.length) {\n\t\tthrow new ValidationError(`No downloaded sync config file found for ContentVersion ${contentVersionId}`);\n\t}\n\n\tif (files.length === 1) {\n\t\treturn this.readJsonFile(files[0]);\n\t}\n\n\tconst jsonFiles = files.filter(filePath => path.extname(filePath).toLowerCase() === '.json');\n\tif (jsonFiles.length === 1) {\n\t\treturn this.readJsonFile(jsonFiles[0]);\n\t}\n\n\tthrow new ValidationError(\n\t\t`Expected one sync config file for ContentVersion ${contentVersionId}, found ${files.length}`\n\t);\n}\n\nfunction buildSyncPayload(syncConfigs, currentEnvironmentId) {\n\tconst filtered = this.filterSyncConfigsForEnvironment(syncConfigs, currentEnvironmentId);\n\tconst deduplicated = this.deduplicateSyncConfigs(filtered);\n\treturn deduplicated.map(entry => this.toSyncRequestEntry(entry));\n}\n\nfunction filterSyncConfigsForEnvironment(syncConfigs, currentEnvironmentId) {\n\treturn syncConfigs.filter(entry => {\n\t\tif (!entry || typeof entry !== 'object') {\n\t\t\treturn false;\n\t\t}\n\t\tif (entry.environmentId !== currentEnvironmentId) {\n\t\t\treturn false;\n\t\t}\n\t\tif (entry.synced === true) {\n\t\t\treturn false;\n\t\t}\n\t\tif (!VALID_OPERATIONS.has(entry.operation)) {\n\t\t\treturn false;\n\t\t}\n\t\tif (!entry.mainTemplateId || !entry.fieldApiName) {\n\t\t\treturn false;\n\t\t}\n\t\treturn true;\n\t});\n}\n\nfunction deduplicateSyncConfigs(syncConfigs) {\n\tconst seen = new Set();\n\tconst deduplicated = [];\n\n\tfor (const entry of syncConfigs) {\n\t\tconst key = this.getSyncConfigDedupeKey(entry);\n\t\tif (seen.has(key)) {\n\t\t\tcontinue;\n\t\t}\n\t\tseen.add(key);\n\t\tdeduplicated.push(entry);\n\t}\n\n\treturn deduplicated;\n}\n\nfunction getSyncConfigDedupeKey(entry) {\n\treturn [\n\t\tentry.mainTemplateId,\n\t\tentry.templateId,\n\t\tentry.objectApiName,\n\t\tentry.fieldApiName,\n\t\tentry.fieldType,\n\t\tentry.operation\n\t].join('|');\n}\n\nfunction toSyncRequestEntry(entry) {\n\tconst requestEntry = {};\n\tfor (const field of SYNC_PAYLOAD_FIELDS) {\n\t\tif (entry[field] !== undefined && entry[field] !== null) {\n\t\t\trequestEntry[field] = entry[field];\n\t\t}\n\t}\n\treturn requestEntry;\n}\n\nasync function callDataTemplatesSync(payload) {\n\tconst requestId = crypto.randomUUID();\n\tconst gatewayRequest = {\n\t\tpath: '/release/data-templates/sync',\n\t\tmethod: 'POST',\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'x-event-id': requestId,\n\t\t\t'x-locale': locale || 'en',\n\t\t\t'platform-experience': 'sfdx',\n\t\t\t'x-copado-api-url': CF_SF_ENDPOINT\n\t\t},\n\t\tbody: payload\n\t};\n\n\tconst safeJsonStr = JSON.stringify(gatewayRequest).replace(/'/g, \"'\\\\''\");\n\tconst command = `copado --gateway '${safeJsonStr}'`;\n\n\tthis.logger(`Generated Event ID: ${requestId}`);\n\tthis.logger('Calling Copado CLI Gateway /data-templates/sync...');\n\tconst output = await this.executeCommand(command);\n\n\tthis.logger(`Raw gateway output received for JSON parsing: \"${output}\"`);\n\ttry {\n\t\treturn JSON.parse(output);\n\t} catch (error) {\n\t\tthrow new SyncError(`Unable to parse gateway response as JSON: ${error.message}`);\n\t}\n}\n\nasync function handleSyncResponse(syncResponse) {\n\tconst parsedResponse = this.parseSyncResponse(syncResponse);\n\tthis.uploadSyncResult(parsedResponse.entries);\n\tthis.logSyncResponse(parsedResponse);\n\n\tif (parsedResponse.status === 'error') {\n\t\tthrow new SyncError(this.formatGatewayErrorMessage(parsedResponse));\n\t}\n\n\tconst attentionEntries = parsedResponse.entries.filter(entry => entry?.needsAttention === true);\n\tconst failedSyncEntries = parsedResponse.entries.filter(entry => entry?.synced === false);\n\n\tif (attentionEntries.length) {\n\t\tthis.logger(\n\t\t\t`WARN: ${attentionEntries.length} of ${parsedResponse.entries.length} sync operation(s) need attention; step will continue`\n\t\t);\n\t}\n\n\tif (failedSyncEntries.length) {\n\t\tconst errorDetails = failedSyncEntries\n\t\t\t.map(entry => {\n\t\t\t\tconst identity = [\n\t\t\t\t\tentry.mainTemplateId,\n\t\t\t\t\tentry.templateId,\n\t\t\t\t\tentry.objectApiName,\n\t\t\t\t\tentry.fieldApiName,\n\t\t\t\t\tentry.operation\n\t\t\t\t]\n\t\t\t\t\t.filter(Boolean)\n\t\t\t\t\t.join('/');\n\t\t\t\treturn `${identity}: ${entry.errorMessage || 'Sync failed'}`;\n\t\t\t})\n\t\t\t.join('; ');\n\t\tthrow new SyncError(\n\t\t\t`Data template sync completed with ${failedSyncEntries.length} failed sync operation(s): ${errorDetails}`\n\t\t);\n\t}\n\n\tif (attentionEntries.length) {\n\t\tthis.logger(\n\t\t\t`Data template sync completed for ${parsedResponse.entries.length} operation(s) with entries needing attention`\n\t\t);\n\t} else {\n\t\tthis.logger(`Data template sync succeeded for ${parsedResponse.entries.length} operation(s)`);\n\t}\n\n\treturn parsedResponse;\n}\n\nfunction parseSyncResponse(syncResponse) {\n\tif (Array.isArray(syncResponse)) {\n\t\treturn {\n\t\t\tstatus: 'success',\n\t\t\tmessage: 'Operation successful',\n\t\t\tentries: syncResponse,\n\t\t\terrorData: null\n\t\t};\n\t}\n\n\tif (!syncResponse || typeof syncResponse !== 'object') {\n\t\tthrow new SyncError('Unexpected gateway response format');\n\t}\n\n\tconst status = String(syncResponse.status || '').toLowerCase() || 'success';\n\tconst message = syncResponse.message || '';\n\n\tif (status === 'error') {\n\t\treturn {\n\t\t\tstatus,\n\t\t\tmessage,\n\t\t\tentries: [],\n\t\t\terrorData: syncResponse.data || null\n\t\t};\n\t}\n\n\tif (Array.isArray(syncResponse.data)) {\n\t\treturn {\n\t\t\tstatus,\n\t\t\tmessage,\n\t\t\tentries: syncResponse.data,\n\t\t\terrorData: null\n\t\t};\n\t}\n\n\tif (Array.isArray(syncResponse.body)) {\n\t\treturn {\n\t\t\tstatus,\n\t\t\tmessage,\n\t\t\tentries: syncResponse.body,\n\t\t\terrorData: null\n\t\t};\n\t}\n\n\tthrow new SyncError('Unexpected gateway response format; expected status/message/data payload');\n}\n\nfunction logSyncResponse(parsedResponse) {\n\tthis.logger(`Gateway status: ${parsedResponse.status}`);\n\tif (parsedResponse.message) {\n\t\tthis.logger(`Gateway message: ${parsedResponse.message}`);\n\t}\n\n\tif (parsedResponse.status === 'error') {\n\t\tconst errorRows = [this.toErrorTableRow(parsedResponse)];\n\t\tthis.logger('Data Templates Sync Error:');\n\t\tconsole.table(errorRows);\n\t\treturn;\n\t}\n\n\tconst tableRows = parsedResponse.entries.map(entry => this.toSyncResultTableRow(entry));\n\tthis.logger('Data Templates Sync Results:');\n\tif (!tableRows.length) {\n\t\tthis.logger('No sync result entries returned by the gateway');\n\t\treturn;\n\t}\n\tconsole.table(tableRows);\n}\n\nfunction toSyncResultTableRow(entry) {\n\treturn {\n\t\t'Main Template Id': entry?.mainTemplateId || '',\n\t\t'Template Id': entry?.templateId || '',\n\t\t'Template Name': entry?.templateName || '',\n\t\tObject: entry?.objectApiName || '',\n\t\tField: entry?.fieldApiName || '',\n\t\tType: entry?.fieldType || '',\n\t\tOperation: entry?.operation || '',\n\t\tSynced: entry?.synced === true ? 'Yes' : 'No',\n\t\t'Needs Attention': entry?.needsAttention === true ? 'Yes' : 'No',\n\t\t'Error Message': entry?.errorMessage || ''\n\t};\n}\n\nfunction toErrorTableRow(parsedResponse) {\n\tconst details = parsedResponse.errorData?.details;\n\tconst detailMessage =\n\t\ttypeof details === 'string'\n\t\t\t? details\n\t\t\t: details?.message || JSON.stringify(details || parsedResponse.errorData || {});\n\n\treturn {\n\t\tStatus: parsedResponse.status,\n\t\tMessage: parsedResponse.message || '',\n\t\tCode: parsedResponse.errorData?.code || '',\n\t\tCategory: details?.category || '',\n\t\tDetails: detailMessage\n\t};\n}\n\nfunction formatGatewayErrorMessage(parsedResponse) {\n\tconst details = parsedResponse.errorData?.details;\n\tconst detailMessage =\n\t\ttypeof details === 'string'\n\t\t\t? details\n\t\t\t: details?.message || JSON.stringify(parsedResponse.errorData || {});\n\tconst code = parsedResponse.errorData?.code ? ` [${parsedResponse.errorData.code}]` : '';\n\treturn `${parsedResponse.message || 'Data template sync failed'}${code}: ${detailMessage}`;\n}\n\nfunction uploadSyncResult(syncResultEntries) {\n\ttry {\n\t\tfs.mkdirSync(TEMP_DIRECTORY, { recursive: true });\n\t\tconst resultFilePath = path.join(TEMP_DIRECTORY, SYNC_RESULT_FILE_NAME);\n\t\tfs.writeFileSync(resultFilePath, JSON.stringify(syncResultEntries, null, 2));\n\t\tconst escapedPath = resultFilePath.replace(/'/g, \"'\\\\''\");\n\t\tthis.executeCommandSync(\n\t\t\t`copado --uploadfile '${escapedPath}' --name '${SYNC_RESULT_FILE_NAME}'`\n\t\t);\n\t} catch (error) {\n\t\tthis.logger(`WARN: Unable to upload sync result file: ${error.message}`);\n\t}\n}\n\n// UTILITY FUNCTIONS\n\nfunction readJsonFile(filePath) {\n\tconst content = fs.readFileSync(filePath, 'utf-8');\n\ttry {\n\t\treturn JSON.parse(content);\n\t} catch (error) {\n\t\tthrow new ValidationError(`Content at ${filePath} is not valid JSON: ${error.message}`);\n\t}\n}\n\nfunction getPath(filePath) {\n\treturn isTest ? `${__dirname}/__tests__/__mockDirectory__${filePath}` : filePath;\n}\n\nfunction executeCommand(command) {\n\tthis.logger(`===> ${command}`);\n\treturn new Promise((resolve, reject) => {\n\t\tlet output = '';\n\t\tlet error = '';\n\n\t\tconst childProcess = child_process.spawn(command, [], { shell: true });\n\n\t\tchildProcess.stdout.on('data', data => {\n\t\t\tconst outputStream = data?.toString();\n\t\t\tthis.logger(outputStream);\n\t\t\toutput += outputStream;\n\t\t});\n\n\t\tchildProcess.stderr.on('data', data => {\n\t\t\tconst errorStream = data?.toString();\n\t\t\tthis.logger(errorStream);\n\t\t\terror += errorStream;\n\t\t});\n\n\t\tchildProcess.on('close', code => {\n\t\t\tif (code !== 0) {\n\t\t\t\tthis.logger(`Code: ${code}`);\n\t\t\t\tconst errorMessage = error || `Error executing the command ${command.trim()}`;\n\t\t\t\tconst truncatedError = JSON.stringify(\n\t\t\t\t\terrorMessage\n\t\t\t\t\t\t.split('\\n')\n\t\t\t\t\t\t.filter(msg => !msg.includes(COPADO_INFO_PREFIX))\n\t\t\t\t\t\t.join(' ')\n\t\t\t\t);\n\t\t\t\treject(new CommandExecutionError(truncatedError));\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tresolve(output);\n\t\t});\n\n\t\tchildProcess.on('error', err => {\n\t\t\tconst truncatedError = JSON.stringify(\n\t\t\t\tString(err)\n\t\t\t\t\t.split('\\n')\n\t\t\t\t\t.filter(msg => !msg.includes(COPADO_INFO_PREFIX))\n\t\t\t\t\t.join(' ')\n\t\t\t);\n\t\t\treject(new CommandExecutionError(truncatedError));\n\t\t});\n\t});\n}\n\nfunction executeCommandSync(command) {\n\tthis.logger(`===> ${command}`);\n\tconst response = child_process.spawnSync(command, { shell: true, encoding: 'utf-8' });\n\tif (response.status !== 0) {\n\t\tconst errorMessage =\n\t\t\tresponse.stderr || response.stdout || `Error executing the command ${command.trim()}`;\n\t\tthrow new CommandExecutionError(String(errorMessage).trim());\n\t}\n\treturn response.stdout;\n}\n\nfunction logger(text) {\n\tconsole.log(text);\n}\n\nclass CommandExecutionError extends Error {\n\tconstructor(message) {\n\t\tsuper(message);\n\t\tthis.name = CUSTOM_ERROR.COMMAND_EXECUTION_ERROR;\n\t}\n}\n\nclass ValidationError extends Error {\n\tconstructor(message) {\n\t\tsuper(message);\n\t\tthis.name = CUSTOM_ERROR.VALIDATION_ERROR;\n\t}\n}\n\nclass SyncError extends Error {\n\tconstructor(message) {\n\t\tsuper(message);\n\t\tthis.name = CUSTOM_ERROR.SYNC_ERROR;\n\t}\n}\n\nmodule.exports.execute = execute;\nmodule.exports.parseContentVersionIds = parseContentVersionIds;\nmodule.exports.downloadAndReadSyncConfigs = downloadAndReadSyncConfigs;\nmodule.exports.downloadContentVersion = downloadContentVersion;\nmodule.exports.readDownloadedSyncConfig = readDownloadedSyncConfig;\nmodule.exports.buildSyncPayload = buildSyncPayload;\nmodule.exports.filterSyncConfigsForEnvironment = filterSyncConfigsForEnvironment;\nmodule.exports.deduplicateSyncConfigs = deduplicateSyncConfigs;\nmodule.exports.getSyncConfigDedupeKey = getSyncConfigDedupeKey;\nmodule.exports.toSyncRequestEntry = toSyncRequestEntry;\nmodule.exports.callDataTemplatesSync = callDataTemplatesSync;\nmodule.exports.handleSyncResponse = handleSyncResponse;\nmodule.exports.parseSyncResponse = parseSyncResponse;\nmodule.exports.logSyncResponse = logSyncResponse;\nmodule.exports.toSyncResultTableRow = toSyncResultTableRow;\nmodule.exports.toErrorTableRow = toErrorTableRow;\nmodule.exports.formatGatewayErrorMessage = formatGatewayErrorMessage;\nmodule.exports.uploadSyncResult = uploadSyncResult;\nmodule.exports.readJsonFile = readJsonFile;\nmodule.exports.getPath = getPath;\nmodule.exports.executeCommand = executeCommand;\nmodule.exports.executeCommandSync = executeCommandSync;\nmodule.exports.logger = logger;\n\n!isTest && this.execute();",
+          "extension": "js"
+        },
+        "ownerName": "chaman swami"
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 1,
+    "totalRecords": 5,
+    "hasMore": false
+  },
+  "status": 0,
+  "transactionId": "01a13691-d289-7512-8ff7-5878c551285d"
+}

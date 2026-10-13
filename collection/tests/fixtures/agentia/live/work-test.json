@@ -1,0 +1,10 @@
+{
+  "error": {
+    "oclif": {
+      "exit": 1
+    },
+    "message": "Local quality gates failed (exit 1) when running '.agentia_quality_gates.sh'. Re-run with --skip-local-tests to bypass local gates.",
+    "name": "Error"
+  },
+  "transactionId": "01a13698-d61f-7436-a51d-7aee7999eba9"
+}

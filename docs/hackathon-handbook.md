@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 1.8 |
-| Date | 2026-10-14 00:11 IST |
+| Version | 1.9 |
+| Date | 2026-10-14 00:16 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on 9 October 2026. Facts marked "not verified" were not. |
@@ -281,6 +281,8 @@ Steps: Success Community, top menu Training > My Playgrounds > New Copado Org; a
 Outcome: on 14 October 2026 the playground CS261013SFP reached status Activated: Copado org username <registration email>.cs2 (a first attempt with the bare email as username ended in a login failure and was deleted; the Salesforce Environment Switcher at welcome.salesforce.com/environments lists every org tied to the owner's email, which is how the first playground org copadotrial142449141 was identified), six scratch orgs (production, hotfix, uat, int, dev1, dev2, usernames with the matching suffix), Git account chamanswami555. Next: open the Copado org, Account Summary, API Key; then `agentia auth set --cicd <key> --region na` and `agentia cicd health-check --json`; then install the Copado connected apps in the seven orgs (article section at the end) before the pipeline demo.
 
 Live access confirmed on 14 October 2026: Account Summary (Copado org copadotrial18423435, Server URL https://na.api.copado.com, Org Id 00Di8000003NzdlEAC, User Id 005i8000001xog9AAA, features incl. Apex Test, Continuous Integration, Git, Org Difference; Function credits 200, Classic credits 10100) gave the API key; `agentia auth set --cicd <key> --region na` stored it in the keychain; `agentia cicd health-check --json` returned real governance checks and `agentia cicd pipeline list --json` returned the playground pipeline "Trial - Salesforce Source Format Pipeline" (id a0Wi8000000Mr2TEAS, repository a0qi8000000LVlZAAW, main branch main, smart conflict resolution on). First real shape difference against the synthetic fixtures: list results come back as `result.data` with pagination fields (currentPage, pageSize, totalPages, totalRecords, hasMore, nextCursor). The key was shared in plain text by the owner; it should be reset on the API Key tab once the work is done. Nothing of the key is stored in the repository.
+
+Live verification on 14 October 2026 (all recorded under var/live, scrubbed copies committed in collection/tests/fixtures/agentia/live): playground facts: pipeline "Trial - Salesforce Source Format Pipeline" a0Wi8000000Mr2TEAS, project "Trial - Salesforce Source Format" a15i8000000sdvdAAA, repository git@github.com:chamanswami555/Copado-CS261013SFPSFP.git (SSH, branches main, dev1-sfp, dev2-sfp, hotfix-sfp, int-sfp, uat-sfp), environments Copado a0ci8000000FuUvAAK (Production/Developer), Dev1-SFP a0ci8000000FuczAAC, Dev2-SFP a0ci8000000FuebAAC, Hotfix-SFP a0ci8000000FuY9AAK, INT-SFP a0ci8000000FubNAAS, Production-SFP a0ci8000000FuWXAA0, UAT-SFP a0ci8000000FuZlAAK; Dev1 credential a11i8000000lRxdAAE (validated); first story US-0000024; one job JE-000 (SFDX Git Initialization, Successful); 5 Copado Functions; no promotions, no data templates yet. Global CLI project defaults set to that project, Dev1 environment and credential. The collection modules ran against the real CLI in a smoke playbook (auth, health check with 18 checks, story create US-0000025, idempotent re-run unchanged, title update, job list, story delete: 8 tasks ok, 3 changed). `agentia cicd work set US-0000024` in a local clone created feature/US-0000024 from main with dev org branch dev1-sfp. Salesforce CLI (sf) is not installed on this Mac yet; needed for Apex test gates and scratch orgs.
 
 ### 4.5 Other access paths
 

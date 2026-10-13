@@ -1,0 +1,12 @@
+{
+  "result": {
+    "data": [],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 0,
+    "totalRecords": 0,
+    "hasMore": false
+  },
+  "status": 0,
+  "transactionId": "01a13691-a8a5-715f-b750-a224c07c25d3"
+}

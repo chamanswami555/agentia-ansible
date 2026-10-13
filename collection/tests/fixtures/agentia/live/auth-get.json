@@ -1,0 +1,67 @@
+{
+  "result": {
+    "configFiles": [
+      {
+        "exists": false,
+        "label": "Project config",
+        "path": "/Users/chaman/copado-agentia-hackathon/.agentia/config.json",
+        "scope": "project"
+      },
+      {
+        "exists": false,
+        "label": "User config",
+        "path": "/Users/chaman/copado-agentia-hackathon/.agentia/config.user.json",
+        "scope": "user"
+      }
+    ],
+    "credentials": [
+      {
+        "baseUrl": "https://na.api.copado.com",
+        "label": "Copado API key (CICD)",
+        "masked": "4a07c...24276",
+        "set": true,
+        "source": "global",
+        "type": "cicd"
+      },
+      {
+        "domain": null,
+        "issues": [
+          {
+            "field": "domain",
+            "kind": "missing"
+          },
+          {
+            "field": "org",
+            "kind": "missing"
+          },
+          {
+            "field": "pak",
+            "kind": "missing"
+          }
+        ],
+        "label": "PAK (CRT)",
+        "missing": [
+          "domain",
+          "org",
+          "pak"
+        ],
+        "orgId": null,
+        "ready": false,
+        "set": false,
+        "source": "global",
+        "type": "crt"
+      },
+      {
+        "domain": null,
+        "gatewayUrl": null,
+        "label": "PAK (AI)",
+        "orgId": null,
+        "set": false,
+        "type": "ai",
+        "workspaceId": null
+      }
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a13693-ef73-74d4-9af5-a80ee90cf568"
+}

@@ -1,0 +1,42 @@
+{
+  "result": {
+    "data": [
+      {
+        "lastModifiedDate": "2026-10-13T18:31:34Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:34Z",
+        "createdBy": "chaman swami",
+        "name": "Trial - Salesforce Source Format",
+        "pipeline": {
+          "lastModifiedDate": "2026-10-13T18:31:27Z",
+          "lastModifiedBy": "chaman swami",
+          "createdDate": "2026-10-13T18:31:10Z",
+          "createdBy": "chaman swami",
+          "name": "Trial - Salesforce Source Format Pipeline",
+          "mainBranch": "main",
+          "gitRepositoryId": "a0qi8000000LVlZAAW",
+          "active": true,
+          "blockCommits": false,
+          "enableSmartConflictResolution": true,
+          "calculateBasedOn": "User Story",
+          "platform": "SFDX",
+          "id": "a0Wi8000000Mr2TEAS"
+        },
+        "status": "In progress",
+        "description": "The Project record summarizes User Stories. We have created 1 User Story for you already, but you can add more in your testing later.",
+        "shouldIndexMetadata": true,
+        "id": "a15i8000000sdvdAAA",
+        "ownerId": "005i8000001xog9AAA",
+        "ownerFullName": "chaman swami",
+        "activityDate": "2026-10-13T18:31:55Z"
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 25,
+    "totalPages": 1,
+    "totalRecords": 1,
+    "hasMore": false
+  },
+  "status": 0,
+  "transactionId": "01a13691-9ac9-70cc-b727-e383c9780cec"
+}

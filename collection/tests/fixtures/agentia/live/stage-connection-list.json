@@ -1,0 +1,85 @@
+{
+  "result": [
+    {
+      "lastModifiedDate": "2026-10-13T18:31:25Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T18:31:25Z",
+      "createdBy": "chaman swami",
+      "stageId": "a2Ai8000001GLBOEA4",
+      "nextPipelineStageConnectionId": null,
+      "id": "a29i8000001LwbcAAC",
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "name": "SC-0000",
+      "stage": {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Production",
+        "metaStage": "Production",
+        "id": "a2Ai8000001GLBOEA4"
+      },
+      "nextStage": null
+    },
+    {
+      "lastModifiedDate": "2026-10-13T18:31:25Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T18:31:25Z",
+      "createdBy": "chaman swami",
+      "stageId": "a2Ai8000001GLBNEA4",
+      "nextPipelineStageConnectionId": "a29i8000001LwbcAAC",
+      "id": "a29i8000001LwbdAAC",
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "name": "SC-0001",
+      "stage": {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Test",
+        "metaStage": "Test",
+        "id": "a2Ai8000001GLBNEA4"
+      },
+      "nextStage": {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Production",
+        "metaStage": "Production",
+        "id": "a2Ai8000001GLBOEA4"
+      }
+    },
+    {
+      "lastModifiedDate": "2026-10-13T18:31:25Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T18:31:25Z",
+      "createdBy": "chaman swami",
+      "stageId": "a2Ai8000001GLBMEA4",
+      "nextPipelineStageConnectionId": "a29i8000001LwbdAAC",
+      "id": "a29i8000001Ly3pAAC",
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "name": "SC-0002",
+      "stage": {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Development",
+        "metaStage": "Build",
+        "id": "a2Ai8000001GLBMEA4"
+      },
+      "nextStage": {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Test",
+        "metaStage": "Test",
+        "id": "a2Ai8000001GLBNEA4"
+      }
+    }
+  ],
+  "status": 0,
+  "transactionId": "01a13691-93d4-76cd-91b3-752307630d04"
+}

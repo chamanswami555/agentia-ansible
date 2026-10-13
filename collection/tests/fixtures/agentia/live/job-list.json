@@ -1,0 +1,26 @@
+{
+  "result": {
+    "data": [
+      {
+        "id": "a0si8000000CVeLAAW",
+        "name": "JE-000",
+        "status": "Successful",
+        "template": {
+          "id": "a0ui80000008EFqAAM",
+          "name": "SFDX Git Initialization"
+        },
+        "dataJson": "{\"gitRepositoryURI\":\"git@github.com:chamanswami555/Copado-CS261013SFPSFP.git\",\"gitRepositoryId\":\"a0qi8000000LVlZAAW\",\"template\":\"standard\",\"defaultDirectory\":\"force-app\",\"branch\":\"main\",\"projectName\":\"sfdxTrial\",\"recreateProject\":true}",
+        "createdDate": "2026-10-13T18:29:36Z",
+        "lastModifiedDate": "2026-10-13T18:30:42Z",
+        "steps": []
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 10,
+    "totalPages": 1,
+    "totalRecords": 1,
+    "hasMore": false
+  },
+  "status": 0,
+  "transactionId": "01a13691-b71c-75f2-b5d7-1667235a5825"
+}

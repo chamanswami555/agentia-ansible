@@ -1,0 +1,33 @@
+{
+  "result": {
+    "defaults": [
+      {
+        "key": "project"
+      },
+      {
+        "key": "team"
+      },
+      {
+        "key": "environment"
+      },
+      {
+        "key": "credential"
+      },
+      {
+        "key": "sprint"
+      },
+      {
+        "key": "epic"
+      },
+      {
+        "key": "feature"
+      },
+      {
+        "key": "assignMe"
+      }
+    ],
+    "scope": "effective"
+  },
+  "status": 0,
+  "transactionId": "01a13691-e339-752e-ae5a-00871abdf6b6"
+}

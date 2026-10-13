@@ -1,0 +1,35 @@
+{
+  "result": {
+    "data": [
+      {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Development",
+        "metaStage": "Build",
+        "id": "a2Ai8000001GLBMEA4"
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Production",
+        "metaStage": "Production",
+        "id": "a2Ai8000001GLBOEA4"
+      },
+      {
+        "lastModifiedDate": "2026-10-13T18:31:19Z",
+        "lastModifiedBy": "chaman swami",
+        "createdDate": "2026-10-13T18:31:19Z",
+        "createdBy": "chaman swami",
+        "name": "Test",
+        "metaStage": "Test",
+        "id": "a2Ai8000001GLBNEA4"
+      }
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a13691-8d44-7587-a54f-d0d499bad39f"
+}

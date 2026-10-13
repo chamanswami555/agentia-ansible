@@ -1,0 +1,13 @@
+{
+  "result": {
+    "baseUrl": "https://na.api.copado.com",
+    "stored": [
+      {
+        "label": "Copado API key (CICD)",
+        "type": "cicd"
+      }
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a13690-82be-772d-9a73-d2f17a6eec1a"
+}
