@@ -1,0 +1,48 @@
+{
+  "result": {
+    "baseBranch": "main",
+    "command": "set",
+    "devOrgBranch": "dev1-sfp",
+    "git": {
+      "branch": "feature/US-0000026",
+      "branchCreated": true,
+      "fetched": true
+    },
+    "message": "Set work item story_id=a1vi80000006OhBAAU base_branch=main dev_org_branch=dev1-sfp pull_request_base_url=https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+    "pullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+    "workItem": {
+      "lastModifiedDate": "2026-10-13T19:56:06Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T19:56:06Z",
+      "createdBy": "chaman swami",
+      "excludedFromCbm": false,
+      "ownerId": "005i8000001xog9AAA",
+      "project": "a15i8000000sdvdAAA",
+      "recordType": "User Story",
+      "sourceCredential": "a11i8000000lRxdAAE",
+      "sourceEnvironment": "a0ci8000000FuczAAC",
+      "status": "Draft",
+      "title": "Release notes static resource",
+      "id": "a1vi80000006OhBAAU",
+      "name": "US-0000026",
+      "lastValidationDate": "2026-10-13T18:42:35Z",
+      "pipelineActive": true,
+      "pipelineBlockCommits": false,
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "platform": "SFDX",
+      "points": 0,
+      "projectName": "Trial - Salesforce Source Format",
+      "projectPipelineMainBranch": "main",
+      "projectPipelinePullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+      "sourceCredentialLink": "https://copadotrial18423435.my.salesforce.com/a11i8000000lRxdAAE",
+      "sourceCredentialName": "Dev1-SFP",
+      "sourceEnvironmentLink": "https://copadotrial18423435.my.salesforce.com/a0ci8000000FuczAAC",
+      "sourceEnvironmentName": "Dev1-SFP",
+      "sourceOrgId": "00Ddq00000HZfT7EAL",
+      "owner": "chaman swami",
+      "externalId": ""
+    }
+  },
+  "status": 0,
+  "transactionId": "01a136d6-3dc9-7242-bc61-f6952b720afa"
+}

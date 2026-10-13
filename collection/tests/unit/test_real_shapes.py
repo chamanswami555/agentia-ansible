@@ -65,3 +65,41 @@ def test_event_source_real_list_shape(fake_agentia, monkeypatch):
     asyncio.run(src.main(queue, {"interval": 0, "max_polls": 1, "page_size": 10, "emit_initial": True}))
     assert [e["agentia"]["name"] for e in queue.events] == ["JE-000"]
     assert queue.events[0]["agentia"]["status"] == "Successful"
+
+
+def test_work_submit_real_recording(fake_agentia, monkeypatch, tmp_path):
+    monkeypatch.setenv("AGENTIA_FAKE_INDEX", "index-live.json")
+    out = run_module("agentia_work_submit", {"working_dir": str(tmp_path), "set_story": "US-0000024",
+                                             "skip_local_tests": True})
+    assert out["changed"] is True
+    assert out["submission"]["submit"]["jobId"] == "a0si8000000CVjBAAW"
+    assert out["submission"]["userStoriesAheadBehind"]["destinationEnvironmentName"] == "INT-SFP"
+    calls = read_calls(fake_agentia)
+    assert calls[0] == ["cicd", "work", "set", "US-0000024"]
+    assert calls[1] == ["cicd", "work", "submit", "--skip-local-tests", "--skip-pull-request"]
+
+
+def test_job_wait_real_deploy_job(fake_agentia, monkeypatch):
+    monkeypatch.setenv("AGENTIA_FAKE_INDEX", "index-live.json")
+    out = run_module("agentia_job_wait", {"id": "a0si8000000CVmPAAW", "interval": 0})
+    assert out["status"] == "Successful"
+    assert [s["name"] for s in out["job"]["steps"]] == ["Deploy", "Activate Deployed Datakits"]
+
+
+def test_work_submit_done_real_recording(fake_agentia, monkeypatch, tmp_path):
+    monkeypatch.setenv("AGENTIA_FAKE_INDEX", "index-live.json")
+    out = run_module("agentia_work_submit", {"working_dir": str(tmp_path), "done": True, "skip_local_tests": True})
+    assert out["submission"]["done"]["jobId"] == "a0si8000000CVw5AAG"
+    assert "promotion_id=a17i800000XX2PfAAL" in out["submission"]["done"]["message"]
+
+
+def test_promotion_info_real_get_and_list(fake_agentia, monkeypatch):
+    monkeypatch.setenv("AGENTIA_FAKE_INDEX", "index-live.json")
+    out = run_module("agentia_promotion_info", {"id": "a17i800000XX2PfAAL"})
+    assert out["deployment_job_id"] == "a0si8000000CVxhAAG"
+    assert out["promotion"]["isValidationRun"] is False
+    assert out["promotion"]["identification"]["promotionName"] == "P00004"
+    validation = run_module("agentia_promotion_info", {"id": "a17i800000XX9jaAAD"})
+    assert validation["promotion"]["isValidationRun"] is True
+    listed = run_module("agentia_promotion_info", {"work_id": "a1vi80000006OHNAA2"})
+    assert [p["name"] for p in listed["promotions"]] == ["P00003", "P00002", "P00001"]

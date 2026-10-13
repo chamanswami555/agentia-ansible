@@ -1,0 +1,35 @@
+{
+  "result": {
+    "id": "a0si8000000CVjBAAW",
+    "name": "JE-002",
+    "status": "Successful",
+    "template": {
+      "id": "a0ui80000008EFgAAM",
+      "name": "SFDX Promote"
+    },
+    "context": "<a href=\"/a17i800000XXqQ4\" target=\"_self\">Promotion: P00001</a>",
+    "parentId": "a17i800000XXqQ4",
+    "dataJson": "{\n  \"userStoryIds\" : [ \"a1vi80000006OHNAA2\" ],\n  \"userStoryBranches\" : [ \"feature/US-0000024\" ],\n  \"sourceCredentialId\" : \"a11i8000000lRxdAAE\",\n  \"promotionMethod\" : \"Classic Promotion\",\n  \"promotionId\" : \"a17i800000XXqQ4AAL\",\n  \"promotionBranchName\" : \"promotion/P00001\",\n  \"isBackPromotion\" : false,\n  \"gitTag\" : \"v1.0\",\n  \"fileWithSelectedChanges\" : \"068i8000000vFIWAA2\",\n  \"executePromotion\" : true,\n  \"executeDeployment\" : true,\n  \"destinationCredentialId\" : \"a11i8000000lS2TAAU\",\n  \"destinationBranchName\" : \"int-sfp\",\n  \"deploymentDryRun\" : true,\n  \"blockQueueForTransaction\" : true,\n  \"action\" : \"Promotion\"\n}",
+    "createdDate": "2026-10-13T18:51:40Z",
+    "lastModifiedDate": "2026-10-13T18:54:31Z",
+    "steps": [
+      {
+        "id": "a0ti8000001YysPAAS",
+        "name": "Promote",
+        "status": "Success",
+        "type": "Function",
+        "customType": "Function",
+        "order": 1,
+        "resultId": "a1Di80000032HlBEAU",
+        "result": {
+          "id": "a1Di80000032HlBEAU",
+          "name": "R00006",
+          "status": "Success",
+          "progressStatus": "Completed"
+        }
+      }
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a1369d-faf2-7022-a924-34f52d378d20"
+}

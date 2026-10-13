@@ -35,11 +35,15 @@ class AgentiaError(Exception):
         self.stderr = stderr
 
     def as_dict(self):
-        """Fields for ``module.fail_json`` so the playbook user sees everything useful."""
+        """Fields for ``module.fail_json`` so the playbook user sees everything useful.
+
+        The key is ``cli_command`` (the quoted command line), not ``command``, because action
+        modules already return ``command`` (the argument list) and pass it to ``fail_json`` too.
+        """
         return {
             "msg": self.message,
             "transaction_id": self.transaction_id,
-            "command": self.command,
+            "cli_command": self.command,
             "rc": self.rc,
             "stderr": (self.stderr or "")[-2000:],
         }

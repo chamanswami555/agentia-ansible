@@ -1,0 +1,38 @@
+{
+  "result": {
+    "branch": "feature/US-0000024",
+    "pushed": false,
+    "qualityGates": {
+      "ran": false,
+      "skipped": false
+    },
+    "submit": {
+      "command": "submit",
+      "message": "Headless submit started for story_id=a1vi80000006OHNAA2 promotion_id=a17i800000XXqQ4AAL job_execution_id=a0si8000000CVjBAAW",
+      "jobId": "a0si8000000CVjBAAW"
+    },
+    "userStoriesAheadBehind": {
+      "ahead": 0,
+      "behind": 0,
+      "destinationEnvironmentId": "a0ci8000000FubNAAS",
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "sourceEnvironmentId": "a0ci8000000FuczAAC",
+      "destinationEnvironmentName": "INT-SFP",
+      "sourceEnvironmentName": "Dev1-SFP"
+    },
+    "workItem": "US-0000024",
+    "logs": [
+      "Branch: feature/US-0000024",
+      "Work item: US-0000024",
+      "Skipping local quality gates (--skip-local-tests).",
+      "Branch is up to date with origin; skipping push.",
+      "User stories ahead: 0. User stories behind: 0. Compared Dev1-SFP (a0ci8000000FuczAAC) to INT-SFP (a0ci8000000FubNAAS).",
+      "Submitting work item",
+      "Submitted for story_id=a1vi80000006OHNAA2 promotion_id=a17i800000XXqQ4AAL job_execution_id=a0si8000000CVjBAAW",
+      "Skipping pull request open (--skip-pull-request).",
+      "Elapsed: 24s"
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a1369a-d342-73b9-980a-af490220707c"
+}

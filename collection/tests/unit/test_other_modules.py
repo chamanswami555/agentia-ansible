@@ -34,7 +34,7 @@ def test_work_submit_sets_story_then_validates(fake_agentia, tmp_path):
     out = run_module("agentia_work_submit", {"working_dir": str(tmp_path), "set_story": "US-0042",
                                              "apex_test_classes": ["AccountServiceTest", "LeadScoringTest"]})
     assert out["changed"] is True
-    assert out["submission"]["action"] == "validate"
+    assert out["submission"]["submit"]["command"] == "submit"
     calls = read_calls(fake_agentia)
     assert calls[0] == ["cicd", "work", "set", "US-0042"]
     assert calls[1] == ["cicd", "work", "submit", "--skip-pull-request",
@@ -43,7 +43,7 @@ def test_work_submit_sets_story_then_validates(fake_agentia, tmp_path):
 
 def test_work_submit_done_promotes(fake_agentia, tmp_path):
     out = run_module("agentia_work_submit", {"working_dir": str(tmp_path), "done": True})
-    assert out["submission"]["action"] == "promote"
+    assert out["submission"]["done"]["command"] == "done"
     assert read_calls(fake_agentia)[-1] == ["cicd", "work", "submit", "--done", "--skip-pull-request"]
 
 

@@ -1,11 +1,16 @@
 {
   "result": {
+    "branch": "feature/US-0042",
+    "pushed": false,
+    "qualityGates": {"ran": false, "skipped": true},
+    "submit": {
+      "command": "submit",
+      "message": "Headless submit started for story_id=a1Y000000000042EAA promotion_id=a0B000000000001EAA job_execution_id=a4N000000000001AAA",
+      "jobId": "a4N000000000001AAA"
+    },
+    "userStoriesAheadBehind": {"ahead": 0, "behind": 1, "destinationEnvironmentId": "a0S000000000002EAA", "pipelineId": "a0M000000000001EAA", "sourceEnvironmentId": "a0S000000000001EAA", "destinationEnvironmentName": "INT", "sourceEnvironmentName": "Dev1"},
     "workItem": "US-0042",
-    "action": "validate",
-    "jobExecutionId": "a4N000000000001AAA",
-    "storiesAhead": 0,
-    "storiesBehind": 1,
-    "warnings": ["1 user story behind the next environment might cause promotion conflicts; consider agentia cicd work environment-sync"]
+    "logs": ["Branch: feature/US-0042", "Work item: US-0042", "Skipping local quality gates (--skip-local-tests).", "User stories ahead: 0. User stories behind: 1.", "Submitting work item", "Elapsed: 12s"]
   },
   "status": 0,
   "transactionId": "01a1-submit"

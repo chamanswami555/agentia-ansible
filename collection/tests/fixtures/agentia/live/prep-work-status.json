@@ -1,0 +1,65 @@
+{
+  "result": {
+    "workItem": {
+      "lastModifiedDate": "2026-10-13T19:56:06Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T19:56:06Z",
+      "createdBy": "chaman swami",
+      "excludedFromCbm": false,
+      "ownerId": "005i8000001xog9AAA",
+      "project": "a15i8000000sdvdAAA",
+      "recordType": "User Story",
+      "sourceCredential": "a11i8000000lRxdAAE",
+      "sourceEnvironment": "a0ci8000000FuczAAC",
+      "status": "Draft",
+      "title": "Release notes static resource",
+      "id": "a1vi80000006OhBAAU",
+      "name": "US-0000026",
+      "lastValidationDate": "2026-10-13T18:42:35Z",
+      "oauthSignature": "REDACTED",
+      "pipelineActive": true,
+      "pipelineBlockCommits": false,
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "platform": "SFDX",
+      "points": 0,
+      "projectName": "Trial - Salesforce Source Format",
+      "projectPipelineMainBranch": "main",
+      "projectPipelinePullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+      "sourceCredentialLink": "https://copadotrial18423435.my.salesforce.com/a11i8000000lRxdAAE",
+      "sourceCredentialName": "Dev1-SFP",
+      "sourceEnvironmentLink": "https://copadotrial18423435.my.salesforce.com/a0ci8000000FuczAAC",
+      "sourceEnvironmentName": "Dev1-SFP",
+      "sourceOrgId": "00Ddq00000HZfT7EAL",
+      "owner": "chaman swami",
+      "externalId": ""
+    },
+    "jobs": [
+      {
+        "id": "a0si8000000CWKHAA4",
+        "name": "JE-014",
+        "status": "In Progress",
+        "templateName": "SFDX Commit",
+        "sourceName": "Dev1-SFP",
+        "parentId": "a1qi8000000hjbN",
+        "userStoryCommitId": "a1qi8000000hjbNAAQ",
+        "userStoryCommitName": "US-0000026",
+        "createdDate": "2026-10-13T19:59:06Z",
+        "lastModifiedDate": "2026-10-13T19:59:06Z"
+      }
+    ],
+    "branchMetadata": {
+      "baseRef": "main",
+      "metadataList": [
+        {
+          "localPaths": [
+            "force-app/main/default/customPermissions/Agentia_Ansible_Release_Operator.customPermission-meta.xml"
+          ],
+          "name": "Agentia_Ansible_Release_Operator",
+          "type": "CustomPermission"
+        }
+      ]
+    }
+  },
+  "status": 0,
+  "transactionId": "01a136d9-0b63-7252-8a6c-9db6ecf920db"
+}

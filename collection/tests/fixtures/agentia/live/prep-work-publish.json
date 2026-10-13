@@ -1,0 +1,71 @@
+{
+  "result": {
+    "baseBranch": "main",
+    "branch": "feature/US-0000026",
+    "commits": [
+      {
+        "added": [
+          "force-app/main/default/customPermissions/Agentia_Ansible_Release_Operator.customPermission-meta.xml"
+        ],
+        "committer": {
+          "date": "2026-10-14T01:28:46+05:30",
+          "email": "user@example.com",
+          "name": "MBOPL"
+        },
+        "id": "d250fab41b55bb5e2df0ebb75dd0fa32e47b5cc0",
+        "message": "Add custom permission Agentia Ansible Release Operator",
+        "modified": [],
+        "removed": [],
+        "workItem": "US-0000026"
+      }
+    ],
+    "devOrgBranch": "dev1-sfp",
+    "lock": {
+      "command": "push_lock",
+      "message": "Locked push for work_item=US-0000026 commit_id=d250fab41b55bb5e2df0ebb75dd0fa32e47b5cc0",
+      "jobId": null
+    },
+    "nestedMetadata": {
+      "deletedNestedChildren": [],
+      "fullMetadataParents": [],
+      "ignoredParents": [],
+      "nestedChildren": [],
+      "permissionNestedChildren": [],
+      "permissionParents": []
+    },
+    "push": {
+      "command": "push",
+      "message": "Registered commits for 1 work item(s)",
+      "jobId": "a0si8000000CWKHAA4"
+    },
+    "workItem": "US-0000026",
+    "logs": [
+      "Branch: feature/US-0000026",
+      "Work item: US-0000026",
+      "Base branch: main",
+      "Dev org branch: dev1-sfp",
+      "Fetching origin/main",
+      "Collecting commits since origin/main",
+      "Commits to register in branch: 1",
+      "Tip commit: d250fab41b55bb5e2df0ebb75dd0fa32e47b5cc0",
+      "Files changed in branch:",
+      "  force-app/main/default/customPermissions/Agentia_Ansible_Release_Operator.customPermission-meta.xml",
+      "Added/modified files for replacements: 1",
+      "Fetching Copado replacements",
+      "No Copado environment variables or yaml replacement rules linked to the work item.",
+      "Nested metadata changes: none detected.",
+      "Notifying headless push",
+      "Pushing origin/feature/US-0000026",
+      "Registering headless push",
+      "Registered commits for 1 work item(s)",
+      "Checking out dev1-sfp",
+      "Pulling origin/dev1-sfp",
+      "Merging feature/US-0000026 into dev1-sfp",
+      "Pushing origin/dev1-sfp",
+      "Checking out feature/US-0000026",
+      "Elapsed: 29s"
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a136d8-96cc-7326-8b26-2acbabe4de52"
+}

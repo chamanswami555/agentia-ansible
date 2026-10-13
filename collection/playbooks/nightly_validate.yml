@@ -12,6 +12,7 @@
     crt_job_id: ""
     crt_project_id: ""
     wait_timeout: 1800
+    poll_interval: 15
   tasks:
     - name: Fix the evidence folder name for this run
       ansible.builtin.set_fact:
@@ -37,6 +38,46 @@
       register: validations
       ignore_errors: true
 
+    - name: Wait for each validation promote job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.submit.jobId }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ validations.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: not ansible_check_mode and (item.submission.submit.jobId is defined)
+      register: validation_jobs
+      ignore_errors: true
+
+    - name: Read each validation promotion until its deployment job exists
+      chamanswami555.agentia.agentia_promotion_info:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.submit.message | regex_search('promotion_id=([A-Za-z0-9]+)', '\\1') | first }}"
+      loop: "{{ validations.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: not ansible_check_mode and (item.submission.submit.message is defined)
+      register: validation_promotions
+      until: validation_promotions.deployment_job_id
+      retries: 18
+      delay: 10
+      ignore_errors: true
+
+    - name: Wait for each validation deployment job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.deployment_job_id }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ validation_promotions.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.item | default('') }}"
+      when: not ansible_check_mode and (item.deployment_job_id is defined)
+      register: validation_deploys
+      ignore_errors: true
+
     - name: Run the Robotic Testing smoke suite
       chamanswami555.agentia.agentia_test_run:
         cli_path: "{{ agentia_cli }}"
@@ -49,7 +90,7 @@
 
     - name: Save the nightly report
       ansible.builtin.copy:
-        content: "{{ {'validations': validations.results | default([]), 'smoke': smoke.run | default({})} | to_nice_json }}"
+        content: "{{ {'validations': validations.results | default([]), 'promote_jobs': validation_jobs.results | default([]) | map(attribute='job', default={}) | list, 'deploy_jobs': validation_deploys.results | default([]) | map(attribute='job', default={}) | list, 'smoke': smoke.run | default({})} | to_nice_json }}"
         dest: "{{ evidence_dir }}/nightly-report.json"
         mode: "0644"
 
@@ -57,6 +98,8 @@
       ansible.builtin.assert:
         that:
           - validations.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | list | length == 0
+          - validation_jobs.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | list | length == 0
+          - validation_deploys.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | list | length == 0
           - smoke is skipped or smoke.passed
         fail_msg: "Nightly validation found failures; see {{ evidence_dir }}/nightly-report.json"
         success_msg: "All stories validated and smoke tests passed"

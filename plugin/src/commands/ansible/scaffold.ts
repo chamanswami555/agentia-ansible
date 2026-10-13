@@ -4,7 +4,7 @@ import {Flags} from '@oclif/core'
 import {mkdirSync, writeFileSync} from 'node:fs'
 import path from 'node:path'
 
-import {AgentiaCliError, itemsOf, runAgentiaJson} from '../../lib/agentia-cli.js'
+import {AgentiaCliError, runAgentiaJson} from '../../lib/agentia-cli.js'
 import {renderReleasePlaybook} from '../../lib/playbook.js'
 
 export default class AnsibleScaffold extends AgentiaCommand {
@@ -40,9 +40,9 @@ export default class AnsibleScaffold extends AgentiaCommand {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
-    const needsCopado = storyIds.length === 0 || !flags.promotion
+    const needsCopado = storyIds.length === 0 || Boolean(flags.promotion)
     if (needsCopado && !cicdConfigured && !flags['skip-auth-check']) {
-      this.error('CI/CD authentication is not configured, so the active story and promotion cannot be read. Run `agentia auth set --cicd <key>` or pass both --stories and --promotion.', {exit: 2})
+      this.error('CI/CD authentication is not configured, so the active story or the promotion cannot be read. Run `agentia auth set --cicd <key>` or pass --stories.', {exit: 2})
     }
 
     if (storyIds.length === 0) {
@@ -57,18 +57,24 @@ export default class AnsibleScaffold extends AgentiaCommand {
       storyIds = [name]
     }
 
-    let promotionId = flags.promotion
-    if (!promotionId) {
+    // Story mode (default): the playbook promotes and deploys each story with the Copado
+    // Submit, so no promotion id is needed. Promotion mode: the user names an existing,
+    // non-validation promotion and the playbook runs it with merge and deploy.
+    const promotionId = flags.promotion ?? ''
+    if (promotionId && promotionId.length !== 18) {
+      this.error(`--promotion must be an 18-character Salesforce id, got "${promotionId}"`, {exit: 2})
+    }
+    if (promotionId) {
       try {
-        const envelope = await runAgentiaJson(flags['agentia-bin'], ['cicd', 'promotion', 'list', '--work-id', storyIds[0]], flags['repo-dir'])
-        const first = itemsOf(envelope.result)[0]
-        promotionId = (first?.id as string | undefined) ?? ''
+        const envelope = await runAgentiaJson(flags['agentia-bin'], ['cicd', 'promotion', 'get', promotionId], flags['repo-dir'])
+        const promotion = envelope.result as {isValidationRun?: boolean; status?: string} | undefined
+        if (promotion?.isValidationRun) {
+          this.error(`Promotion ${promotionId} is a validation run and cannot be deployed. Omit --promotion to use story mode.`, {exit: 2})
+        }
       } catch (error) {
         if (!(error instanceof AgentiaCliError)) throw error
-        this.warn(`Could not read promotions for ${storyIds[0]}: ${error.message}`)
-        promotionId = ''
+        this.warn(`Could not read promotion ${promotionId}: ${error.message}`)
       }
-      if (!promotionId) this.warn('No promotion found; set promotion_id in the playbook before running it.')
     }
 
     const repoDir = path.resolve(flags['repo-dir'])
@@ -95,7 +101,7 @@ export default class AnsibleScaffold extends AgentiaCommand {
       } else {
         this.log(`Wrote ${outPath}`)
         this.log(`  stories:    ${storyIds.join(', ')}`)
-        this.log(`  promotion:  ${promotionId || '(none found, set promotion_id before running)'}`)
+        this.log(`  deploy:     ${promotionId ? `promotion ${promotionId} (merge and deploy)` : 'story mode (Copado Submit per story)'}`)
         this.log(`  smoke test: ${flags['crt-job'] ? `${flags['crt-job']} in project ${flags['crt-project'] ?? '?'}` : 'none'}`)
         this.log(`  next:       agentia ansible run --playbook ${outPath} --check`)
       }

@@ -4,20 +4,26 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-export ANSIBLE_COLLECTIONS_PATH="$ROOT/var"
-export PATH="$ROOT/tools/fake-agentia:$PATH"
-export AGENTIA_FAKE_FIXTURES="$ROOT/collection/tests/fixtures/agentia"
-export ANSIBLE_LOCALHOST_WARNING=false
-export ANSIBLE_INVENTORY_UNPARSED_WARNING=false
-
-PLAYBOOK="$ROOT/.venv/bin/ansible-playbook"
 DEMO="$ROOT/var/demo"
+PLAYBOOK="$ROOT/.venv/bin/ansible-playbook"
 rm -rf "$DEMO"
 mkdir -p "$DEMO"
 
-echo "== 1/3 release window (validate, merge, smoke test, deploy, evidence)"
+export ANSIBLE_COLLECTIONS_PATH="$ROOT/var"
+export PATH="$ROOT/tools/fake-agentia:$PATH"
+export AGENTIA_FAKE_FIXTURES="$ROOT/collection/tests/fixtures/agentia"
+# The fake answers job polls in sequence (running, then finished) by counting earlier calls
+# in this log, so the log must be set for every run.
+export AGENTIA_FAKE_LOG="$DEMO/agentia-calls.jsonl"
+export ANSIBLE_LOCALHOST_WARNING=false
+export ANSIBLE_INVENTORY_UNPARSED_WARNING=false
+
+echo "== 1/3 release window (validate, smoke test, approve, promote and deploy, evidence)"
 "$PLAYBOOK" "$ROOT/collection/playbooks/release_window.yml" \
-  -e "{\"story_ids\":[\"US-0042\"],\"promotion_id\":\"a0B000000000001EAA\",\"crt_job_id\":\"196473\",\"crt_project_id\":\"112901\",\"approve\":true,\"repo_dir\":\"$DEMO\",\"evidence_dir\":\"$DEMO/evidence\"}"
+  -e "{\"story_ids\":[\"US-0042\"],\"crt_job_id\":\"196473\",\"crt_project_id\":\"112901\",\"approve\":true,\"poll_interval\":1,\"repo_dir\":\"$DEMO\",\"evidence_dir\":\"$DEMO/evidence\"}" \
+  | tee "$DEMO/release-window.log"
+grep -q "Deployment jobs: \['Successful'\]" "$DEMO/release-window.log" \
+  || { echo "release window did not reach a successful deployment job"; exit 1; }
 
 echo "== 2/3 remediate a failed job (diagnosis, incident file, resume)"
 "$PLAYBOOK" "$ROOT/collection/playbooks/remediate_failed_job.yml" \
@@ -29,3 +35,4 @@ echo "== 3/3 nightly validation"
 
 echo "== evidence written:"
 find "$DEMO" -type f -name '*.json' | sort
+echo "== Agentia CLI calls replayed: $(wc -l < "$AGENTIA_FAKE_LOG")"

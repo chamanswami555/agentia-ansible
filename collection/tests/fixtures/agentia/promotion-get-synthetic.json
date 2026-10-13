@@ -1,0 +1,22 @@
+{
+  "result": {
+    "id": "a0B000000000001EAA",
+    "status": "In Progress",
+    "salesforceStatus": "In Progress",
+    "pipelineId": "a0M000000000001EAA",
+    "userStoryCount": 1,
+    "includedMetadataCount": 1,
+    "sourceEnvironmentName": "Dev1",
+    "destinationEnvironmentName": "INT",
+    "sourceEnvironmentId": "a0S000000000001EAA",
+    "destinationEnvironmentId": "a0S000000000002EAA",
+    "identification": {"promotionName": "P00004", "projectId": "a0w000000000001AAA", "projectName": "Example Project"},
+    "lastPromotionExecutionId": "a4N000000000001AAA",
+    "lastDeploymentExecutionId": "a4N000000000004AAA",
+    "lastPromotionExecutionStatus": "Successful",
+    "lastDeploymentExecutionStatus": "In Progress",
+    "isValidationRun": false
+  },
+  "status": 0,
+  "transactionId": "01a1-promotion-get"
+}

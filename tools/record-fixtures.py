@@ -16,8 +16,10 @@ import re
 import sys
 
 SCRUB = [
-    (re.compile(r"[A-Za-z0-9._%+-]+@company\.com(\.[A-Za-z0-9.-]+)?"), r"user@example.com\1"),
-    (re.compile(r"[A-Za-z0-9._%+-]+@gmail\.com"), "user@example.com"),
+    # any email address, and any Salesforce username built on one (user@company.com.suffix);
+    # an SSH Git address such as git@github.com:org/repo.git is not an email and is kept
+    (re.compile(r"[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*?\.[A-Za-z]{2,}(?![A-Za-z0-9:-])((?:\.[A-Za-z0-9-]+)*)"),
+     r"user@example.com\1"),
     # Signatures and tokens the CLI echoes in records must never reach the repository.
     (re.compile(r'"(oauthSignature|apiKey|token|accessToken|refreshToken|password)": "[^"]*"'), r'"\1": "REDACTED"'),
 ]

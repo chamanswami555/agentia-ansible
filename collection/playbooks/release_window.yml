@@ -1,8 +1,15 @@
 ---
 # Release window: validate, test, approve and promote Salesforce changes through Copado,
 # with evidence written to a folder. Run from the Git working copy of the Salesforce project
-# or set repo_dir. Required variables: story_ids, promotion_id. Optional: crt_job_id and
-# crt_project_id (Robotic Testing smoke suite), evidence_dir, approve (skip the pause).
+# or set repo_dir.
+#
+# Required: story_ids. Optional: crt_job_id and crt_project_id (Robotic Testing smoke suite),
+# evidence_dir, approve (skip the human pause), poll_interval and wait_timeout (seconds between
+# job polls and the longest wait for one job), deploy_mode:
+#   story     (default) each story is promoted and deployed with the Copado Submit
+#             (`agentia cicd work submit --done`), the same action as the Submit button.
+#   promotion an existing, non-validation promotion is run with merge_and_deploy; needs
+#             promotion_id (18-character Salesforce id).
 - name: Copado release window
   hosts: localhost
   gather_facts: false
@@ -11,15 +18,26 @@
     repo_dir: "{{ playbook_dir }}"
     evidence_root: "{{ repo_dir }}/evidence"
     story_ids: []
+    deploy_mode: story
     promotion_id: ""
     crt_job_id: ""
     crt_project_id: ""
     approve: false
     wait_timeout: 1800
+    poll_interval: 15
   tasks:
     - name: Fix the evidence folder name for this run
       ansible.builtin.set_fact:
         evidence_dir: "{{ evidence_dir | default(evidence_root ~ '/' ~ lookup('pipe', 'date +%Y%m%d-%H%M%S')) }}"
+
+    - name: Refuse to start with incomplete inputs
+      ansible.builtin.assert:
+        that:
+          - story_ids | length > 0
+          - deploy_mode in ['story', 'promotion']
+          - deploy_mode == 'story' or promotion_id | length == 18
+        fail_msg: "story_ids must list at least one story; deploy_mode must be story or promotion; promotion mode needs the 18-character promotion id (got '{{ promotion_id }}')"
+        quiet: true
 
     - name: Check that the Agentia CLI is authenticated
       chamanswami555.agentia.agentia_auth_info:
@@ -49,22 +67,61 @@
         cli_path: "{{ agentia_cli }}"
         working_dir: "{{ repo_dir }}"
         set_story: "{{ item }}"
+        skip_local_tests: "{{ skip_local_tests | default(false) }}"
       loop: "{{ story_ids }}"
       register: validations
 
+    - name: Every story must have started a validation
+      ansible.builtin.assert:
+        that: validations.results | selectattr('submission.submit.jobId', 'defined') | list | length == story_ids | length
+        fail_msg: "A validation submit returned no job; see the task output above"
+        quiet: true
+      when: not ansible_check_mode
+
+    - name: Wait for each validation job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.submit.jobId }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ validations.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: not ansible_check_mode and (item.submission.submit.jobId is defined)
+      register: validation_jobs
+
+    # The job returned by the submit is the promote job of the validation promotion; the check-only
+    # deployment is a second job that the promotion record points at once it exists.
+    - name: Read each validation promotion until its deployment job exists
+      chamanswami555.agentia.agentia_promotion_info:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.submit.message | regex_search('promotion_id=([A-Za-z0-9]+)', '\\1') | first }}"
+      loop: "{{ validations.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: not ansible_check_mode and (item.submission.submit.message is defined)
+      register: validation_promotions
+      until: validation_promotions.deployment_job_id
+      retries: 18
+      delay: 10
+
+    - name: Wait for each validation deployment job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.deployment_job_id }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ validation_promotions.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.item | default('') }}"
+      when: not ansible_check_mode and (item.deployment_job_id is defined)
+      register: validation_deploys
+
     - name: Save the validation results
       ansible.builtin.copy:
-        content: "{{ validations.results | map(attribute='submission', default={}) | list | to_nice_json }}"
+        content: "{{ {'submissions': validations.results | map(attribute='submission', default={}) | list, 'promote_jobs': validation_jobs.results | default([]) | map(attribute='job', default={}) | list, 'promotions': validation_promotions.results | default([]) | map(attribute='promotion', default={}) | list, 'deploy_jobs': validation_deploys.results | default([]) | map(attribute='job', default={}) | list} | to_nice_json }}"
         dest: "{{ evidence_dir }}/validations.json"
         mode: "0644"
-
-    - name: Merge the promotion (no deployment yet)
-      chamanswami555.agentia.agentia_promotion:
-        cli_path: "{{ agentia_cli }}"
-        id: "{{ promotion_id }}"
-        operation: merge
-        wait_timeout: "{{ wait_timeout }}"
-      register: merge
 
     - name: Run the Robotic Testing smoke suite
       chamanswami555.agentia.agentia_test_run:
@@ -84,28 +141,91 @@
 
     - name: Wait for a human before deploying to the next environment
       ansible.builtin.pause:
-        prompt: "Validation and smoke tests passed for {{ story_ids | join(', ') }}. Deploy promotion {{ promotion_id }}? Press Enter to continue or Ctrl-C to abort"
+        prompt: "Validation deployments finished with {{ validation_deploys.results | default([]) | map(attribute='status', default='skipped') | list }} for {{ story_ids | join(', ') }}. Deploy to the next environment? Press Enter to continue or Ctrl-C to abort"
       when: not approve
 
+    # Story mode: the Copado Submit for each story (promote and deploy to the next environment).
+    - name: Promote and deploy each story
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ agentia_cli }}"
+        working_dir: "{{ repo_dir }}"
+        set_story: "{{ item }}"
+        done: true
+        skip_local_tests: true
+      loop: "{{ story_ids }}"
+      when: deploy_mode == 'story'
+      register: deploys
+
+    - name: Every story must have started its Copado Submit
+      ansible.builtin.assert:
+        that: deploys.results | selectattr('submission.done.jobId', 'defined') | list | length == story_ids | length
+        fail_msg: "A Copado Submit returned no promote job; see the task output above"
+        quiet: true
+      when: deploy_mode == 'story' and not ansible_check_mode
+
+    - name: Wait for each promote job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.done.jobId }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ deploys.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item | default('') }}"
+      when: deploy_mode == 'story' and not ansible_check_mode and (item.submission.done.jobId is defined)
+      register: promote_jobs
+
+    - name: Read each promotion until its deployment job exists
+      chamanswami555.agentia.agentia_promotion_info:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.submission.done.message | regex_search('promotion_id=([A-Za-z0-9]+)', '\\1') | first }}"
+      loop: "{{ deploys.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item | default('') }}"
+      when: deploy_mode == 'story' and not ansible_check_mode and (item.submission.done.message is defined)
+      register: promotions
+      until: promotions.deployment_job_id
+      retries: 18
+      delay: 10
+
+    - name: Wait for each deployment job
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ agentia_cli }}"
+        id: "{{ item.deployment_job_id }}"
+        timeout: "{{ wait_timeout }}"
+        interval: "{{ poll_interval }}"
+      loop: "{{ promotions.results | default([]) }}"
+      loop_control:
+        label: "{{ item.deployment_job_id | default('') }}"
+      when: deploy_mode == 'story' and not ansible_check_mode and (item.deployment_job_id | default('')) | length > 0
+      register: deploy_jobs
+
+    # Promotion mode: run an existing promotion with merge and deploy.
     - name: Merge and deploy the promotion
       chamanswami555.agentia.agentia_promotion:
         cli_path: "{{ agentia_cli }}"
         id: "{{ promotion_id }}"
         operation: merge_and_deploy
         wait_timeout: "{{ wait_timeout }}"
-      register: deploy
+      when: deploy_mode == 'promotion'
+      register: promotion_run
 
-    - name: Wait for the deployment job to finish
-      chamanswami555.agentia.agentia_job_wait:
+    - name: Read the promotion after the run
+      chamanswami555.agentia.agentia_promotion_info:
         cli_path: "{{ agentia_cli }}"
-        id: "{{ deploy.promotion.deploymentJobExecutionId | default(deploy.promotion.jobExecutionId | default('')) }}"
-        timeout: "{{ wait_timeout }}"
-      when: (deploy.promotion | default({})).deploymentJobExecutionId is defined or (deploy.promotion | default({})).jobExecutionId is defined
-      register: deploy_job
+        id: "{{ promotion_id }}"
+      when: deploy_mode == 'promotion' and not ansible_check_mode
+      register: promotion_after
 
-    - name: Save the deployment result
+    - name: Save the deployment evidence
       ansible.builtin.copy:
-        content: "{{ {'promotion': deploy.promotion | default({}), 'job': deploy_job.job | default({})} | to_nice_json }}"
+        content: "{{ {'deploy_mode': deploy_mode,
+                      'submissions': deploys.results | default([]) | map(attribute='submission', default={}) | list,
+                      'promote_jobs': promote_jobs.results | default([]) | map(attribute='job', default={}) | list,
+                      'promotions': promotions.results | default([]) | map(attribute='promotion', default={}) | list,
+                      'deploy_jobs': deploy_jobs.results | default([]) | map(attribute='job', default={}) | list,
+                      'promotion_run': promotion_run.promotion | default({}),
+                      'promotion_after': promotion_after.promotion | default({})} | to_nice_json }}"
         dest: "{{ evidence_dir }}/deployment.json"
         mode: "0644"
 
@@ -122,4 +242,4 @@
 
     - name: Release summary
       ansible.builtin.debug:
-        msg: "Stories {{ story_ids | join(', ') }} deployed through promotion {{ promotion_id }}. Evidence in {{ evidence_dir }}"
+        msg: "Stories {{ story_ids | join(', ') }} released ({{ deploy_mode }} mode). Deployment jobs: {{ deploy_jobs.results | default([]) | map(attribute='status', default='n/a') | list }}. Evidence in {{ evidence_dir }}"

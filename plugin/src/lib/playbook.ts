@@ -4,6 +4,7 @@
 
 export interface ReleaseScaffold {
   storyIds: string[]
+  /** Empty for story mode (Copado Submit per story); an 18-character id for promotion mode. */
   promotionId: string
   crtJobId?: string
   crtProjectId?: string
@@ -31,6 +32,7 @@ export function renderReleasePlaybook(input: ReleaseScaffold): string {
     '  import_playbook: chamanswami555.agentia.release_window',
     '  vars:',
     `    story_ids: ${list(input.storyIds)}`,
+    `    deploy_mode: ${scalar(input.promotionId ? 'promotion' : 'story')}`,
     `    promotion_id: ${scalar(input.promotionId)}`,
     `    crt_job_id: ${scalar(input.crtJobId ?? '')}`,
     `    crt_project_id: ${scalar(input.crtProjectId ?? '')}`,

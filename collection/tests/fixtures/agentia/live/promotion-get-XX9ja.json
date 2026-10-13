@@ -1,0 +1,99 @@
+{
+  "result": {
+    "id": "a17i800000XX9ja",
+    "status": "Validated",
+    "salesforceStatus": "Validated",
+    "pipelineId": "a0Wi8000000Mr2TEAS",
+    "userStoryCount": 1,
+    "includedMetadataCount": 1,
+    "sourceEnvironmentName": "Dev1-SFP",
+    "destinationEnvironmentName": "INT-SFP",
+    "sourceEnvironmentId": "a0ci8000000FuczAAC",
+    "destinationEnvironmentId": "a0ci8000000FubNAAS",
+    "createdBy": "chaman swami",
+    "createdDate": "2026-10-13T18:59:42.000+0000",
+    "lastModifiedBy": "chaman swami",
+    "lastModifiedDate": "2026-10-13T19:02:23.000+0000",
+    "identification": {
+      "promotionName": "P00002",
+      "projectId": "a15i8000000sdvdAAA",
+      "projectName": "Trial - Salesforce Source Format",
+      "releaseId": "a1Ci8000006HnQfEAK",
+      "releaseName": "Trial - Salesforce Source Format",
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "pipelineName": "Trial - Salesforce Source Format Pipeline"
+    },
+    "mainSettings": {
+      "platform": "SFDX",
+      "destinationCredential": "INT-SFP",
+      "destinationCredentialId": "a11i8000000lS2TAAU",
+      "sourceEnv": "Dev1-SFP",
+      "destinationEnv": "INT-SFP",
+      "isBackPromotion": false,
+      "promotionDirectionKind": "forward_promotion"
+    },
+    "viewInGitLink": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/tree/promotion/P00002",
+    "openPullRequest": {
+      "gitProvider": "Github",
+      "pullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+      "destinationEnvironmentBranch": "int-sfp",
+      "compareBranch": "promotion/P00002",
+      "isMerged": true
+    },
+    "userStories": [
+      {
+        "id": "a1vi80000006OHNAA2",
+        "name": "US-0000024",
+        "title": "My first Source Format User Story",
+        "status": "Draft",
+        "assigneeName": "",
+        "ownerId": "005i8000001xog9AAA",
+        "ownerName": "chaman swami",
+        "latestCommitDate": "2026-10-13T18:51:16.000+0000",
+        "isBundle": false,
+        "deploymentStepsCount": 0,
+        "componentsCount": 1,
+        "createdDate": "2026-10-13T18:31:55.000+0000",
+        "lastModifiedDate": "2026-10-13T19:02:24.000+0000",
+        "projectId": "a15i8000000sdvdAAA",
+        "projectName": "Trial - Salesforce Source Format",
+        "releaseId": "a1Ci8000006HnQfEAK",
+        "releaseName": "Trial - Salesforce Source Format",
+        "releaseProjectId": "a15i8000000sdvdAAA",
+        "ignored": false
+      }
+    ],
+    "includedMetadata": [
+      {
+        "id": "a1si8000000U1EnAAK",
+        "name": "US-0000024 Full CustomLabels.CustomLabels",
+        "userStoryId": "a1vi80000006OHNAA2",
+        "userStoryName": "US-0000024",
+        "userStoryTitle": "My first Source Format User Story",
+        "type": "CustomLabels",
+        "action": "Full",
+        "metadataApiName": "CustomLabels",
+        "moduleDirectory": "force-app/main/default",
+        "ignored": false,
+        "lastModifiedDate": "2026-10-13T18:51:15.000+0000",
+        "lastModifiedById": "005i8000001xog9AAA",
+        "lastModifiedByName": "chaman swami"
+      }
+    ],
+    "lastPromotionExecutionId": "a0si8000000CVpdAAG",
+    "lastDeploymentExecutionId": "a0si8000000CVrFAAW",
+    "lastPromotionExecutionStatus": "Successful",
+    "lastDeploymentExecutionStatus": "Successful",
+    "apexTestLevel": "No Test Run",
+    "debugMode": false,
+    "validateDeployRequestId": "0AfEk00000ftO26KAE",
+    "isValidationRun": true,
+    "recreatePromotionBranch": false,
+    "isRolledBack": false,
+    "ignoreDeploymentWarnings": false,
+    "rollbackStatus": "Not Started",
+    "ignoreRollbackDeploymentWarnings": false
+  },
+  "status": 0,
+  "transactionId": "01a136ae-d643-7480-bba7-340279f1aab2"
+}

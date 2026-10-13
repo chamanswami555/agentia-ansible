@@ -1,0 +1,100 @@
+{
+  "result": {
+    "workItem": {
+      "lastModifiedDate": "2026-10-13T18:51:16Z",
+      "lastModifiedBy": "chaman swami",
+      "createdDate": "2026-10-13T18:31:55Z",
+      "createdBy": "chaman swami",
+      "excludedFromCbm": false,
+      "ownerId": "005i8000001xog9AAA",
+      "project": "a15i8000000sdvdAAA",
+      "recordType": "User Story",
+      "releaseId": "a1Ci8000006HnQfEAK",
+      "sourceCredential": "a11i8000000lRxdAAE",
+      "sourceEnvironment": "a0ci8000000FuczAAC",
+      "status": "Draft",
+      "title": "My first Source Format User Story",
+      "id": "a1vi80000006OHNAA2",
+      "name": "US-0000024",
+      "baseBranch": "main",
+      "lastValidationDate": "2026-10-13T18:42:35Z",
+      "latestCommitDate": "2026-10-13T18:51:16Z",
+      "oauthSignature": "REDACTED",
+      "pipelineActive": true,
+      "pipelineBlockCommits": false,
+      "pipelineId": "a0Wi8000000Mr2TEAS",
+      "platform": "SFDX",
+      "points": 0,
+      "projectName": "Trial - Salesforce Source Format",
+      "projectPipelineMainBranch": "main",
+      "projectPipelinePullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+      "releaseBaseBranch": "main",
+      "releaseProject": "a15i8000000sdvdAAA",
+      "releaseProjectPipelineId": "a0Wi8000000Mr2TEAS",
+      "releaseProjectPipelineMainBranch": "main",
+      "releaseProjectPipelinePullRequestBaseUrl": "https://github.com/chamanswami555/Copado-CS261013SFPSFP/",
+      "sourceCredentialLink": "https://copadotrial18423435.my.salesforce.com/a11i8000000lRxdAAE",
+      "sourceCredentialName": "Dev1-SFP",
+      "sourceEnvironmentLink": "https://copadotrial18423435.my.salesforce.com/a0ci8000000FuczAAC",
+      "sourceEnvironmentName": "Dev1-SFP",
+      "sourceOrgId": "00Ddq00000HZfT7EAL",
+      "owner": "chaman swami",
+      "releaseName": "Trial - Salesforce Source Format",
+      "externalId": ""
+    },
+    "jobs": [
+      {
+        "id": "a0si8000000CVmPAAW",
+        "name": "JE-003",
+        "status": "In Progress",
+        "templateName": "SFDX Deploy",
+        "sourceName": "Dev1-SFP",
+        "destinationName": "INT-SFP",
+        "parentId": "a0ai8000001iVIr",
+        "deploymentId": "a0ai8000001iVIrAAM",
+        "deploymentName": "P00001",
+        "createdDate": "2026-10-13T18:54:29Z",
+        "lastModifiedDate": "2026-10-13T18:54:30Z"
+      },
+      {
+        "id": "a0si8000000CVjBAAW",
+        "name": "JE-002",
+        "status": "Successful",
+        "templateName": "SFDX Promote",
+        "sourceName": "Dev1-SFP",
+        "destinationName": "INT-SFP",
+        "parentId": "a17i800000XXqQ4",
+        "promotionId": "a17i800000XXqQ4AAL",
+        "promotionName": "P00001",
+        "createdDate": "2026-10-13T18:51:40Z",
+        "lastModifiedDate": "2026-10-13T18:54:31Z"
+      },
+      {
+        "id": "a0si8000000CVhZAAW",
+        "name": "JE-001",
+        "status": "Successful",
+        "templateName": "SFDX Commit",
+        "sourceName": "Dev1-SFP",
+        "parentId": "a1qi8000000hiAf",
+        "userStoryCommitId": "a1qi8000000hiAfAAI",
+        "userStoryCommitName": "US-0000024 78a770c",
+        "createdDate": "2026-10-13T18:50:24Z",
+        "lastModifiedDate": "2026-10-13T18:51:16Z"
+      }
+    ],
+    "branchMetadata": {
+      "baseRef": "main",
+      "metadataList": [
+        {
+          "localPaths": [
+            "force-app/main/default/labels/CustomLabels.labels-meta.xml"
+          ],
+          "name": "CustomLabels",
+          "type": "CustomLabels"
+        }
+      ]
+    }
+  },
+  "status": 0,
+  "transactionId": "01a1369e-95c6-723a-957c-25bc9a59ef3f"
+}

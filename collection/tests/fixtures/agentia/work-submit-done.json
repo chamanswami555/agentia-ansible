@@ -1,10 +1,15 @@
 {
   "result": {
+    "branch": "feature/US-0042",
+    "done": {
+      "command": "done",
+      "message": "Headless done started for story_id=a1Y000000000042EAA promotion_id=a0B000000000001EAA job_execution_id=a4N000000000001AAA",
+      "jobId": "a4N000000000001AAA"
+    },
+    "pushed": false,
+    "userStoriesAheadBehind": {"ahead": 0, "behind": 0, "destinationEnvironmentId": "a0S000000000002EAA", "pipelineId": "a0M000000000001EAA", "sourceEnvironmentId": "a0S000000000001EAA", "destinationEnvironmentName": "INT", "sourceEnvironmentName": "Dev1"},
     "workItem": "US-0042",
-    "action": "promote",
-    "jobExecutionId": "a4N000000000003AAA",
-    "storiesAhead": 0,
-    "storiesBehind": 0
+    "logs": ["Branch: feature/US-0042", "Work item: US-0042", "Marking work item done", "Elapsed: 14s"]
   },
   "status": 0,
   "transactionId": "01a1-submit-done"

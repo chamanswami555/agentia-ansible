@@ -1,0 +1,14 @@
+{
+  "result": {
+    "id": "a1Y000000000042EAA",
+    "name": "US-0042",
+    "title": "Account service hardening",
+    "status": "Development In Progress",
+    "project": "a0w000000000001AAA",
+    "pipelineId": "a0M000000000001EAA",
+    "sourceEnvironment": "a0S000000000001EAA",
+    "baseBranch": "main"
+  },
+  "status": 0,
+  "transactionId": "01a1-get-0042"
+}

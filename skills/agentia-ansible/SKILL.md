@@ -23,10 +23,17 @@ troubleshoot the collection's playbooks, without guessing module names, order or
 ## Module Order For A Release
 
 `agentia_auth_info (require: [cicd])` -> `agentia_health_check` -> `agentia_work_submit`
-(validate, one task per story, `set_story`) -> `agentia_promotion (operation: merge)` ->
+(validate, one task per story, `set_story`) -> `agentia_job_wait` (the validation's promote job) -> `agentia_promotion_info` (until `deployment_job_id` exists) -> `agentia_job_wait` (the check-only deployment job) ->
 `agentia_test_run` (Robotic Testing smoke suite) -> `ansible.builtin.pause` (human approval) ->
-`agentia_promotion (operation: merge_and_deploy)` -> `agentia_job_wait` -> `agentia_health_check`
--> write evidence files with `ansible.builtin.copy`.
+`agentia_work_submit (done: true)` per story (the Copado Submit: promote and deploy) ->
+`agentia_job_wait` (promote job) -> `agentia_promotion_info` (until `deployment_job_id` exists) ->
+`agentia_job_wait` (deployment job) -> `agentia_health_check` -> write evidence files with
+`ansible.builtin.copy`.
+
+Facts learned on the real system: a `work submit` (validate) creates a validation promotion
+(`isValidationRun: true`) that cannot be merged or deployed with `agentia_promotion`; only
+`work submit --done` (story mode) or an existing non-validation promotion (promotion mode)
+deploys. `promotion list --work-id` needs the story's 18-character Salesforce id, not its name.
 
 The reference playbook is `chamanswami555.agentia.release_window`; copy its structure instead of
 writing a new one when the user wants a release window.
@@ -38,7 +45,8 @@ writing a new one when the user wants a release window.
 | Fail early without credentials | `agentia_auth_info` | `require: [cicd]`; add `ai` or `crt` when those modules are used |
 | Create or update a story | `agentia_work` | Idempotent; `id` for an existing story, `title` to create; `state: absent` deletes |
 | Validate or promote a story | `agentia_work_submit` | Needs `working_dir` (the Git checkout); `done: true` promotes, only after approval |
-| Merge or deploy a promotion | `agentia_promotion` | `operation: merge` first, `merge_and_deploy` after approval; `resume` after a conflict |
+| Deploy an existing promotion | `agentia_promotion` | `merge_and_deploy` after approval; `resume` after a conflict; never on a validation promotion |
+| Read a promotion | `agentia_promotion_info` | `id` gives `deployment_job_id`; `work_id` (18-character story id) lists a story's promotions |
 | Watch a job | `agentia_job_info`, `agentia_job_wait` | `job_wait` fails on Error unless `fail_on_error: false` |
 | Act on a job | `agentia_job_action` | `resume`, `run`, `pause`, `kill` |
 | Run Robotic Testing | `agentia_test_run` | Fails the task when the run fails unless `fail_on_test_failure: false` |

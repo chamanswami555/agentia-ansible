@@ -1,0 +1,43 @@
+{
+  "result": {
+    "id": "a0si8000000CVxhAAG",
+    "name": "JE-009",
+    "status": "Successful",
+    "template": {
+      "id": "a0ui80000008EFfAAM",
+      "name": "SFDX Deploy"
+    },
+    "context": "<a href=\"/a17i800000XX2Pf\" target=\"_self\">Promotion: P00004</a>",
+    "parentId": "a0ai8000001iTaQ",
+    "dataJson": "{\n  \"userStoryIds\" : [ \"a1vi80000006OHNAA2\" ],\n  \"userStoryBranches\" : [ \"feature/US-0000024\" ],\n  \"transactionId\" : \"a17i800000XX2PfAAL\",\n  \"promotionId\" : \"a17i800000XX2PfAAL\",\n  \"promotionBranchName\" : \"promotion/P00004\",\n  \"fileWithSelectedChanges\" : \"068i8000000vG4sAAE\",\n  \"destinationBranchName\" : \"int-sfp\",\n  \"deploymentId\" : \"a0ai8000001iTaQAAU\",\n  \"deploymentDryRun\" : false,\n  \"action\" : \"PromotionDeployment\"\n}",
+    "createdDate": "2026-10-13T19:14:58Z",
+    "lastModifiedDate": "2026-10-13T19:16:22Z",
+    "steps": [
+      {
+        "id": "a0ti8000001Z06DAAS",
+        "name": "Deploy",
+        "status": "Success",
+        "type": "Function",
+        "customType": "Function",
+        "order": 1,
+        "resultId": "a1Di80000032HegEAE",
+        "result": {
+          "id": "a1Di80000032HegEAE",
+          "name": "R00024",
+          "status": "Success",
+          "progressStatus": "Completed"
+        }
+      },
+      {
+        "id": "a0ti8000001Z06EAAS",
+        "name": "Activate Deployed Datakits",
+        "status": "Skipped",
+        "type": "Function",
+        "customType": "Function",
+        "order": 2
+      }
+    ]
+  },
+  "status": 0,
+  "transactionId": "01a136b1-e6a8-759a-a919-e3ae0d3299ee"
+}

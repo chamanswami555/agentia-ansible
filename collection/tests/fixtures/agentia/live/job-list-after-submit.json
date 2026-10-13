@@ -1,0 +1,71 @@
+{
+  "result": {
+    "data": [
+      {
+        "id": "a0si8000000CVmPAAW",
+        "name": "JE-003",
+        "status": "In Progress",
+        "template": {
+          "id": "a0ui80000008EFfAAM",
+          "name": "SFDX Deploy"
+        },
+        "context": "<a href=\"/a17i800000XXqQ4\" target=\"_self\">Promotion: P00001</a>",
+        "parentId": "a0ai8000001iVIr",
+        "dataJson": "{\n  \"userStoryIds\" : [ \"a1vi80000006OHNAA2\" ],\n  \"userStoryBranches\" : [ \"feature/US-0000024\" ],\n  \"transactionId\" : \"a17i800000XXqQ4AAL\",\n  \"promotionId\" : \"a17i800000XXqQ4AAL\",\n  \"promotionBranchName\" : \"promotion/P00001\",\n  \"fileWithSelectedChanges\" : \"068i8000000vID9AAM\",\n  \"destinationBranchName\" : \"int-sfp\",\n  \"deploymentId\" : \"a0ai8000001iVIrAAM\",\n  \"deploymentDryRun\" : true,\n  \"action\" : \"PromotionDeployment\"\n}",
+        "createdDate": "2026-10-13T18:54:29Z",
+        "lastModifiedDate": "2026-10-13T18:54:30Z",
+        "steps": []
+      },
+      {
+        "id": "a0si8000000CVjBAAW",
+        "name": "JE-002",
+        "status": "Successful",
+        "template": {
+          "id": "a0ui80000008EFgAAM",
+          "name": "SFDX Promote"
+        },
+        "context": "<a href=\"/a17i800000XXqQ4\" target=\"_self\">Promotion: P00001</a>",
+        "parentId": "a17i800000XXqQ4",
+        "dataJson": "{\n  \"userStoryIds\" : [ \"a1vi80000006OHNAA2\" ],\n  \"userStoryBranches\" : [ \"feature/US-0000024\" ],\n  \"sourceCredentialId\" : \"a11i8000000lRxdAAE\",\n  \"promotionMethod\" : \"Classic Promotion\",\n  \"promotionId\" : \"a17i800000XXqQ4AAL\",\n  \"promotionBranchName\" : \"promotion/P00001\",\n  \"isBackPromotion\" : false,\n  \"gitTag\" : \"v1.0\",\n  \"fileWithSelectedChanges\" : \"068i8000000vFIWAA2\",\n  \"executePromotion\" : true,\n  \"executeDeployment\" : true,\n  \"destinationCredentialId\" : \"a11i8000000lS2TAAU\",\n  \"destinationBranchName\" : \"int-sfp\",\n  \"deploymentDryRun\" : true,\n  \"blockQueueForTransaction\" : true,\n  \"action\" : \"Promotion\"\n}",
+        "createdDate": "2026-10-13T18:51:40Z",
+        "lastModifiedDate": "2026-10-13T18:54:31Z",
+        "steps": []
+      },
+      {
+        "id": "a0si8000000CVhZAAW",
+        "name": "JE-001",
+        "status": "Successful",
+        "template": {
+          "id": "a0ui80000008EFdAAM",
+          "name": "SFDX Commit"
+        },
+        "context": "<a href=\"/a1qi8000000hiAf\" target=\"_self\">Commit: US-0000024 78a770c</a>",
+        "parentId": "a1qi8000000hiAf",
+        "dataJson": "{\n  \"userStoryName\" : \"US-0000024\",\n  \"userStoryId\" : \"a1vi80000006OHNAA2\",\n  \"userStoryCommitId\" : \"a1qi8000000hiAfAAI\",\n  \"sourceCredentialId\" : \"a11i8000000lRxdAAE\",\n  \"recreateFeatureBranch\" : false,\n  \"orgCommitId\" : \"a0pi8000000n8MEAAY\",\n  \"message\" : \"US-0000024 add release banner custom label\",\n  \"fileWithSelectedChanges\" : \"068i8000000vKwUAAU\",\n  \"featureBranchName\" : \"feature/US-0000024\",\n  \"commitId\" : \"78a770c82ed1ff1fc37ea6b949840df07a9fba3a\",\n  \"baseBranch\" : \"main\",\n  \"action\" : \"Commit\"\n}",
+        "createdDate": "2026-10-13T18:50:24Z",
+        "lastModifiedDate": "2026-10-13T18:51:16Z",
+        "steps": []
+      },
+      {
+        "id": "a0si8000000CVeLAAW",
+        "name": "JE-000",
+        "status": "Successful",
+        "template": {
+          "id": "a0ui80000008EFqAAM",
+          "name": "SFDX Git Initialization"
+        },
+        "dataJson": "{\"gitRepositoryURI\":\"git@github.com:chamanswami555/Copado-CS261013SFPSFP.git\",\"gitRepositoryId\":\"a0qi8000000LVlZAAW\",\"template\":\"standard\",\"defaultDirectory\":\"force-app\",\"branch\":\"main\",\"projectName\":\"sfdxTrial\",\"recreateProject\":true}",
+        "createdDate": "2026-10-13T18:29:36Z",
+        "lastModifiedDate": "2026-10-13T18:30:42Z",
+        "steps": []
+      }
+    ],
+    "currentPage": 1,
+    "pageSize": 5,
+    "totalPages": 1,
+    "totalRecords": 4,
+    "hasMore": false
+  },
+  "status": 0,
+  "transactionId": "01a1369e-8368-73b2-9570-29c3e35c2130"
+}

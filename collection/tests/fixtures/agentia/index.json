@@ -47,7 +47,7 @@
   "cicd work set US-0042": {
     "file": "work-set-US-0042.json"
   },
-  "cicd work submit --done --skip-pull-request": {
+  "cicd work submit --done *": {
     "file": "work-submit-done.json"
   },
   "cicd work submit *": {
@@ -102,7 +102,21 @@
   "cicd job get a4N000000000004AAA": {
     "file": "job-get-deploy-success.json"
   },
-  "cicd promotion list --work-id US-0042": {
+  "cicd promotion run P-BAD *": {
+    "file": "promotion-run-error.json",
+    "exit": 1
+  },
+  "cicd work set US-9999": {
+    "file": "work-get-missing.json",
+    "exit": 1
+  },
+  "cicd work get US-0042": {
+    "file": "work-get-US-0042.json"
+  },
+  "cicd promotion list --work-id a1Y000000000042EAA": {
     "file": "promotion-list-US-0042.json"
+  },
+  "cicd promotion get a0B000000000001EAA": {
+    "file": "promotion-get-synthetic.json"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "error": {
+    "message": "Promotion ID must be an 18-character Salesforce ID, not a display name.",
+    "name": "Error"
+  },
+  "transactionId": "01a1-promotion-bad-id"
+}

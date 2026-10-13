@@ -1,15 +1,92 @@
 {
-  "auth get": {"file": "live/auth-get.json"},
-  "cicd health-check": {"file": "live/health-check.json"},
-  "cicd work get US-0000024": {"file": "live/work-get-US-0000024.json"},
-  "cicd job get a0si8000000CVeLAAW": {"file": "live/job-get.json"},
-  "cicd job log get a0si8000000CVeLAAW": {"file": "live/job-log-get.json"},
-  "cicd job list --page-size 10": {"file": "live/job-list.json"},
-  "cicd pipeline list": {"file": "live/pipeline-list.json"},
-  "cicd pipeline get a0Wi8000000Mr2TEAS": {"file": "live/pipeline-get.json"},
-  "cicd environment list": {"file": "live/environment-list.json"},
-  "cicd project list": {"file": "live/project-list.json"},
-  "cicd promotion list": {"file": "live/promotion-list.json"},
-  "cicd user get": {"file": "live/user-get.json"},
-  "cicd work list --page-size 10": {"file": "live/work-list.json"}
+  "auth get": {
+    "file": "live/auth-get.json"
+  },
+  "cicd health-check": {
+    "file": "live/health-check.json"
+  },
+  "cicd work get US-0000024": {
+    "file": "live/work-get-US-0000024.json"
+  },
+  "cicd job get a0si8000000CVeLAAW": {
+    "file": "live/job-get.json"
+  },
+  "cicd job log get a0si8000000CVeLAAW": {
+    "file": "live/job-log-get.json"
+  },
+  "cicd job list --page-size 10": {
+    "file": "live/job-list.json"
+  },
+  "cicd pipeline list": {
+    "file": "live/pipeline-list.json"
+  },
+  "cicd pipeline get a0Wi8000000Mr2TEAS": {
+    "file": "live/pipeline-get.json"
+  },
+  "cicd environment list": {
+    "file": "live/environment-list.json"
+  },
+  "cicd project list": {
+    "file": "live/project-list.json"
+  },
+  "cicd promotion list": {
+    "file": "live/promotion-list.json"
+  },
+  "cicd user get": {
+    "file": "live/user-get.json"
+  },
+  "cicd work list --page-size 10": {
+    "file": "live/work-list.json"
+  },
+  "cicd work set US-0000024": {
+    "file": "live/work-set-US-0000024.json"
+  },
+  "cicd work publish": {
+    "file": "live/work-publish.json"
+  },
+  "cicd work submit --skip-local-tests --skip-pull-request": {
+    "file": "live/work-submit.json"
+  },
+  "cicd work status": {
+    "file": "live/work-status-after-submit.json"
+  },
+  "cicd job get a0si8000000CVjBAAW": {
+    "file": "live/job-get-validation.json"
+  },
+  "cicd job get a0si8000000CVmPAAW": {
+    "file": "live/job-get-deploy.json"
+  },
+  "cicd job log get a0si8000000CVmPAAW": {
+    "file": "live/job-log-deploy.json"
+  },
+  "cicd job list --page-size 5": {
+    "file": "live/job-list-after-submit.json"
+  },
+  "cicd promotion get a17i800000XXqQ4AAL": {
+    "file": "live/promotion-get.json"
+  },
+  "cicd work submit --done --skip-local-tests --skip-pull-request": {
+    "file": "live/work-submit-done.json"
+  },
+  "cicd promotion get a17i800000XX2PfAAL": {
+    "file": "live/promotion-get-done.json"
+  },
+  "cicd promotion get a17i800000XX9jaAAD": {
+    "file": "live/promotion-get-XX9ja.json"
+  },
+  "cicd promotion list --page-size 50 --work-id a1vi80000006OHNAA2": {
+    "file": "live/promotion-list-by-story.json"
+  },
+  "cicd job get a0si8000000CVw5AAG": {
+    "file": "live/job-get-promote-done.json"
+  },
+  "cicd job get a0si8000000CVxhAAG": {
+    "file": "live/job-get-deploy-done.json"
+  },
+  "cicd job log get a0si8000000CVxhAAG": {
+    "file": "live/job-log-deploy-done.json"
+  },
+  "cicd job list --page-size 8": {
+    "file": "live/job-list-latest.json"
+  }
 }
