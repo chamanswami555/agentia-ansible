@@ -9,7 +9,7 @@ export interface ReleaseScaffold {
   crtJobId?: string
   crtProjectId?: string
   repoDir: string
-  evidenceDir?: string
+  evidenceRoot?: string
   approve?: boolean
   generatedAt: string
 }
@@ -38,7 +38,8 @@ export function renderReleasePlaybook(input: ReleaseScaffold): string {
     `    crt_project_id: ${scalar(input.crtProjectId ?? '')}`,
     `    repo_dir: ${scalar(input.repoDir)}`,
   ]
-  if (input.evidenceDir) lines.push(`    evidence_dir: ${scalar(input.evidenceDir)}`)
+  // a root, not a folder: every run of the generated playbook gets its own dated evidence folder
+  if (input.evidenceRoot) lines.push(`    evidence_root: ${scalar(input.evidenceRoot)}`)
   lines.push(`    approve: ${scalar(Boolean(input.approve))}`)
   return `${lines.join('\n')}\n`
 }

@@ -24,7 +24,7 @@ troubleshoot the collection's playbooks, without guessing module names, order or
 
 `agentia_auth_info (require: [cicd])` -> `agentia_health_check` -> `agentia_work_submit`
 (validate, one task per story, `set_story`) -> `agentia_job_wait` (the validation's promote job) -> `agentia_promotion_info` (until `deployment_job_id` exists) -> `agentia_job_wait` (the check-only deployment job) ->
-`agentia_test_run` (Robotic Testing smoke suite) -> `ansible.builtin.pause` (human approval) ->
+`agentia_test_run` (Robotic Testing smoke suite) -> approval gate (`ansible.builtin.pause` asking for yes, then an `assert` that passes only with `approve: true` or a typed yes, because a pause alone does not stop a run without a terminal) ->
 `agentia_work_submit (done: true)` per story (the Copado Submit: promote and deploy) ->
 `agentia_job_wait` (promote job) -> `agentia_promotion_info` (until `deployment_job_id` exists) ->
 `agentia_job_wait` (deployment job) -> `agentia_health_check` -> write evidence files with

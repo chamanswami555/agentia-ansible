@@ -111,7 +111,7 @@ export function createServer() {
   server.tool('list_playbooks', 'List the governed Copado release playbooks this server can run', {}, async () => text(PLAYBOOKS));
 
   server.tool('run_release_playbook',
-    'Run the Copado release window playbook: validate each story and wait for its check-only deployment, run Robotic Testing smoke tests, then promote and deploy (story mode: the Copado Submit per story; promotion mode: merge_and_deploy on an existing promotion), wait and write evidence. Without approve=true the playbook stops at the human approval step, so an agent cannot deploy on its own.',
+    'Run the Copado release window playbook: validate each story and wait for its check-only deployment, run Robotic Testing smoke tests, then promote and deploy (story mode: the Copado Submit per story; promotion mode: merge_and_deploy on an existing promotion), wait and write evidence. Without approve=true the playbook stops at the approval gate (stopped_at_approval: true, nothing deployed), so an agent cannot deploy on its own.',
     {
       story_ids: z.array(z.string()).min(1).describe('Copado user story ids or names, for example ["US-0042"]'),
       deploy_mode: z.enum(['story', 'promotion']).default('story').describe('story: Copado Submit per story (default); promotion: run an existing promotion'),
@@ -133,7 +133,8 @@ export function createServer() {
       const extra = { story_ids: args.story_ids, deploy_mode: args.deploy_mode, promotion_id: args.promotion_id || '', crt_job_id: args.crt_job_id || '', crt_project_id: args.crt_project_id || '', repo_dir: args.repo_dir, evidence_dir: evidenceDir, approve: args.approve };
       if (args.demo) { extra.poll_interval = 1; extra.wait_timeout = 60; }
       const result = await runPlaybook('release_window', extra, { demo: args.demo, check: args.check });
-      return text({ ...result, evidence_dir: evidenceDir });
+      const stoppedAtApproval = !result.ok && /Deployment not approved/.test(result.output);
+      return text({ ...result, stopped_at_approval: stoppedAtApproval, evidence_dir: evidenceDir });
     });
 
   server.tool('run_playbook',

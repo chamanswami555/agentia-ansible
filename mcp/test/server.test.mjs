@@ -86,3 +86,15 @@ test('release window runs end to end in demo mode and reports a successful deplo
   assert.equal(status.deployment_status, 'Successful');
   assert.ok(status.files['validations.json'].deploy_jobs.length === 1, 'validation deployment job recorded');
 });
+
+test('release window without approve stops at the gate and deploys nothing', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'agentia-mcp-gate-'));
+  const result = await runPlaybook('release_window',
+    { story_ids: ['US-0042'], poll_interval: 1, wait_timeout: 60, repo_dir: root, evidence_dir: path.join(root, 'run') },
+    { demo: true });
+  assert.equal(result.ok, false);
+  assert.match(result.output, /Deployment not approved/);
+  assert.doesNotMatch(result.output, /Promote and deploy each story.*\n.*changed/);
+  const files = await fs.readdir(path.join(root, 'run'));
+  assert.ok(!files.includes('deployment.json'), 'no deployment evidence without approval');
+});

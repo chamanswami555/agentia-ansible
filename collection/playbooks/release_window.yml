@@ -146,13 +146,25 @@
         mode: "0644"
       when: smoke is not skipped
 
-    - name: Wait for a human before deploying to the next environment
+    # Interactive runs answer the prompt; AWX, MCP and CI runs have no terminal, so Ansible would
+    # continue past a plain pause. The assertion is the real gate: approve must be true or the
+    # operator must have typed yes.
+    - name: Ask the operator before deploying to the next environment
       ansible.builtin.pause:
         prompt: >-
-          Validation deployments finished with {{ validation_deploys.results | default([]) |
-          map(attribute='status', default='skipped') | list }} for {{ story_ids | join(', ') }}. Deploy to the
-          next environment? Press Enter to continue or Ctrl-C to abort
-      when: not approve
+          Validation deployments finished with
+          {{ validation_deploys.results | default([]) | map(attribute='status', default='skipped') | list }}
+          for {{ story_ids | join(', ') }}. Type yes to deploy to the next environment
+      when: not approve and not ansible_check_mode
+      register: approval
+
+    - name: Stop unless the deployment was approved
+      ansible.builtin.assert:
+        that: approve or ansible_check_mode or (approval.user_input | default('') | trim | lower == 'yes')
+        fail_msg: >-
+          Deployment not approved. Interactive runs answer yes at the prompt; AWX, MCP and CI runs
+          set approve=true after their own approval step.
+        quiet: true
 
     # Story mode: the Copado Submit for each story (promote and deploy to the next environment).
     - name: Promote and deploy each story

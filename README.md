@@ -17,8 +17,9 @@ Agentia Headless gives Copado a scriptable CLI with JSON output. This project pu
 operations teams already work:
 
 - Modules that are idempotent and support check mode and diff mode, so a playbook can be dry-run.
-- Playbooks with a human approval pause, a validation stage that waits for the real check-only
-  deployment, and an evidence folder per run (health checks, validations, deployment, test results)
+- Playbooks with a real approval gate (a typed yes at the prompt, or `approve: true` from an
+  AWX approval node, an MCP client or CI; a plain pause would not stop a run without a terminal),
+  a validation stage that waits for the real check-only deployment, and an evidence folder per run (health checks, validations, deployment, test results)
   with Copado's own transaction ids.
 - An event source so a failed Copado job starts a remediation playbook on its own.
 - Nothing bypasses Copado: every call is a public `agentia ... --json` command.
@@ -27,9 +28,9 @@ operations teams already work:
 
 | Folder | Component | Contents |
 | --- | --- | --- |
-| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 72 unit tests (96 percent coverage), recorded CLI answers |
+| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 74 unit tests (96 percent coverage), recorded CLI answers |
 | `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK |
-| `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 5 tests |
+| `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 6 tests |
 | `skills/agentia-ansible/` | Agent Skill | Teaches a coding agent how to author and run playbooks with the collection |
 | `tools/` | Development tools | Fake Agentia CLI that replays recorded answers, offline demos (playbooks and rulebook), a local quality gates script for Copado projects, fixture recorder with scrubbing, handbook PDF build |
 | `docs/` | Project handbook | Decisions, facts, command log and terminology of the project (Markdown and PDF) |
@@ -55,7 +56,7 @@ operations teams already work:
 
 | Playbook | What it does |
 | --- | --- |
-| `release_window.yml` | Health check; validate each story and wait for its promote job and its check-only deployment job; optional Robotic Testing smoke suite; human approval pause; then, in story mode, the Copado Submit per story (`work submit --done`) with waits on the promote job and the deployment job, or, in promotion mode, `merge_and_deploy` on an existing promotion; evidence folder; health check after |
+| `release_window.yml` | Health check; validate each story and wait for its promote job and its check-only deployment job; optional Robotic Testing smoke suite; approval gate (typed yes or `approve: true`); then, in story mode, the Copado Submit per story (`work submit --done`) with waits on the promote job and the deployment job, or, in promotion mode, `merge_and_deploy` on an existing promotion; evidence folder; health check after |
 | `nightly_validate.yml` | Validate every story in flight, wait for each validation deployment, run the smoke suite, write a report, fail if anything failed; no deployment |
 | `remediate_failed_job.yml` | Read a failed job and its log, ask the Copado AI Operate agent for a diagnosis when AI is configured, write an incident file, optionally resume the job |
 
@@ -71,14 +72,16 @@ in Error or Failed and records successful jobs.
 | Extensibility surface | Used how |
 | --- | --- |
 | CLI with `--json` | Every module runs a public command, parses the `{result, status, transactionId}` envelope (tolerating the warning line a linked plugin prints), returns the transaction id, and fails with Copado's own error message |
-| Plugin command (plugin SDK and generator) | `agentia ansible scaffold` reads the active story through the host API (or takes `--stories`) and writes a playbook that imports the collection's release window; `agentia ansible run` runs it with `--check`, `--approve` and `--json` |
-| MCP | `mcp/server.mjs` exposes `list_playbooks`, `run_release_playbook`, `run_playbook`, `list_evidence` and `release_status`, so an AI agent triggers the governed playbooks instead of raw commands and cannot skip the approval pause without `approve: true` |
+| Plugin command (plugin SDK and generator) | `agentia ansible scaffold` reads the active story through the host API (or takes `--stories`) and writes a playbook that imports the collection's release window; `agentia ansible run` runs it with `--check`, `--approve` and `--json`, finds the collection on its own (`--collections-path`, the environment, or a repository checkout) and names the stop at the approval gate |
+| MCP | `mcp/server.mjs` exposes `list_playbooks`, `run_release_playbook`, `run_playbook`, `list_evidence` and `release_status`, so an AI agent triggers the governed playbooks instead of raw commands; without `approve: true` the run stops at the approval gate (`stopped_at_approval`) and nothing is deployed |
 | Agent Skill | `skills/agentia-ansible/SKILL.md` gives a coding agent the module order, the real shapes learned from Copado and the rules for safe playbooks |
 
 ## Verified against a real Copado org
 
 On 14 October 2026 everything below ran against a Copado Playground (Copado Pipelines, Salesforce
-Source Format, region na) with Agentia CLI 1.0.0-beta.5. The scrubbed CLI answers of these runs
+Source Format, region na) with Agentia CLI 1.0.0-beta.5; on 15 October the module smoke test, a
+check-mode release through the plugin and a run that stops at the approval gate were repeated on
+1.0.0-beta.6. The scrubbed CLI answers of these runs
 are the `live/` fixtures under `collection/tests/fixtures/agentia`, and the unit tests assert on
 those real shapes.
 
@@ -107,14 +110,16 @@ Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), GNU make.
 git clone git@github.com:chamanswami555/agentia-ansible.git
 cd agentia-ansible
 make setup                      # .venv with ansible-core and pytest; links the collection under var/
-make check                      # pyflakes, ansible-lint, 72 unit tests with a 90 percent coverage floor, ansible-doc
+make check                      # pyflakes, ansible-lint, 74 unit tests with a 90 percent coverage floor, ansible-doc
 make demo                       # the three playbooks, then the rulebook, against the fake CLI
 make sanity                     # ansible-test sanity on a copy of the collection (installs its requirements)
 ```
 
 The fake CLI (`tools/fake-agentia/agentia`) replays recorded answers, logs every call, and answers
 job polls in sequence (running, then finished), so the demo shows the whole release flow in a few
-seconds. It fails unless the release reaches a successful deployment job. The rulebook demo
+seconds. It first proves the approval gate (no terminal, no approve: the run stops and the fake
+records no Copado Submit), then fails unless the approved release reaches a successful deployment
+job. The rulebook demo
 (`tools/demo/offline-rulebook-demo.sh`, Java 17 needed) lets a job turn to Error on the second poll
 and fails unless `remediate_failed_job` ran and wrote the incident file.
 
@@ -149,7 +154,7 @@ Without the plugin, the playbook runs directly:
 ansible-playbook chamanswami555.agentia.release_window -e '{"story_ids": ["US-0001"], "repo_dir": "/path/to/clone"}'
 ```
 
-Useful variables: `approve: true` skips the pause, `skip_local_tests: true` skips the local
+Useful variables: `approve: true` passes the approval gate (use it from an AWX workflow approval node, an MCP client or CI; interactive runs type yes at the prompt instead), `skip_local_tests: true` skips the local
 quality gates, `deploy_mode: promotion` with `promotion_id` uses an existing promotion,
 `poll_interval` and `wait_timeout` tune the waits, `evidence_dir` sets the evidence folder.
 
@@ -188,7 +193,8 @@ check mode and prints the recap and the latest evidence summary.
   and wait for the deployment job before anyone approves.
 - Every list answer of the CLI comes back as `result.data` with pagination; the module helper
   (`collection/plugins/module_utils/agentia.py`) hides that, maps CLI errors to Ansible failures
-  with the transaction id, and tolerates the warning line the CLI prints when a plugin is linked.
+  with the transaction id, enforces the per-call `timeout`, names a missing CLI clearly, and
+  tolerates the warning line the CLI prints when a plugin is linked.
 - The recorded answers are scrubbed before they enter the repository: every email address and
   Salesforce username becomes `user@example.com`; signature and token fields become `REDACTED`.
   `collection/tests/fixtures/agentia/README.md` lists the origin of every file.
@@ -199,9 +205,9 @@ check mode and prints the recap and the latest evidence summary.
 
 | Suite | Command | Count |
 | --- | --- | --- |
-| Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags) | `make test` | 72, coverage 96 percent with a 90 percent floor |
-| Plugin | `cd plugin && npm test` | 3 |
-| MCP server (including the release window end to end in demo mode) | `cd mcp && npm test` | 5 |
+| Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags, timeout, missing CLI) | `make test` | 74, coverage 96 percent with a 90 percent floor |
+| Plugin | `cd plugin && npm test` | 5 |
+| MCP server (including the release window end to end in demo mode, and the gate without approval) | `cd mcp && npm test` | 6 |
 
 Before a release, `ansible-galaxy collection build` and Galaxy's own importer (`galaxy-importer`)
 run on the tarball, and the release playbook runs from the installed copy by its full name; both

@@ -71,3 +71,19 @@ def test_modules_fail_with_the_cli_error_when_the_cli_breaks(fake_agentia, monke
     assert out["_rc"] == 1
     assert "fake agentia: cannot read no-such-index.json" in out["msg"]
     assert out["cli_command"].startswith("agentia ")
+
+
+def test_cli_timeout_fails_clearly(fake_agentia, tmp_path):
+    slow = tmp_path / "slow-agentia"
+    slow.write_text("#!/bin/sh\nsleep 5\n")
+    slow.chmod(0o755)
+    out = run_module("agentia_health_check", {"cli_path": str(slow), "timeout": 1})
+    assert out["_rc"] == 1
+    assert out["msg"] == "Agentia CLI did not finish within 1 seconds"
+    assert out["rc"] == 124
+
+
+def test_missing_cli_fails_clearly(fake_agentia):
+    out = run_module("agentia_health_check", {"cli_path": "/nonexistent/agentia"})
+    assert out["_rc"] == 1
+    assert out["msg"].startswith("Agentia CLI not found: /nonexistent/agentia")

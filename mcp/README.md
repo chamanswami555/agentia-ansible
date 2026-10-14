@@ -10,7 +10,7 @@ the Copado transaction ids; the agent only chooses what to run and reads the out
 | Tool | What it does |
 | --- | --- |
 | `list_playbooks` | The playbooks available |
-| `run_release_playbook` | Runs `release_window.yml` for the given stories (story mode, the Copado Submit per story) or for an existing promotion (`deploy_mode: promotion` with `promotion_id`); stops at the approval pause unless `approve: true` |
+| `run_release_playbook` | Runs `release_window.yml` for the given stories (story mode, the Copado Submit per story) or for an existing promotion (`deploy_mode: promotion` with `promotion_id`); stops at the approval gate unless `approve: true` (`stopped_at_approval: true`, nothing deployed) |
 | `run_playbook` | Runs `nightly_validate` or `remediate_failed_job` with extra variables |
 | `list_evidence` | Lists evidence folders |
 | `release_status` | Summarizes the latest evidence folder: deployment status, smoke tests, health checks |

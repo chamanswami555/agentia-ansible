@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import os
 import shlex
+import subprocess
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -58,6 +59,12 @@ def agentia_argument_spec():
     }
 
 
+def _text(value):
+    if value is None:
+        return ""
+    return value.decode("utf-8", "replace") if isinstance(value, bytes) else str(value)
+
+
 class AgentiaCli:
     """Runs ``agentia`` commands for one Ansible module."""
 
@@ -82,7 +89,16 @@ class AgentiaCli:
         self.calls.append(argv[1:])
         env = dict(os.environ)
         env.setdefault("CI", "1")
-        rc, stdout, stderr = self.module.run_command(argv, cwd=self.working_dir, environ_update=env)
+        try:
+            proc = subprocess.run(argv, cwd=self.working_dir or None, env=env, capture_output=True,
+                                  text=True, errors="replace", timeout=self.timeout)
+        except FileNotFoundError:
+            raise AgentiaError("Agentia CLI not found: %s (install @copado/agentia-cli or set cli_path)" % self.cli_path,
+                               command=command, rc=127, stdout="", stderr="")
+        except subprocess.TimeoutExpired as exc:
+            raise AgentiaError("Agentia CLI did not finish within %s seconds" % self.timeout,
+                               command=command, rc=124, stdout=_text(exc.stdout), stderr=_text(exc.stderr))
+        rc, stdout, stderr = proc.returncode, proc.stdout, proc.stderr
         self.last_rc = rc
         data = self._parse(stdout, stderr, rc, command)
         if "error" in data and data["error"]:

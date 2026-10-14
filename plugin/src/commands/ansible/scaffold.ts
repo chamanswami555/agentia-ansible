@@ -9,7 +9,7 @@ import {renderReleasePlaybook} from '../../lib/playbook.js'
 
 export default class AnsibleScaffold extends AgentiaCommand {
   static override description =
-    'Write an Ansible release-window playbook from the current Copado state: the active or given user stories and their promotion'
+    'Write an Ansible release-window playbook from the current Copado state: the active or given user stories (story mode) or an existing promotion'
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --stories US-0042,US-0043 --promotion a0BXXXXXXXXXXXXXXX --out release.yml',
@@ -85,7 +85,7 @@ export default class AnsibleScaffold extends AgentiaCommand {
       crtJobId: flags['crt-job'],
       crtProjectId: flags['crt-project'],
       repoDir,
-      evidenceDir: path.join(repoDir, 'evidence', stamp),
+      evidenceRoot: path.join(repoDir, 'evidence'),
       generatedAt: new Date().toISOString(),
     })
 
