@@ -1,0 +1,5 @@
+{
+  "result": "The validation deployment passed; promote when the smoke suite is green.",
+  "status": 0,
+  "transactionId": "01a1-ai-str"
+}

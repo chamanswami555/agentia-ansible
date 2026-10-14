@@ -27,7 +27,7 @@ operations teams already work:
 
 | Folder | Component | Contents |
 | --- | --- | --- |
-| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 59 unit tests, recorded CLI answers |
+| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 72 unit tests (96 percent coverage), recorded CLI answers |
 | `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK |
 | `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 5 tests |
 | `skills/agentia-ansible/` | Agent Skill | Teaches a coding agent how to author and run playbooks with the collection |
@@ -107,7 +107,7 @@ Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), GNU make.
 git clone git@github.com:chamanswami555/agentia-ansible.git
 cd agentia-ansible
 make setup                      # .venv with ansible-core and pytest; links the collection under var/
-make check                      # pyflakes, ansible-lint, 59 unit tests, ansible-doc for every module
+make check                      # pyflakes, ansible-lint, 72 unit tests with a 90 percent coverage floor, ansible-doc
 make demo                       # the three playbooks, then the rulebook, against the fake CLI
 make sanity                     # ansible-test sanity on a copy of the collection (installs its requirements)
 ```
@@ -199,9 +199,13 @@ check mode and prints the recap and the latest evidence summary.
 
 | Suite | Command | Count |
 | --- | --- | --- |
-| Collection unit tests (modules, helper, event source, real shapes, error paths) | `make test` | 59 |
+| Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags) | `make test` | 72, coverage 96 percent with a 90 percent floor |
 | Plugin | `cd plugin && npm test` | 3 |
 | MCP server (including the release window end to end in demo mode) | `cd mcp && npm test` | 5 |
+
+Before a release, `ansible-galaxy collection build` and Galaxy's own importer (`galaxy-importer`)
+run on the tarball, and the release playbook runs from the installed copy by its full name; both
+passed on 15 October 2026.
 
 `.github/workflows/ci.yml` runs `make check` (pyflakes, ansible-lint, unit tests, module docs),
 the offline playbook demo, the offline rulebook demo with Java 17, the MCP server tests and the

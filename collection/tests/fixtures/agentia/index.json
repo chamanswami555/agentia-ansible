@@ -96,6 +96,9 @@
     "file": "test-run-fail.json",
     "exit": 1
   },
+  "testing test run 196473 *": {
+    "file": "test-run-pass.json"
+  },
   "ai agent ask *": {
     "file": "ai-ask.json"
   },
@@ -116,6 +119,9 @@
   "cicd promotion list --work-id a1Y000000000042EAA": {
     "file": "promotion-list-US-0042.json"
   },
+  "cicd promotion list *": {
+    "file": "promotion-list-US-0042.json"
+  },
   "cicd promotion get a0B000000000001EAA": {
     "file": "promotion-get-synthetic.json"
   },
@@ -127,5 +133,8 @@
   },
   "cicd job resume a4N000000000006AAA": {
     "file": "job-resume.json"
+  },
+  "ai agent ask --agent plan -p Short answer --no-stream --timeout 30": {
+    "file": "ai-ask-string.json"
   }
 }

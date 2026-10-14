@@ -11,8 +11,9 @@ setup:
 	mkdir -p $(COLLECTIONS)/ansible_collections/chamanswami555
 	ln -sfn $(CURDIR)/collection $(COLLECTIONS)/ansible_collections/chamanswami555/agentia
 
+# coverage of the modules, the helper and the event source; the floor is a quality gate
 test:
-	$(PY) -m pytest
+	$(PY) -m pytest --cov=collection/plugins --cov=collection/extensions/eda/plugins/event_source --cov-report=term-missing --cov-fail-under=90
 
 docs:
 	@for m in $(MODULES); do \
