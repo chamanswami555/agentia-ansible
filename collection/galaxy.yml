@@ -15,7 +15,7 @@ tags:
   - cicd
   - release
 repository: https://github.com/chamanswami555/agentia-ansible
-documentation: https://github.com/chamanswami555/agentia-ansible/tree/main/collection/docs
+documentation: https://github.com/chamanswami555/agentia-ansible/blob/main/collection/README.md
 issues: https://github.com/chamanswami555/agentia-ansible/issues
 build_ignore:
   - tests/output

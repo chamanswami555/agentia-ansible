@@ -7,7 +7,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listEvidence, releaseStatus, playbookPath } from '../server.mjs';
+import { listEvidence, releaseStatus, playbookPath, runPlaybook, deploymentStatus } from '../server.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SERVER = path.join(HERE, '..', 'server.mjs');
@@ -16,7 +16,7 @@ async function tempEvidence() {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'agentia-evidence-'));
   const folder = path.join(root, '2026-10-12T10-00-00');
   await fs.mkdir(folder);
-  await fs.writeFile(path.join(folder, 'deployment.json'), JSON.stringify({ promotion: { status: 'Completed' }, job: { status: 'Successful' } }));
+  await fs.writeFile(path.join(folder, 'deployment.json'), JSON.stringify({ deploy_mode: 'story', deploy_jobs: [{ name: 'JE-018', status: 'Successful' }], promotions: [{ status: 'In Progress' }] }));
   await fs.writeFile(path.join(folder, 'smoke-tests.json'), JSON.stringify({ tests: { total: 12, passed: 12, failed: 0 } }));
   return root;
 }
@@ -63,4 +63,26 @@ test('server answers initialize and tools/list over stdio', async () => {
   assert.equal(init.result.serverInfo.name, 'agentia-ansible');
   const tools = lines.find((m) => m.id === 2).result.tools.map((t) => t.name).sort();
   assert.deepEqual(tools, ['list_evidence', 'list_playbooks', 'release_status', 'run_playbook', 'run_release_playbook']);
+});
+
+test('deploymentStatus reads story-mode and promotion-mode evidence', () => {
+  assert.equal(deploymentStatus({ deploy_jobs: [{ status: 'Successful' }, { status: 'Successful' }] }), 'Successful');
+  assert.equal(deploymentStatus({ deploy_jobs: [{ status: 'Successful' }, { status: 'Error' }] }), 'Error');
+  assert.equal(deploymentStatus({ promotion_after: { status: 'Completed' } }), 'Completed');
+  assert.equal(deploymentStatus({}), 'unknown');
+});
+
+// The whole release window against the fake CLI: proves the demo path reaches a deployment job
+// (a fake that answers "In Progress" for ever, or a skipped stage, would fail this).
+test('release window runs end to end in demo mode and reports a successful deployment', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'agentia-mcp-demo-'));
+  const evidenceDir = path.join(root, 'run');
+  const result = await runPlaybook('release_window',
+    { story_ids: ['US-0042'], deploy_mode: 'story', approve: true, poll_interval: 1, wait_timeout: 60, repo_dir: root, evidence_dir: evidenceDir },
+    { demo: true });
+  assert.equal(result.ok, true, result.output);
+  assert.match(result.recap, /failed=0/);
+  const status = await releaseStatus(root, 'run');
+  assert.equal(status.deployment_status, 'Successful');
+  assert.ok(status.files['validations.json'].deploy_jobs.length === 1, 'validation deployment job recorded');
 });

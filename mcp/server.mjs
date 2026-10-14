@@ -10,6 +10,7 @@
 //   AGENTIA_EVIDENCE_ROOT  where evidence folders live (default: <root>/var/evidence)
 //   AGENTIA_MCP_DEMO       "1" runs playbooks against the fake Agentia CLI (offline demo)
 import { spawn } from 'node:child_process';
+import os from 'node:os';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,6 +39,9 @@ export function buildEnv(demo) {
   if (demo || process.env.AGENTIA_MCP_DEMO === '1') {
     env.PATH = `${path.join(ROOT, 'tools', 'fake-agentia')}${path.delimiter}${env.PATH || ''}`;
     env.AGENTIA_FAKE_FIXTURES = path.join(ROOT, 'collection', 'tests', 'fixtures', 'agentia');
+    // The fake answers job polls in sequence (running, then finished) by counting earlier calls in
+    // this log, so every demo run gets a fresh one; without it a job would poll "In Progress" for ever.
+    env.AGENTIA_FAKE_LOG = path.join(os.tmpdir(), `agentia-fake-calls-${process.pid}-${Date.now()}.jsonl`);
   }
   return env;
 }
@@ -84,10 +88,17 @@ export async function releaseStatus(root = EVIDENCE_ROOT, folder) {
     }
   }
   const deployment = summary.files['deployment.json'];
-  if (deployment) summary.deployment_status = deployment.job?.status || deployment.promotion?.status || 'unknown';
+  if (deployment) summary.deployment_status = deploymentStatus(deployment);
   const smoke = summary.files['smoke-tests.json'];
   if (smoke?.tests) summary.smoke_tests = smoke.tests;
   return summary;
+}
+
+// Story mode writes one deployment job per story; promotion mode writes the promotion after the run.
+export function deploymentStatus(deployment) {
+  const jobs = Array.isArray(deployment.deploy_jobs) ? deployment.deploy_jobs.map((j) => j?.status).filter(Boolean) : [];
+  if (jobs.length) return jobs.every((st) => st === 'Successful') ? 'Successful' : jobs.find((st) => st !== 'Successful');
+  return deployment.job?.status || deployment.promotion_after?.status || deployment.promotion?.status || 'unknown';
 }
 
 function text(value) {
@@ -100,10 +111,11 @@ export function createServer() {
   server.tool('list_playbooks', 'List the governed Copado release playbooks this server can run', {}, async () => text(PLAYBOOKS));
 
   server.tool('run_release_playbook',
-    'Run the Copado release window playbook: validate stories, merge the promotion, run Robotic Testing smoke tests, deploy, wait and write evidence. Without approve=true the playbook stops at the human approval step, so an agent cannot deploy on its own.',
+    'Run the Copado release window playbook: validate each story and wait for its check-only deployment, run Robotic Testing smoke tests, then promote and deploy (story mode: the Copado Submit per story; promotion mode: merge_and_deploy on an existing promotion), wait and write evidence. Without approve=true the playbook stops at the human approval step, so an agent cannot deploy on its own.',
     {
       story_ids: z.array(z.string()).min(1).describe('Copado user story ids or names, for example ["US-0042"]'),
-      promotion_id: z.string().describe('18-character Copado promotion id'),
+      deploy_mode: z.enum(['story', 'promotion']).default('story').describe('story: Copado Submit per story (default); promotion: run an existing promotion'),
+      promotion_id: z.string().optional().describe('18-character Copado promotion id; required in promotion mode, must not be a validation promotion'),
       crt_job_id: z.string().optional().describe('Robotic Testing job id for the smoke suite'),
       crt_project_id: z.string().optional().describe('Robotic Testing project id'),
       repo_dir: z.string().describe('Git working copy of the Salesforce project'),
@@ -115,7 +127,11 @@ export function createServer() {
     async (args) => {
       const stamp = new Date().toISOString().replace(/[:.]/g, '-');
       const evidenceDir = args.evidence_dir || path.join(EVIDENCE_ROOT, stamp);
-      const extra = { story_ids: args.story_ids, promotion_id: args.promotion_id, crt_job_id: args.crt_job_id || '', crt_project_id: args.crt_project_id || '', repo_dir: args.repo_dir, evidence_dir: evidenceDir, approve: args.approve };
+      if (args.deploy_mode === 'promotion' && !/^[A-Za-z0-9]{18}$/.test(args.promotion_id || '')) {
+        return text({ ok: false, error: 'promotion mode needs an 18-character promotion_id' });
+      }
+      const extra = { story_ids: args.story_ids, deploy_mode: args.deploy_mode, promotion_id: args.promotion_id || '', crt_job_id: args.crt_job_id || '', crt_project_id: args.crt_project_id || '', repo_dir: args.repo_dir, evidence_dir: evidenceDir, approve: args.approve };
+      if (args.demo) { extra.poll_interval = 1; extra.wait_timeout = 60; }
       const result = await runPlaybook('release_window', extra, { demo: args.demo, check: args.check });
       return text({ ...result, evidence_dir: evidenceDir });
     });

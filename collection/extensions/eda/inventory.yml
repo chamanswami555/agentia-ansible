@@ -1,0 +1,6 @@
+---
+# Inventory for the rulebook: the Agentia CLI runs on the machine that runs ansible-rulebook.
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
