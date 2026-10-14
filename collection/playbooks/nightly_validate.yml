@@ -90,7 +90,11 @@
 
     - name: Save the nightly report
       ansible.builtin.copy:
-        content: "{{ {'validations': validations.results | default([]), 'promote_jobs': validation_jobs.results | default([]) | map(attribute='job', default={}) | list, 'deploy_jobs': validation_deploys.results | default([]) | map(attribute='job', default={}) | list, 'smoke': smoke.run | default({})} | to_nice_json }}"
+        content: >-
+          {{ {'validations': validations.results | default([]), 'promote_jobs': validation_jobs.results |
+          default([]) | map(attribute='job', default={}) | list, 'deploy_jobs': validation_deploys.results |
+          default([]) | map(attribute='job', default={}) | list, 'smoke': smoke.run | default({})} |
+          to_nice_json }}
         dest: "{{ evidence_dir }}/nightly-report.json"
         mode: "0644"
 

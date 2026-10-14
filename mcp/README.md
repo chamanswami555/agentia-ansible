@@ -23,7 +23,8 @@ flow can be shown without a Copado licence.
 ```sh
 cd mcp && npm install
 node server.mjs            # speaks MCP over stdio
-npm test                   # smoke tests
+npm test                   # tests, including the release window end to end in demo mode
+node live-check.mjs US-0001 /path/to/salesforce-clone   # real org, Ansible check mode, prints recap and evidence summary
 ```
 
 Client configuration (for example Cursor's `mcp.json`):

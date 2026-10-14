@@ -36,7 +36,9 @@
           - story_ids | length > 0
           - deploy_mode in ['story', 'promotion']
           - deploy_mode == 'story' or promotion_id | length == 18
-        fail_msg: "story_ids must list at least one story; deploy_mode must be story or promotion; promotion mode needs the 18-character promotion id (got '{{ promotion_id }}')"
+        fail_msg: >-
+          story_ids must list at least one story; deploy_mode must be story or promotion; promotion mode needs
+          the 18-character promotion id (got '{{ promotion_id }}')
         quiet: true
 
     - name: Check that the Agentia CLI is authenticated
@@ -119,7 +121,12 @@
 
     - name: Save the validation results
       ansible.builtin.copy:
-        content: "{{ {'submissions': validations.results | map(attribute='submission', default={}) | list, 'promote_jobs': validation_jobs.results | default([]) | map(attribute='job', default={}) | list, 'promotions': validation_promotions.results | default([]) | map(attribute='promotion', default={}) | list, 'deploy_jobs': validation_deploys.results | default([]) | map(attribute='job', default={}) | list} | to_nice_json }}"
+        content: >-
+          {{ {'submissions': validations.results | map(attribute='submission', default={}) | list,
+          'promote_jobs': validation_jobs.results | default([]) | map(attribute='job', default={}) | list,
+          'promotions': validation_promotions.results | default([]) | map(attribute='promotion', default={}) |
+          list, 'deploy_jobs': validation_deploys.results | default([]) | map(attribute='job', default={}) |
+          list} | to_nice_json }}
         dest: "{{ evidence_dir }}/validations.json"
         mode: "0644"
 
@@ -141,7 +148,10 @@
 
     - name: Wait for a human before deploying to the next environment
       ansible.builtin.pause:
-        prompt: "Validation deployments finished with {{ validation_deploys.results | default([]) | map(attribute='status', default='skipped') | list }} for {{ story_ids | join(', ') }}. Deploy to the next environment? Press Enter to continue or Ctrl-C to abort"
+        prompt: >-
+          Validation deployments finished with {{ validation_deploys.results | default([]) |
+          map(attribute='status', default='skipped') | list }} for {{ story_ids | join(', ') }}. Deploy to the
+          next environment? Press Enter to continue or Ctrl-C to abort
       when: not approve
 
     # Story mode: the Copado Submit for each story (promote and deploy to the next environment).
@@ -242,4 +252,7 @@
 
     - name: Release summary
       ansible.builtin.debug:
-        msg: "Stories {{ story_ids | join(', ') }} released ({{ deploy_mode }} mode). Deployment jobs: {{ deploy_jobs.results | default([]) | map(attribute='status', default='n/a') | list }}. Evidence in {{ evidence_dir }}"
+        msg: >-
+          Stories {{ story_ids | join(', ') }} released ({{ deploy_mode }} mode). Deployment jobs: {{
+          deploy_jobs.results | default([]) | map(attribute='status', default='n/a') | list }}. Evidence in {{
+          evidence_dir }}

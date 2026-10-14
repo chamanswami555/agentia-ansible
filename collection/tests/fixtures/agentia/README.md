@@ -48,7 +48,7 @@ answers, error cases) and the multi-step job scenarios.
 | auth-get-configured.json, auth-get-missing.json | Synthetic, shaped after the real `auth get` |
 | health-check.json | Synthetic |
 | promotion-run.json, promotion-resume.json, promotion-run-error.json, promotion-list-US-0042.json, promotion-get-synthetic.json | Synthetic; the promotion get is shaped after the real promotion-get-done.json (`lastDeploymentExecutionId`); run and resume are still to be re-recorded, because the playground only produced validation promotions, which refuse the merge operation |
-| job-get-inprogress.json, job-get-success.json, job-get-error.json, job-get-deploy-success.json, job-log.json, job-list.json, job-list-cycle1.json, job-list-cycle2.json, job-resume.json | Synthetic job scenarios |
+| job-get-inprogress.json, job-get-success.json, job-get-error.json, job-get-error-6.json, job-get-deploy-success.json, job-log.json, job-list.json, job-list-cycle1.json, job-list-cycle2.json, job-resume.json | Synthetic job scenarios; job-get-error-6.json is the failed job that appears in job-list-cycle2.json, used by the rulebook demo |
 | metadata-compare.json, test-run-pass.json, test-run-fail.json, ai-ask.json | Synthetic |
 
 Each synthetic file is replaced by a recording as soon as the corresponding real flow has run.

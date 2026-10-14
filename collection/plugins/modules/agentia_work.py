@@ -225,14 +225,14 @@ def run_module():
             result["changed"] = True
             result["diff"] = {"before": {"id": story_id, "present": True}, "after": {"present": False}}
             if not module.check_mode:
-                _, tx = cli.run(["cicd", "work", "delete", story_id])
+                _deleted, tx = cli.run(["cicd", "work", "delete", story_id])
                 result["transaction_id"] = tx
             module.exit_json(**result)
 
         if current is None:
             if not params["title"]:
                 module.fail_json(msg="title is required to create a story", **result)
-            flags, _, after = _desired_changes(params, None)
+            flags, _before, after = _desired_changes(params, None)
             result["changed"] = True
             result["diff"] = {"before": {}, "after": after}
             if module.check_mode:

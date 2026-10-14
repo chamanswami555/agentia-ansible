@@ -24,8 +24,19 @@ jobs:
       - name: Lint, unit tests and module documentation
         run: make check
 
+      - name: ansible-test sanity
+        run: make sanity
+
       - name: Offline demo against the fake Agentia CLI
         run: bash tools/demo/offline-demo.sh
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Offline rulebook demo (failed job to remediation playbook)
+        run: bash tools/demo/offline-rulebook-demo.sh
 
       - uses: actions/setup-node@v4
         with:

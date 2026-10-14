@@ -118,5 +118,14 @@
   },
   "cicd promotion get a0B000000000001EAA": {
     "file": "promotion-get-synthetic.json"
+  },
+  "cicd job get a4N000000000006AAA": {
+    "file": "job-get-error-6.json"
+  },
+  "cicd job log get a4N000000000006AAA": {
+    "file": "job-log.json"
+  },
+  "cicd job resume a4N000000000006AAA": {
+    "file": "job-resume.json"
   }
 }

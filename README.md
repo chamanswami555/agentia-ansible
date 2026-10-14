@@ -31,7 +31,7 @@ operations teams already work:
 | `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK |
 | `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 5 tests |
 | `skills/agentia-ansible/` | Agent Skill | Teaches a coding agent how to author and run playbooks with the collection |
-| `tools/` | Development tools | Fake Agentia CLI that replays recorded answers, offline demo, fixture recorder with scrubbing, handbook PDF build |
+| `tools/` | Development tools | Fake Agentia CLI that replays recorded answers, offline demos (playbooks and rulebook), a local quality gates script for Copado projects, fixture recorder with scrubbing, handbook PDF build |
 | `docs/` | Project handbook | Decisions, facts, command log and terminology of the project (Markdown and PDF) |
 
 ### Modules
@@ -92,9 +92,10 @@ those real shapes.
 
 Not yet run live: promotion mode (`merge_and_deploy` on an existing non-validation promotion),
 Robotic Testing and Copado AI, which the playground has no licence for. Those modules are covered
-by tests against answers shaped after the CLI documentation. The live runs skipped the local
-quality gates (`skip_local_tests: true`) because the playground's sample gate fails on its own
-code analysis step.
+by tests against answers shaped after the CLI documentation. The first live runs skipped the local
+quality gates (`skip_local_tests: true`) because the CLI's stock sample gate fails on this machine;
+with `tools/quality-gates/agentia_quality_gates.sh` installed in the project, a later validation
+submit ran the gate (exit 0) and reached its check-only deployment job without the skip.
 
 ## Quick start
 
@@ -106,13 +107,16 @@ Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), GNU make.
 git clone git@github.com:chamanswami555/agentia-ansible.git
 cd agentia-ansible
 make setup                      # .venv with ansible-core and pytest; links the collection under var/
-make check                      # pyflakes, 59 unit tests, ansible-doc for every module
-bash tools/demo/offline-demo.sh # the three playbooks against the fake CLI; evidence in var/demo
+make check                      # pyflakes, ansible-lint, 59 unit tests, ansible-doc for every module
+make demo                       # the three playbooks, then the rulebook, against the fake CLI
+make sanity                     # ansible-test sanity on a copy of the collection (installs its requirements)
 ```
 
 The fake CLI (`tools/fake-agentia/agentia`) replays recorded answers, logs every call, and answers
 job polls in sequence (running, then finished), so the demo shows the whole release flow in a few
-seconds. It fails unless the release reaches a successful deployment job.
+seconds. It fails unless the release reaches a successful deployment job. The rulebook demo
+(`tools/demo/offline-rulebook-demo.sh`, Java 17 needed) lets a job turn to Error on the second poll
+and fails unless `remediate_failed_job` ran and wrote the incident file.
 
 ### Live, with a Copado CI/CD API key
 
@@ -149,6 +153,12 @@ Useful variables: `approve: true` skips the pause, `skip_local_tests: true` skip
 quality gates, `deploy_mode: promotion` with `promotion_id` uses an existing promotion,
 `poll_interval` and `wait_timeout` tune the waits, `evidence_dir` sets the evidence folder.
 
+Local quality gates: `agentia cicd work test` and `work submit` run the project's
+`.agentia_quality_gates.sh` when it exists, and the CLI's stock sample otherwise.
+`tools/quality-gates/agentia_quality_gates.sh` is a deterministic, offline gate for Source Format
+projects (well-formed XML, no org ids or credentials, a test class for every changed Apex class,
+file size); copy it to the project root as `.agentia_quality_gates.sh`.
+
 ### Event-Driven Ansible
 
 `ansible-rulebook` needs Java 17 and `ansible-galaxy` on the PATH. On macOS with Homebrew, set
@@ -164,6 +174,8 @@ ansible-rulebook --rulebook collection/extensions/eda/rulebooks/copado_release.y
 
 See [mcp/README.md](mcp/README.md) for the client configuration and
 [skills/agentia-ansible/SKILL.md](skills/agentia-ansible/SKILL.md) for the skill.
+`node mcp/live-check.mjs <story> <clone>` drives the server over stdio against a real org in
+check mode and prints the recap and the latest evidence summary.
 
 ## Design notes
 
@@ -191,7 +203,8 @@ See [mcp/README.md](mcp/README.md) for the client configuration and
 | Plugin | `cd plugin && npm test` | 3 |
 | MCP server (including the release window end to end in demo mode) | `cd mcp && npm test` | 5 |
 
-`.github/workflows/ci.yml` runs `make check`, the offline demo, the MCP server tests and the
+`.github/workflows/ci.yml` runs `make check` (pyflakes, ansible-lint, unit tests, module docs),
+the offline playbook demo, the offline rulebook demo with Java 17, the MCP server tests and the
 plugin tests on every push, and keeps the demo evidence as an artifact.
 
 ## Repository layout

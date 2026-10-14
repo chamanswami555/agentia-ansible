@@ -1,0 +1,12 @@
+plugins/modules/agentia_ai_ask.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_auth_info.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_health_check.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_job_action.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_job_info.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_job_wait.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_metadata_compare.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_promotion.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_promotion_info.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_test_run.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_work.py validate-modules:missing-gplv3-license
+plugins/modules/agentia_work_submit.py validate-modules:missing-gplv3-license
