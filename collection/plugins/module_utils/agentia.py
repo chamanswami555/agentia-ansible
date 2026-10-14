@@ -91,13 +91,13 @@ class AgentiaCli:
         env.setdefault("CI", "1")
         try:
             proc = subprocess.run(argv, cwd=self.working_dir or None, env=env, capture_output=True,
-                                  text=True, errors="replace", timeout=self.timeout)
-        except FileNotFoundError:
+                                  text=True, errors="replace", timeout=self.timeout, check=False)
+        except FileNotFoundError as exc:
             raise AgentiaError("Agentia CLI not found: %s (install @copado/agentia-cli or set cli_path)" % self.cli_path,
-                               command=command, rc=127, stdout="", stderr="")
+                               command=command, rc=127, stdout="", stderr="") from exc
         except subprocess.TimeoutExpired as exc:
             raise AgentiaError("Agentia CLI did not finish within %s seconds" % self.timeout,
-                               command=command, rc=124, stdout=_text(exc.stdout), stderr=_text(exc.stderr))
+                               command=command, rc=124, stdout=_text(exc.stdout), stderr=_text(exc.stderr)) from exc
         rc, stdout, stderr = proc.returncode, proc.stdout, proc.stderr
         self.last_rc = rc
         data = self._parse(stdout, stderr, rc, command)
