@@ -1,6 +1,6 @@
 # agentia-ansible-mcp
 
-An MCP server so an AI coding agent (Cursor or any MCP client) triggers Copado
+An MCP server so an AI coding agent (any MCP client, for example Cursor) triggers Copado
 releases through the governed playbooks of the `chamanswami555.agentia` collection rather
 than through raw commands. The playbooks keep the human approval pause, the evidence folder and
 the Copado transaction ids; the agent only chooses what to run and reads the outcome.
@@ -27,7 +27,7 @@ npm test                   # tests, including the release window end to end in d
 node live-check.mjs US-0001 /path/to/salesforce-clone   # real org, Ansible check mode, prints recap and evidence summary
 ```
 
-Client configuration (for example Cursor's `mcp.json`):
+Client configuration (the client's MCP settings file, for example `mcp.json`):
 
 ```json
 {
