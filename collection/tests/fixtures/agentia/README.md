@@ -3,8 +3,9 @@
 Recorded answers replayed by `tools/fake-agentia/agentia` during unit tests and the offline demo.
 `index.json` maps a command line (arguments without `--json`) to a file and exit code; an entry
 with `files` answers successive calls with successive files. `index-nocreds.json` is the index for
-the "no credentials configured" scenario and `index-live.json` the index that points at real
-recordings; both are selected with `AGENTIA_FAKE_INDEX`.
+the "no credentials configured" scenario, `index-failing-validation.json` the index whose submit names
+a job that ends in Error, and `index-live.json` the index that points at real recordings; all are
+selected with `AGENTIA_FAKE_INDEX`.
 
 ## Real recordings (`live/`)
 
@@ -43,7 +44,7 @@ answers, error cases) and the multi-step job scenarios.
 | --- | --- |
 | work-get-US-0001.json, work-list-found.json, work-list-empty.json, work-create.json, work-update-US-0001.json, work-delete.json | Synthetic story flow |
 | work-get-missing.json, work-get-nocreds.json | Synthetic error envelopes; the nocreds message is the real text the CLI prints without a key |
-| work-set-US-0042.json, work-get-US-0042.json, work-submit.json, work-submit-done.json | Synthetic ids; the submit and done files were reshaped on 14 October 2026 after the real recordings (`submit.jobId`, `done.jobId`, a message carrying `promotion_id=` and `job_execution_id=`) |
+| work-set-US-0042.json, work-set-US-0043.json, work-get-US-0042.json, work-submit.json, work-submit-failing.json, work-submit-done.json | Synthetic ids; the submit and done files were reshaped on 14 October 2026 after the real recordings (`submit.jobId`, `done.jobId`, a message carrying `promotion_id=` and `job_execution_id=`) |
 | work-get-with-warning.txt, work-get-broken.txt | Synthetic warning-prefix and non-JSON outputs |
 | auth-get-configured.json, auth-get-missing.json | Synthetic, shaped after the real `auth get` |
 | health-check.json | Synthetic |

@@ -98,3 +98,19 @@ def test_job_action_check_mode(fake_agentia):
     out = run_module("agentia_job_action", {"id": "x", "action": "run", "restart": True}, check_mode=True)
     assert out["command"] == ["cicd", "job", "run", "x", "--restart"]
     assert not Path(os.environ["AGENTIA_FAKE_LOG"]).exists()
+
+
+def test_main_polls_promotions_when_asked(fake_agentia):
+    src = load_source()
+
+    class Queue:
+        def __init__(self):
+            self.events = []
+
+        async def put(self, event):
+            self.events.append(event)
+
+    queue = Queue()
+    asyncio.run(src.main(queue, {"interval": 0, "max_polls": 1, "kinds": ["promotion"], "emit_initial": True}))
+    assert queue.events and all(e["agentia"]["kind"] == "promotion" for e in queue.events)
+    assert read_calls(fake_agentia)[0][:3] == ["cicd", "promotion", "list"]

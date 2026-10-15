@@ -28,3 +28,24 @@ To render one page as an image for a visual check on macOS:
 node tools/html2pdf.mjs "<browser>" "$PWD/var/hackathon-handbook.html" var/page-23.pdf 23
 qlmanage -t -s 1400 -o var var/page-23.pdf
 ```
+
+## Other documents
+
+The deck is `docs/deck/agentia-ansible-deck.html`, printed as a 16:9 PDF with the same tool:
+
+```sh
+PDF_PAPER_WIDTH=13.33 PDF_PAPER_HEIGHT=7.5 PDF_MARGIN=0 PDF_FOOTER=off \
+  node tools/html2pdf.mjs "<browser>" "$PWD/docs/deck/agentia-ansible-deck.html" docs/agentia-ansible-deck.pdf
+```
+
+`PDF_PAPER_WIDTH` and `PDF_PAPER_HEIGHT` are inches (default A4 portrait), `PDF_MARGIN` sets all four
+margins, `PDF_FOOTER=off` drops the page footer.
+
+The project document is built with python-docx (`uv pip install --python .venv-tools/bin/python python-docx`):
+
+```sh
+.venv-tools/bin/python -I tools/build-project-doc.py   # writes docs/agentia-ansible-project.docx
+```
+
+`tools/quality-gates/agentia_quality_gates.sh` is the local quality gate for Copado Source Format
+projects; copy it to a project root as `.agentia_quality_gates.sh`.

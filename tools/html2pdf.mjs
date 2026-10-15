@@ -38,13 +38,17 @@ await send('Page.enable');
 await send('Page.navigate', { url: 'file://' + htmlPath });
 await sleep(2500);
 const title = footerTitle || path.basename(htmlPath, '.html');
+// Page geometry in inches; the defaults are A4 portrait for documents. A slide deck sets
+// PDF_PAPER_WIDTH=13.33 PDF_PAPER_HEIGHT=7.5 PDF_MARGIN=0 PDF_FOOTER=off.
+const num = (name, fallback) => (process.env[name] ? Number(process.env[name]) : fallback);
+const margin = num('PDF_MARGIN', null);
 const pdf = await send('Page.printToPDF', {
   printBackground: true,
   preferCSSPageSize: true,
-  paperWidth: 8.27, paperHeight: 11.69,
-  marginTop: 0.55, marginBottom: 0.55, marginLeft: 0.5, marginRight: 0.5,
+  paperWidth: num('PDF_PAPER_WIDTH', 8.27), paperHeight: num('PDF_PAPER_HEIGHT', 11.69),
+  marginTop: margin ?? 0.55, marginBottom: margin ?? 0.55, marginLeft: margin ?? 0.5, marginRight: margin ?? 0.5,
   ...(pageRanges ? { pageRanges } : {}),
-  displayHeaderFooter: true,
+  displayHeaderFooter: process.env.PDF_FOOTER !== 'off',
   headerTemplate: '<div></div>',
   footerTemplate: `<div style="font-size:8px; width:100%; text-align:center; color:#555; font-family: Helvetica, Arial, sans-serif;">${title}, page <span class="pageNumber"></span> of <span class="totalPages"></span></div>`,
 });

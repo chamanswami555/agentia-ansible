@@ -265,6 +265,9 @@
     - name: Release summary
       ansible.builtin.debug:
         msg: >-
-          Stories {{ story_ids | join(', ') }} released ({{ deploy_mode }} mode). Deployment jobs: {{
-          deploy_jobs.results | default([]) | map(attribute='status', default='n/a') | list }}. Evidence in {{
-          evidence_dir }}
+          Stories {{ story_ids | join(', ') }} released ({{ deploy_mode }} mode).
+          {% if deploy_mode == 'story' %}Deployment jobs: {{ deploy_jobs.results | default([]) | map(attribute='status', default='n/a') | list }}.
+          {% else %}Promotion {{ promotion_after.promotion.identification.promotionName | default(promotion_id) }}
+          status after the run: {{ promotion_after.promotion.status | default('unknown') }},
+          last deployment: {{ promotion_after.promotion.lastDeploymentExecutionStatus | default('unknown') }}.
+          {% endif %}Evidence in {{ evidence_dir }}

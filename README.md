@@ -24,16 +24,28 @@ operations teams already work:
 - An event source so a failed Copado job starts a remediation playbook on its own.
 - Nothing bypasses Copado: every call is a public `agentia ... --json` command.
 
+## Why not just...
+
+| The objection | The answer, with what backs it |
+| --- | --- |
+| ...call the CLI from `ansible.builtin.command`? | A shell task cannot tell Ansible what changed, cannot dry-run, and leaves JSON parsing, error mapping, pagination and job polling to every playbook author. The modules are idempotent (a second `agentia_work` run reports no change, verified live), support check and diff mode, return Copado's transaction id, and turn CLI errors into Ansible failures with the CLI's own message. One tested layer instead of one shell loop per team |
+| ...use Copado's own automations (Functions, Quality Gates, Slack notifications)? | Those run inside Copado. A release window for a platform team spans Salesforce, databases, infrastructure and feature flags, and runs from Ansible Automation Platform with its inventories, RBAC, schedules, approval nodes and job history. This collection makes the Salesforce leg one job template in that same workflow, with the same evidence folder as everything else |
+| ...run it from a CI pipeline (GitHub Actions, Jenkins)? | You can; the repository's own CI does. Ansible adds what CI lacks for operations: approval nodes, inventories, credentials, scheduled nightly validation, and Event-Driven Ansible so a failed Copado job starts remediation without a human watching a console |
+| ...use the Agentia MCP server that already exists? | Copado's server exposes 194 raw tools. This server exposes five governed workflows: validate, approve, release, read the evidence. An agent cannot skip the approval gate (proved by a test that runs without approval and checks that nothing was deployed), and nothing runs that a human has not already codified in a playbook |
+| ...just click Submit in Copado? | Clicking works for one story. A release window with several stories, a smoke suite, a check-only validation before anyone approves, a health check before and after, and a JSON evidence trail for the change ticket is what the playbook does in one run, the same way every time (the fourth live rehearsal took a story from Dev1 to INT in 21 tasks with zero failures) |
+| ...the CLI is beta; will this break? | Every module is tested against recorded real answers, the suite re-ran on 1.0.0-beta.6 the day it shipped, the collection pins `ansible-core` 2.17 to 2.18, and the fixtures README says where every recording came from |
+| ...what does it not do? | No rollback (the CLI has no rollback operation; Copado keeps it), no Windows control node, Robotic Testing and Copado AI modules verified against recorded answers only, promotion mode verified offline only. All listed, none hidden |
+
 ## What is inside
 
 | Folder | Component | Contents |
 | --- | --- | --- |
-| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 74 unit tests (96 percent coverage), recorded CLI answers |
+| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 75 unit tests (96 percent coverage), recorded CLI answers |
 | `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK |
 | `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 6 tests |
 | `skills/agentia-ansible/` | Agent Skill | Teaches a coding agent how to author and run playbooks with the collection |
 | `tools/` | Development tools | Fake Agentia CLI that replays recorded answers, offline demos (playbooks and rulebook), a local quality gates script for Copado projects, fixture recorder with scrubbing, handbook PDF build |
-| `docs/` | Project handbook | Decisions, facts, command log and terminology of the project (Markdown and PDF) |
+| `docs/` | Project documents | Handbook (decisions, facts, command log, terminology), project document, presentation deck, video script, submission text |
 
 ### Modules
 
@@ -110,16 +122,17 @@ Requirements: Python 3.12 with [uv](https://docs.astral.sh/uv/), GNU make.
 git clone git@github.com:chamanswami555/agentia-ansible.git
 cd agentia-ansible
 make setup                      # .venv with ansible-core and pytest; links the collection under var/
-make check                      # pyflakes, ansible-lint, 74 unit tests with a 90 percent coverage floor, ansible-doc
+make check                      # pyflakes, ansible-lint, 75 unit tests with a 90 percent coverage floor, ansible-doc
 make demo                       # the three playbooks, then the rulebook, against the fake CLI
 make sanity                     # ansible-test sanity on a copy of the collection (installs its requirements)
 ```
 
 The fake CLI (`tools/fake-agentia/agentia`) replays recorded answers, logs every call, and answers
 job polls in sequence (running, then finished), so the demo shows the whole release flow in a few
-seconds. It first proves the approval gate (no terminal, no approve: the run stops and the fake
-records no Copado Submit), then fails unless the approved release reaches a successful deployment
-job. The rulebook demo
+seconds. Its seven steps prove the approval gate (no terminal, no approve: the run stops and the
+fake records no Copado Submit), the approved release up to a successful deployment job, remediation,
+nightly validation, promotion mode, two stories in one window, a nightly run that catches a failed
+validation, and check mode of every playbook. The rulebook demo
 (`tools/demo/offline-rulebook-demo.sh`, Java 17 needed) lets a job turn to Error on the second poll
 and fails unless `remediate_failed_job` ran and wrote the incident file.
 
@@ -205,7 +218,7 @@ check mode and prints the recap and the latest evidence summary.
 
 | Suite | Command | Count |
 | --- | --- | --- |
-| Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags, timeout, missing CLI) | `make test` | 74, coverage 96 percent with a 90 percent floor |
+| Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags, timeout, missing CLI) | `make test` | 75, coverage 96 percent with a 90 percent floor |
 | Plugin | `cd plugin && npm test` | 5 |
 | MCP server (including the release window end to end in demo mode, and the gate without approval) | `cd mcp && npm test` | 6 |
 

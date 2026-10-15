@@ -35,7 +35,14 @@ export default class AnsibleRun extends AgentiaCommand {
 
     const args = [playbook]
     if (flags.check) args.push('--check')
-    const extra: Record<string, unknown> = flags['extra-vars'] ? (JSON.parse(flags['extra-vars']) as Record<string, unknown>) : {}
+    let extra: Record<string, unknown> = {}
+    if (flags['extra-vars']) {
+      try {
+        extra = JSON.parse(flags['extra-vars']) as Record<string, unknown>
+      } catch (error) {
+        this.error(`--extra-vars must be a JSON object, for example '{"skip_local_tests": true}': ${(error as Error).message}`, {exit: 2})
+      }
+    }
     if (flags.approve) extra.approve = true
     if (Object.keys(extra).length > 0) args.push('-e', JSON.stringify(extra))
 

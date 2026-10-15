@@ -47,6 +47,9 @@
   "cicd work set US-0042": {
     "file": "work-set-US-0042.json"
   },
+  "cicd work set US-0043": {
+    "file": "work-set-US-0043.json"
+  },
   "cicd work submit --done *": {
     "file": "work-submit-done.json"
   },
