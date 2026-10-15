@@ -3,8 +3,8 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 2.5 |
-| Date | 2026-10-16 00:55 IST |
+| Version | 2.6 |
+| Date | 2026-10-16 01:24 IST |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
 | Status | Working draft. Facts marked "verified" were checked against the source on the date given next to them (9 October 2026 where no date is given). Facts marked "not verified" were not. |
