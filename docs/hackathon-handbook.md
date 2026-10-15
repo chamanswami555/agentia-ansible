@@ -334,7 +334,7 @@ IDE extensions: VS Code (Marketplace item Copado.agentia-idex) and Cursor via Op
 | --- | --- | --- | --- |
 | CLI (`agentia`) | 234 commands in the installed version; every command has `--json` | `agentia <topic> <command> --json` from a terminal or a script | "Commands" in the judging criterion |
 | MCP server (`agentia mcp start`) | 194 tools over stdio that mirror the commands, so an AI coding agent (for example Cursor) can call Copado directly | Configure the agent with `{"command": "agentia", "args": ["mcp", "start"]}` | "MCP" in the judging criterion |
-| Agent Skills | Markdown playbooks (`SKILL.md` plus reference files) that teach a coding agent the right command order and guardrails | `agentia setup skills create --target <target>` | "Skills" in the judging criterion |
+| Agent Skills | Markdown playbooks (`SKILL.md` plus reference files) that teach a coding agent the right command order and guardrails | `agentia setup skills create --target agents, cursor or another assistant` | "Skills" in the judging criterion |
 | Plugins | Extra commands added to the CLI with the official generator and SDK | `npm init @copado/agentia-plugin my-plugin`, build, `agentia plugins link .` | The hackathon's "extension" path |
 
 ### 5.3 The CLI in detail (verified from the installed 1.0.0-beta.4)
@@ -358,7 +358,7 @@ Main workflows, as the shipped skills describe them:
 - Governance: `health-check [--git-sizer --path]`.
 - Testing (Copado Robotic Testing): projects, robots, jobs (file upload or Git-backed), `test run --wait-for-result`, builds (list/get/latest/search/logs/abort), schedules, data tables, variables, user parameters, live sessions (start/execute/inspect/screenshot/stop).
 - AI: `ai agent ask --agent plan|build|test|release|operate|knowledge -p "..." [--user-story --sf-org --component --workspace --dialogue] --json`, `ai agent chat` (interactive only), `ai quota get`, `ai workspace list/get/create/update/member list/invite`.
-- Setup: `setup` (interactive), `setup skills create|update --cicd --testing --ai --target <target> --no-prompt`, `cicd project default set/get/unset` (project defaults so you do not repeat IDs), `update`, `runtime` (NDJSON process used by the IDE).
+- Setup: `setup` (interactive), `setup skills create|update --cicd --testing --ai --target agents|cursor|... --no-prompt`, `cicd project default set/get/unset` (project defaults so you do not repeat IDs), `update`, `runtime` (NDJSON process used by the IDE).
 
 Help quirk: `agentia cicd work list --help` prints "Command cicd work list not found"; use `agentia help cicd:work:list` instead.
 
