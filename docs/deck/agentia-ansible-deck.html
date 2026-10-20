@@ -114,7 +114,7 @@
   <h1>Everything ran against a real Copado org</h1>
   <table>
     <tr><th>Run on the Copado Playground, 14 to 16 October 2026</th><th style="width:34%">Result</th></tr>
-    <tr><td>Module smoke test: auth, health check, story create, idempotent re-run, update, delete, job reads (on CLI beta.5 and again on beta.6)</td><td>8 ok, 3 changed, 0 failed</td></tr>
+    <tr><td>Module smoke test: auth, health check, story create, idempotent re-run, update, delete, job reads (on CLI beta.5, beta.6 and rc.0)</td><td>8 ok, 3 changed, 0 failed</td></tr>
     <tr><td>Release window through the plugin: US-0000024 from INT to UAT (validation P00005, Copado Submit P00006, jobs JE-010 to JE-013)</td><td>17 ok, 7 changed, 0 failed</td></tr>
     <tr><td>Release window with the validation-deployment wait: US-0000026 from Dev1 to INT (P00007, P00008, jobs JE-015 to JE-018)</td><td>21 ok, 7 changed, 0 failed</td></tr>
     <tr><td>Run without approval and without a terminal: validation P00010 ran, the gate stopped the run</td><td>Nothing deployed, exit 2</td></tr>
@@ -160,7 +160,7 @@ Deployment jobs: ['Successful'].</div>
   </div>
   <ul>
     <li>Mutation checks: the approval gate, the fake call log, the story lookup and the interval bug each have a test that goes red when the fix is removed.</li>
-    <li>Fixtures recorded from the real org and scrubbed; their README lists the origin of every file. The suite re-ran on CLI 1.0.0-beta.6 the day it shipped.</li>
+    <li>Fixtures recorded from the real org and scrubbed; their README lists the origin of every file. The live checks re-ran on CLI 1.0.0-beta.6 and 1.0.0-rc.0 after each release.</li>
     <li>CI on every push: lint, unit tests, sanity, both demos, MCP and plugin tests, evidence kept as an artifact.</li>
   </ul>
   <div class="foot"><span>agentia-ansible</span><span>8 / 10</span></div>

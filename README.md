@@ -93,7 +93,8 @@ in Error or Failed and records successful jobs.
 On 14 October 2026 everything below ran against a Copado Playground (Copado Pipelines, Salesforce
 Source Format, region na) with Agentia CLI 1.0.0-beta.5; on 15 October the module smoke test, a
 check-mode release through the plugin and a run that stops at the approval gate were repeated on
-1.0.0-beta.6. The scrubbed CLI answers of these runs
+1.0.0-beta.6; on 21 October the module smoke test, a check-mode release, the event source and a
+live validation (promote job and check-only deployment job Successful) passed on 1.0.0-rc.0. The scrubbed CLI answers of these runs
 are the `live/` fixtures under `collection/tests/fixtures/agentia`, and the unit tests assert on
 those real shapes.
 
