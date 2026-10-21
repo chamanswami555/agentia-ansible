@@ -1,0 +1,23 @@
+---
+- name: agentia_promotion_info against the fake CLI
+  environment:
+    AGENTIA_FAKE_FIXTURES: "{{ fake_fixtures }}"
+    AGENTIA_FAKE_LOG: "{{ fake_log }}"
+  block:
+    - name: Read one promotion with its deployment job id
+      chamanswami555.agentia.agentia_promotion_info:
+        cli_path: "{{ fake_agentia }}"
+        id: a0B000000000001EAA
+      register: one
+    - name: List the promotions of a story
+      chamanswami555.agentia.agentia_promotion_info:
+        cli_path: "{{ fake_agentia }}"
+        work_id: a1Y000000000042EAA
+      register: many
+    - name: Check the results
+      ansible.builtin.assert:
+        that:
+          - one.deployment_job_id == 'a4N000000000004AAA'
+          - one.promotion.isValidationRun == false
+          - many.promotions | length > 0
+        quiet: true

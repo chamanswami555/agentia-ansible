@@ -94,4 +94,10 @@ The scrubbed CLI answers of these runs are the `live/` fixtures under `tests/fix
 
 `tools/fake-agentia/agentia` in the repository replays recorded CLI answers from
 `tests/fixtures/agentia`, so the unit tests and the demo run without a Copado licence.
-`make check` in the repository root runs lint, the tests and the module documentation check.
+`make check` in the repository root runs lint, the tests and the module documentation check;
+`make sanity` and `make integration` run `ansible-test` sanity and the five integration targets
+under `tests/integration` (they use the fake CLI in `tests/integration/targets/setup_fake_agentia`).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the release notes of every version.

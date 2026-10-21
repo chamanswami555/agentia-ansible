@@ -3,11 +3,15 @@ COLLECTIONS := var
 NS := chamanswami555.agentia
 MODULES := $(notdir $(basename $(wildcard collection/plugins/modules/*.py)))
 
-.PHONY: setup test docs lint sanity demo check
+.PHONY: setup test docs lint sanity integration demo check
 
+# ANSIBLE_CORE=2.17 pins the control node version after the requirements (CI tests 2.17 and 2.18)
+ANSIBLE_CORE ?=
 setup:
 	uv venv --python 3.12 .venv
 	uv pip install --python .venv/bin/python -r requirements-dev.txt
+	@if [ -n "$(ANSIBLE_CORE)" ]; then uv pip install --python .venv/bin/python "ansible-core~=$(ANSIBLE_CORE).0"; fi
+	@.venv/bin/python -c 'import ansible.release as r; print("ansible-core", r.__version__)'
 	mkdir -p $(COLLECTIONS)/ansible_collections/chamanswami555
 	ln -sfn $(CURDIR)/collection $(COLLECTIONS)/ansible_collections/chamanswami555/agentia
 
@@ -31,6 +35,14 @@ sanity:
 	rm -rf $(SANITY_ROOT) && mkdir -p $(SANITY_ROOT)/ansible_collections/chamanswami555
 	rsync -a --exclude __pycache__ --exclude '*.pyc' collection/ $(SANITY_ROOT)/ansible_collections/chamanswami555/agentia/
 	cd $(SANITY_ROOT)/ansible_collections/chamanswami555/agentia && $(CURDIR)/.venv/bin/ansible-test sanity --local --requirements --python 3.12
+
+# ansible-test integration: the targets under collection/tests/integration run the modules against
+# the fake CLI shipped inside the collection's tests; same copy-outside-the-repository rule as sanity
+INTEGRATION_ROOT ?= /tmp/agentia-integration
+integration:
+	rm -rf $(INTEGRATION_ROOT) && mkdir -p $(INTEGRATION_ROOT)/ansible_collections/chamanswami555
+	rsync -a --exclude __pycache__ --exclude '*.pyc' collection/ $(INTEGRATION_ROOT)/ansible_collections/chamanswami555/agentia/
+	cd $(INTEGRATION_ROOT)/ansible_collections/chamanswami555/agentia && $(CURDIR)/.venv/bin/ansible-test integration --local --python 3.12
 
 # the three playbooks and the rulebook against the fake CLI (the rulebook demo needs Java 17)
 demo:

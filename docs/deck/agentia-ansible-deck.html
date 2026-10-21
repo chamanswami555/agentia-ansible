@@ -50,11 +50,11 @@
 
 <section class="slide">
   <p class="kicker">The problem</p>
-  <h1>Salesforce is the one release that still needs a person at a button</h1>
+  <h1>One change ticket, one automated run, and a Salesforce step still done by hand</h1>
   <div class="cols">
     <div>
       <ul>
-        <li>Platform teams run change windows from Ansible and Ansible Automation Platform: inventories, approval nodes, schedules, RBAC, a job history that doubles as evidence.</li>
+        <li>A Salesforce change rarely ships alone: the same ticket carries a database migration, an infrastructure change, a feature flag. Platform teams already run those from Ansible Automation Platform: inventories, approval nodes, schedules, RBAC, a job history that doubles as evidence.</li>
         <li>Copado releases sit outside that: someone presses Submit, waits for jobs, pastes screenshots into the change ticket.</li>
         <li>Validation, smoke tests, approval and deployment are four manual steps. A failed job at night waits until morning.</li>
       </ul>
@@ -154,14 +154,14 @@ Deployment jobs: ['Successful'].</div>
   <h1>Tests that fail when the code they protect is removed</h1>
   <div class="stats">
     <div class="stat"><span class="big">75</span><small>unit tests, 96 percent coverage, 90 percent floor in CI</small></div>
-    <div class="stat"><span class="big">24</span><small>ansible-test sanity tests, plus ansible-lint at the production profile</small></div>
+    <div class="stat"><span class="big">24 + 5</span><small>ansible-test sanity tests and integration targets, on ansible-core 2.17 and 2.18, plus ansible-lint at the production profile</small></div>
     <div class="stat"><span class="big">7 + 1</span><small>offline demo steps and the rulebook demo against a fake CLI; 45 real recordings, scrubbed, back the shape tests</small></div>
-    <div class="stat"><span class="big">6 + 5</span><small>MCP and plugin tests, including the release end to end and the gate without approval</small></div>
+    <div class="stat"><span class="big">6 + 13</span><small>MCP and plugin tests, including the release end to end, the gate without approval and both plugin commands</small></div>
   </div>
   <ul>
     <li>Mutation checks: the approval gate, the fake call log, the story lookup and the interval bug each have a test that goes red when the fix is removed.</li>
     <li>Fixtures recorded from the real org and scrubbed; their README lists the origin of every file. The live checks re-ran on CLI 1.0.0-beta.6 and 1.0.0-rc.0 after each release.</li>
-    <li>CI on every push: lint, unit tests, sanity, both demos, MCP and plugin tests, evidence kept as an artifact.</li>
+    <li>CI on every push, on ansible-core 2.17 and 2.18: lint, unit tests, sanity, integration, both demos, MCP and plugin tests, evidence kept as an artifact.</li>
   </ul>
   <div class="foot"><span>agentia-ansible</span><span>8 / 10</span></div>
 </section>

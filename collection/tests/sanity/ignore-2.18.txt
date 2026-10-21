@@ -10,3 +10,4 @@ plugins/modules/agentia_promotion_info.py validate-modules:missing-gplv3-license
 plugins/modules/agentia_test_run.py validate-modules:missing-gplv3-license
 plugins/modules/agentia_work.py validate-modules:missing-gplv3-license
 plugins/modules/agentia_work_submit.py validate-modules:missing-gplv3-license
+tests/integration/targets/setup_fake_agentia/files/agentia shebang

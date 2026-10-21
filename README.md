@@ -40,8 +40,8 @@ operations teams already work:
 
 | Folder | Component | Contents |
 | --- | --- | --- |
-| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 75 unit tests (96 percent coverage), recorded CLI answers |
-| `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK |
+| `collection/` | Ansible collection `chamanswami555.agentia` | 12 modules, 3 playbooks, an Event-Driven Ansible source and rulebook, 75 unit tests (96 percent coverage), 5 integration targets, recorded CLI answers |
+| `plugin/` | Agentia CLI plugin `agentia-plugin-ansible` | Commands `agentia ansible scaffold` and `agentia ansible run`, built with the official plugin SDK; 13 tests |
 | `mcp/` | MCP server `agentia-ansible-mcp` | Five tools that let an AI agent run the governed playbooks and read the evidence; 6 tests |
 | `skills/agentia-ansible/` | Agent Skill | Teaches a coding agent how to author and run playbooks with the collection |
 | `tools/` | Development tools | Fake Agentia CLI that replays recorded answers, offline demos (playbooks and rulebook), a local quality gates script for Copado projects, fixture recorder with scrubbing, handbook PDF build |
@@ -126,6 +126,7 @@ make setup                      # .venv with ansible-core and pytest; links the 
 make check                      # pyflakes, ansible-lint, 75 unit tests with a 90 percent coverage floor, ansible-doc
 make demo                       # the three playbooks, then the rulebook, against the fake CLI
 make sanity                     # ansible-test sanity on a copy of the collection (installs its requirements)
+make integration                # ansible-test integration: five targets against the fake CLI
 ```
 
 The fake CLI (`tools/fake-agentia/agentia`) replays recorded answers, logs every call, and answers
@@ -220,16 +221,19 @@ check mode and prints the recap and the latest evidence summary.
 | Suite | Command | Count |
 | --- | --- | --- |
 | Collection unit tests (modules, helper, event source, real shapes, error paths, optional flags, timeout, missing CLI) | `make test` | 75, coverage 96 percent with a 90 percent floor |
-| Plugin | `cd plugin && npm test` | 5 |
+| Collection integration tests (`ansible-test integration`, five targets: stories, job waits, submits, promotions, CLI failures, against the fake CLI shipped in the tests) | `make integration` | 5 targets |
+| ansible-test sanity | `make sanity` | 24 tests, on ansible-core 2.17 and 2.18 |
+| Plugin (library and both commands in-process) | `cd plugin && npm test` | 13 |
 | MCP server (including the release window end to end in demo mode, and the gate without approval) | `cd mcp && npm test` | 6 |
 
 Before a release, `ansible-galaxy collection build` and Galaxy's own importer (`galaxy-importer`)
 run on the tarball, and the release playbook runs from the installed copy by its full name; both
 passed on 15 October 2026.
 
-`.github/workflows/ci.yml` runs `make check` (pyflakes, ansible-lint, unit tests, module docs),
-the offline playbook demo, the offline rulebook demo with Java 17, the MCP server tests and the
-plugin tests on every push, and keeps the demo evidence as an artifact.
+`.github/workflows/ci.yml` runs, on ansible-core 2.17 and 2.18, `make check` (pyflakes, ansible-lint,
+unit tests, module docs), ansible-test sanity and integration, the offline playbook demo, the offline
+rulebook demo with Java 17, the MCP server tests and the plugin tests on every push, and keeps the
+demo evidence as an artifact.
 
 ## Repository layout
 

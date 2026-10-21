@@ -5,7 +5,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DEMO="$ROOT/var/demo"
-PLAYBOOK="$ROOT/.venv/bin/ansible-playbook"
+PLAYBOOK="${ANSIBLE_PLAYBOOK_BIN:-$ROOT/.venv/bin/ansible-playbook}"
 rm -rf "$DEMO"
 mkdir -p "$DEMO"
 

@@ -1,0 +1,75 @@
+---
+- name: agentia_work against the fake CLI
+  environment:
+    AGENTIA_FAKE_FIXTURES: "{{ fake_fixtures }}"
+    AGENTIA_FAKE_LOG: "{{ fake_log }}"
+  block:
+    - name: A story that already has the wanted status is unchanged
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-0001
+        status: Development In Progress
+      register: same
+    - name: A status change in check mode reports the diff without an update call
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-0001
+        status: Ready for Testing
+      check_mode: true
+      register: dry
+    - name: The same status change for real
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-0001
+        status: Ready for Testing
+      register: changed
+    - name: A title that matches no story creates one
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        title: Brand new story
+        status: Draft
+      register: created
+    - name: A title that matches an existing story finds it
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        title: Improve deployment validation
+      register: found
+    - name: Deleting the story
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-0001
+        state: absent
+      register: deleted
+    - name: Deleting a story that does not exist is unchanged
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-9999
+        state: absent
+      register: gone
+    - name: An explicit id that does not exist is a failure, not a create
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-9999
+        status: Draft
+      register: missing
+      ignore_errors: true
+    - name: Check the results
+      ansible.builtin.assert:
+        that:
+          - not same.changed
+          - dry.changed and dry.diff.after.status == 'Ready for Testing'
+          - changed.changed and changed.transaction_id | length > 0
+          - created.changed and created.work_item.name is defined
+          - not found.changed and found.work_item.name == 'US-0001'
+          - deleted.changed
+          - not gone.changed
+          - missing.failed and 'not found' in missing.msg
+        quiet: true
+    - name: The call log shows no update during the check-mode run
+      ansible.builtin.shell: "grep -c '\"update\"' {{ fake_log }}"
+      register: updates
+      changed_when: false
+    - name: Exactly one update call was made
+      ansible.builtin.assert:
+        that: updates.stdout | int == 1
+        quiet: true

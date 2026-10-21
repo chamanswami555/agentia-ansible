@@ -1,0 +1,38 @@
+---
+- name: agentia_job_wait against the fake CLI
+  environment:
+    AGENTIA_FAKE_FIXTURES: "{{ fake_fixtures }}"
+    AGENTIA_FAKE_LOG: "{{ fake_log }}"
+  block:
+    - name: Poll a job until it succeeds (the fake answers running, then finished)
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ fake_agentia }}"
+        id: a4N000000000001AAA
+        interval: 0
+      register: waited
+    - name: A job that ends in Error fails the task with its steps
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ fake_agentia }}"
+        id: a4N000000000002AAA
+        interval: 0
+      register: errored
+      ignore_errors: true
+    - name: Start the sequence again for the timeout case
+      ansible.builtin.file:
+        path: "{{ fake_log }}"
+        state: absent
+    - name: A zero timeout gives up after the first poll with the last status
+      chamanswami555.agentia.agentia_job_wait:
+        cli_path: "{{ fake_agentia }}"
+        id: a4N000000000001AAA
+        interval: 0
+        timeout: 0
+      register: timed_out
+      ignore_errors: true
+    - name: Check the results
+      ansible.builtin.assert:
+        that:
+          - waited.status == 'Successful' and waited.polls == 2 and not waited.changed
+          - errored.failed and 'ended with status Error' in errored.msg
+          - timed_out.failed and timed_out.msg is match('Timed out after 0s') and timed_out.polls == 1
+        quiet: true

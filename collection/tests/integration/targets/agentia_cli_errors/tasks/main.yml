@@ -1,0 +1,31 @@
+---
+- name: agentia_cli_errors against the fake CLI
+  environment:
+    AGENTIA_FAKE_FIXTURES: "{{ fake_fixtures }}"
+    AGENTIA_FAKE_LOG: "{{ fake_log }}"
+  block:
+    - name: A missing CLI is named clearly
+      chamanswami555.agentia.agentia_health_check:
+        cli_path: /nonexistent/agentia
+      register: missing
+      ignore_errors: true
+    - name: An explicit story id the CLI does not know is a failure with a clear message
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-9999
+        status: Draft
+      register: cli_error
+      ignore_errors: true
+    - name: Output that is not JSON is a clear failure
+      chamanswami555.agentia.agentia_work:
+        cli_path: "{{ fake_agentia }}"
+        id: US-BROKEN
+      register: broken
+      ignore_errors: true
+    - name: Check the results
+      ansible.builtin.assert:
+        that:
+          - missing.failed and missing.msg is match('Agentia CLI not found')
+          - cli_error.failed and 'not found' in cli_error.msg
+          - broken.failed and 'not JSON' in broken.msg
+        quiet: true

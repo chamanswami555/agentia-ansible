@@ -1,0 +1,32 @@
+---
+- name: agentia_work_submit against the fake CLI
+  environment:
+    AGENTIA_FAKE_FIXTURES: "{{ fake_fixtures }}"
+    AGENTIA_FAKE_LOG: "{{ fake_log }}"
+  block:
+    - name: Check mode lists the commands without running them
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ fake_agentia }}"
+        working_dir: "{{ fake_log | dirname }}"
+        set_story: US-0042
+      check_mode: true
+      register: dry
+    - name: Validation submit
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ fake_agentia }}"
+        working_dir: "{{ fake_log | dirname }}"
+        set_story: US-0042
+      register: validated
+    - name: Copado Submit (promote and deploy)
+      chamanswami555.agentia.agentia_work_submit:
+        cli_path: "{{ fake_agentia }}"
+        working_dir: "{{ fake_log | dirname }}"
+        done: true
+      register: done
+    - name: Check the results
+      ansible.builtin.assert:
+        that:
+          - dry.changed and dry.commands[0] == ['cicd', 'work', 'set', 'US-0042']
+          - validated.submission.submit.command == 'submit' and validated.submission.submit.jobId is defined
+          - done.submission.done.command == 'done' and 'promotion_id=' in done.submission.done.message
+        quiet: true

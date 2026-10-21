@@ -1,0 +1,40 @@
+---
+# Shared by every integration target: the fake Agentia CLI shipped with the tests, the recorded
+# answers it replays, and a fresh call log (the fake answers job polls in sequence by counting calls).
+# ansible-test runs each target from a temporary copy of the collection under
+# tests/output/.tmp/integration/<target>-<random>/ that holds the integration targets but not
+# tests/fixtures, so the fixtures are read from the collection the copy was made from.
+- name: Locate the fake CLI and the recorded answers
+  ansible.builtin.set_fact:
+    fake_agentia: "{{ role_path }}/files/agentia"
+    fake_fixtures: >-
+      {{ ((role_path.split('/tests/output/.tmp/') | first)
+          if '/tests/output/.tmp/' in role_path
+          else role_path | dirname | dirname | dirname) ~ '/tests/fixtures/agentia' }}
+    fake_log: "{{ output_dir | default('/tmp/agentia-integration-output') }}/agentia-calls.jsonl"
+
+- name: Show where the fake CLI and the recorded answers are
+  ansible.builtin.debug:
+    msg: "fake={{ fake_agentia }} fixtures={{ fake_fixtures }} log={{ fake_log }}"
+
+- name: The recorded answers must be where we expect them
+  ansible.builtin.stat:
+    path: "{{ fake_fixtures }}/index.json"
+  register: fixture_index
+  failed_when: not fixture_index.stat.exists
+
+- name: Create the output folder
+  ansible.builtin.file:
+    path: "{{ fake_log | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Start with an empty call log
+  ansible.builtin.file:
+    path: "{{ fake_log }}"
+    state: absent
+
+- name: The fake must be executable
+  ansible.builtin.file:
+    path: "{{ fake_agentia }}"
+    mode: "0755"

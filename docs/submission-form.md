@@ -16,9 +16,11 @@ tools the project was built with.
 
 ## Problem statement (judges read this first)
 
-Platform and operations teams already run their change windows from Ansible and Ansible Automation
-Platform: inventories, approvals, schedules, role-based access and a job history that doubles as
-evidence. Salesforce releases through Copado sit outside that world. A person presses Submit in
+A Salesforce change rarely ships alone: the same change ticket carries a database migration, an
+infrastructure change and a feature flag. Platform and operations teams already run all of those
+from Ansible and Ansible Automation Platform: inventories, approvals, schedules, role-based access
+and a job history that doubles as evidence. The Salesforce step, released through Copado, is the
+one still done by hand. A person presses Submit in
 Copado, waits for the jobs, and copies screenshots into the change ticket. Validation, smoke tests,
 approval and deployment are four separate manual steps, and a failed Copado job at night waits for
 someone to notice it in the morning. Copado's Agentia Headless CLI makes every one of those steps
