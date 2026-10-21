@@ -5,12 +5,13 @@ MODULES := $(notdir $(basename $(wildcard collection/plugins/modules/*.py)))
 
 .PHONY: setup test docs lint sanity integration demo check
 
-# ANSIBLE_CORE=2.17 pins the control node version after the requirements (CI tests 2.17 and 2.18)
+# ANSIBLE_CORE=2.17 pins the control node version (CI tests 2.17 and 2.18). The pin goes into the
+# same resolve as the requirements, so uv picks an ansible-lint that supports that core version
+# (ansible-lint 26.10 refuses ansible-core 2.17; 26.6 accepts it).
 ANSIBLE_CORE ?=
 setup:
 	uv venv --python 3.12 .venv
-	uv pip install --python .venv/bin/python -r requirements-dev.txt
-	@if [ -n "$(ANSIBLE_CORE)" ]; then uv pip install --python .venv/bin/python "ansible-core~=$(ANSIBLE_CORE).0"; fi
+	uv pip install --python .venv/bin/python -r requirements-dev.txt $(if $(ANSIBLE_CORE),"ansible-core~=$(ANSIBLE_CORE).0",)
 	@.venv/bin/python -c 'import ansible.release as r; print("ansible-core", r.__version__)'
 	mkdir -p $(COLLECTIONS)/ansible_collections/chamanswami555
 	ln -sfn $(CURDIR)/collection $(COLLECTIONS)/ansible_collections/chamanswami555/agentia
