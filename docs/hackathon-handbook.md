@@ -3,7 +3,7 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 2.8 |
+| Version | 2.9 |
 | Date | 2026-10-16 (edition 2.7) |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
@@ -829,6 +829,7 @@ Where: "Mac" means this laptop's terminal; "web" means a page fetch or a web sea
 | `tests/integration/targets/*` written; `make integration` (ansible-test integration --local) six times | Mac | Integration tests that ansible-test itself runs (21 October) | ansible-test runs each target from a temporary copy without tests/fixtures, so the setup role resolves the fixtures from the source collection; two assertions corrected to the modules' real messages; all five targets pass |
 | `plugin/src/lib/commands.test.ts`: the two commands run in-process with a stand-in host (runWithTransaction, auth.status, work.getWorkItem) | Mac | Command-level plugin tests without the Agentia CLI (21 October) | 13 plugin tests pass; scaffold story and promotion modes, active-story lookup, bad promotion id, missing playbook, bad extra-vars, recap, approval stop, collection hint |
 | CI run 32 (job steps through the GitHub API), then the same two-step install repeated in var/venv217b | Mac, web | The first matrix run failed on ansible-core 2.17 at `make check` (21 October) | ansible-lint 26.10 refuses ansible-core 2.17 (`requires ansible-core!=2.17.*`); CI installed the requirements first and pinned the core version second, so it kept 26.10. The pin now goes into the same uv resolve, which picks ansible-lint 26.6 on 2.17 (the one-step local environment had done exactly that and passed) |
+| `npm audit` in mcp/ and plugin/, `pip-audit -l` in .venv, `unzip -p` of the .docx properties, PDF metadata through pypdf | Mac | Dependency and document checks before the public submission (22 October) | mcp: 0 findings; plugin: 4 high, all through the `oclif` dev tool (braces, micromatch) with no fix inside oclif 4, so the unused tool and its prepack scripts were removed: 0 findings, 13 tests, plugin still loads; Python: certifi 2026.7.22 (PYSEC-2026-4320) upgraded to 2026.10.19 and pinned as a minimum, then clean; the .docx named its writing library as creator, now the owner; both PDFs carried the print pipeline's producer and the browser's user agent, now title and author only (`tools/pdf-metadata.py`) |
 | `uv pip install galaxy-importer`; `ansible-galaxy collection build`; `python -m galaxy_importer.main <tarball>` (twice) | Mac | Galaxy's upload validation before any publish (15 October 00:10) | Pass both times; the first run skipped docstrings and lint (ansible-doc and ansible-lint not on its PATH), the second with the .venv on PATH ran lint clean; warning: no changelog, fixed |
 | `ansible-galaxy collection install <tarball> -p var/galaxy-test`; `ansible-playbook chamanswami555.agentia.release_window` from that path against the fake | Mac | The installed copy, not the symlinked source, runs the release (15 October 00:12) | 21 ok, 7 changed, 0 failed |
 | `uv pip install pytest-cov`; `pytest --cov=collection/plugins --cov=...event_source --cov-report=term-missing` | Mac | Find what the tests do not reach (15 October 00:15) | 92 percent; gaps were optional flags, check-mode exits, the job wait timeout and the CLI failure path of six modules; after 13 new tests 72 pass at 96 percent; `make test` carries `--cov-fail-under=90` |
@@ -844,13 +845,13 @@ Where: "Mac" means this laptop's terminal; "web" means a page fetch or a web sea
 | Offline probes: release_window in promotion mode, with two stories, nightly_validate with `index-failing-validation.json`, `--check` of nightly and remediate | Mac | Paths no demo had run (16 October) | Promotion mode 19 ok but the summary said n/a (fixed); two stories 22 ok with two deployment jobs; nightly failed as designed with its report; check modes clean. All four are now demo steps 4 to 7 (73 replayed calls) |
 | `agentia help cicd:promotion:run` | Mac | Does the CLI offer rollback (16 October) | Operations are merge and merge_and_deploy only; rollback stays in Copado and is listed as a limitation |
 | `agentia_work` create, `work set US-0000028`, permission set commit, gate, `work publish`, `agentia ansible scaffold` | Mac | Demo story for the video (16 October) | US-0000028 "Release operator permission set" ready in Dev1 with one published commit; gate passed; playbook scaffolded |
-| `tools/build-project-doc.py` (python-docx), read back with python-docx | Mac | House project document (16 October) | 43 paragraphs, 5 tables, 10 headings, no em dash, no tooling names |
+| `tools/build-project-doc.py`, read back with the same document library | Mac | House project document (16 October) | 43 paragraphs, 5 tables, 10 headings, no em dash, no tooling names |
 | `tools/html2pdf.mjs` with PDF_PAPER_WIDTH, PDF_PAPER_HEIGHT, PDF_MARGIN, PDF_FOOTER; `qlmanage` renders of slides 1, 4, 6, 8 | Mac | Deck as a 16:9 PDF, checked visually (16 October) | 10 pages, about 200 KB; one wording fix on slide 8 after the check |
 | `agentia ansible scaffold --stories US-0000026 --repo-dir var/playground-repo --out release-window.yml`; `agentia ansible run --check`; `agentia ansible run --approve --extra-vars '{"skip_local_tests": true}'` | Mac | Rehearsal of the corrected playbook (14 October 01:31 to 01:38) | Check run 14 ok, 7 changed, 0 failed; approved run 21 ok, 7 changed, 0 failed; P00007 validated (JE-015, JE-016), P00008 deployed the custom permission from Dev1-SFP to INT-SFP (JE-017, JE-018) |
 
 Mistakes made and corrected during the first day: the first MCP probe failed on my own path typo; `--help` after nested topics misled me for one round until `agentia help topic:command` worked; a first attempt to extract the Official Rules used the wrong text pattern and found nothing until the search anchor was changed; an early `grep` pattern was too complex for the Mac's grep and was replaced by a Python script.
 
-Mistakes made and corrected on 10 to 14 October: the offline demo passed green while the Copado Submit stage did nothing (fixture key mismatch), and before that hung for 22 minutes (call log unset); both were only found by reading the fake CLI's call log and the evidence files, not the recap. A syntax check run without ANSIBLE_COLLECTIONS_PATH reported a missing module (my environment, not the playbook). The first version of the demo script exported the call-log path before the variable it used existed (caught by reading the script back before running it). The rulebook was first started without the .venv on the PATH ("ansible-galaxy is not installed"), then with JAVA_HOME at the Homebrew formula folder (engine silent for 150 seconds); the JDK home path fixed it. A generalised email scrubber first mangled Salesforce usernames and SSH Git addresses; a word boundary and a colon exclusion fixed it; regenerating the fixtures then changed only a placeholder address inside a Copado function log. Static resources are ignored by the playground repository, so the demo story carries a custom permission instead. The release playbook waited for the validation's promote job only, which was noticed in the evidence file, not in the recap. A shell whose working directory resets between calls put one checkout in the wrong repository; every Git command now carries -C with an absolute path. After the owner's evening reply on 14 October, two handbook rows were first written with times extrapolated from the night's work (01:50, 02:00) instead of the clock (21:56); corrected from `date` and file modification times. Evening round: two sanity runs reported 0 errors while checking nothing ("All targets skipped"), which a quick reading would have taken as a pass; the rulebook demo counted the wrong file name and its fixture script assumed the wrong result shape; the gate script used a bash 4 builtin on macOS bash 3.2; a relative stderr path inside a subshell `cd` landed in the wrong folder. Judge-probe round: the README claimed a safety property (no deployment without approval) that the pause did not provide, so a claim about a gate now needs a no-terminal test before it is written; the module timeout had been documented and unused since the first commit; one live check failed only because my shell lacked the collections path, and the fix went into the plugin so that no caller depends on the environment. The subprocess rewrite was pushed before `make sanity` had run on it, and CI caught the pylint finding; sanity now runs locally before every push that touches plugins.
+Mistakes made and corrected on 10 to 14 October: the offline demo passed green while the Copado Submit stage did nothing (fixture key mismatch), and before that hung for 22 minutes (call log unset); both were only found by reading the fake CLI's call log and the evidence files, not the recap. A syntax check run without ANSIBLE_COLLECTIONS_PATH reported a missing module (my environment, not the playbook). The first version of the demo script exported the call-log path before the variable it used existed (caught by reading the script back before running it). The rulebook was first started without the .venv on the PATH ("ansible-galaxy is not installed"), then with JAVA_HOME at the Homebrew formula folder (engine silent for 150 seconds); the JDK home path fixed it. A generalised email scrubber first mangled Salesforce usernames and SSH Git addresses; a word boundary and a colon exclusion fixed it; regenerating the fixtures then changed only a placeholder address inside a Copado function log. Static resources are ignored by the playground repository, so the demo story carries a custom permission instead. The release playbook waited for the validation's promote job only, which was noticed in the evidence file, not in the recap. A shell whose working directory resets between calls put one checkout in the wrong repository; every Git command now carries -C with an absolute path. After the owner's evening reply on 14 October, two handbook rows were first written with times extrapolated from the night's work (01:50, 02:00) instead of the clock (21:56); corrected from `date` and file modification times. Evening round: two sanity runs reported 0 errors while checking nothing ("All targets skipped"), which a quick reading would have taken as a pass; the rulebook demo counted the wrong file name and its fixture script assumed the wrong result shape; the gate script used a bash 4 builtin on macOS bash 3.2; a relative stderr path inside a subshell `cd` landed in the wrong folder. Judge-probe round: the README claimed a safety property (no deployment without approval) that the pause did not provide, so a claim about a gate now needs a no-terminal test before it is written; the module timeout had been documented and unused since the first commit; one live check failed only because my shell lacked the collections path, and the fix went into the plugin so that no caller depends on the environment. The subprocess rewrite was pushed before `make sanity` had run on it, and CI caught the pylint finding; sanity now runs locally before every push that touches plugins. On 22 October a command meant for the repository root ran inside plugin/ because the shell's working directory had moved, and created a stray requirements file there; caught in `git status` before the commit and removed; every command now carries absolute paths.
 
 ## 12. Sources
 
@@ -883,3 +884,110 @@ Mistakes made and corrected on 10 to 14 October: the offline demo passed green w
 11. API key reset: the CI/CD key was shared by the owner. Owner's decision on 14 October 2026: leave it for now. When wanted later: reset it on the Account Summary API Key tab, then run `agentia auth set --cicd <new key> --region na`.
 12. Module licence header: ansible-test's validate-modules expects a GPLv3+ header in every module. The collection is MIT (owner's pick, item 4), so the check is ignored per module in tests/sanity/ignore-2.17.txt and ignore-2.18.txt, the documented route for collections under another GPL-compatible licence. Alternative, only if the owner wants it: dual-license the twelve module files under GPL-3.0-or-later.
 13. Galaxy publish: optional, a plus for judges (install by name). Needs the owner's galaxy.ansible.com login with GitHub (namespace chamanswami555) and an API token; command `ansible-galaxy collection publish var/galaxy-build/chamanswami555-agentia-0.1.0.tar.gz --api-key <token>`. Public and one-way per version; do it after README and video are final (around 23 October). The importer check and the installed-copy run of 15 October are the pre-publish tests.
+
+## 14. Engineering record
+
+Written on 22 October 2026 at the release gate, following the owner's decision policy: classify
+the project, select the dimensions that matter, mark each, name the gaps and the high-risk
+decisions, and record the threat model and the agent-safety design with their proofs.
+
+### 14.1 Decision policy output
+
+| Item | Value |
+| --- | --- |
+| Objective | Win the Copado Agentia Headless Virtual Hackathon with a submission that is useful after the hackathon: Copado releases run from Ansible |
+| Users | Platform and operations teams that run change windows from Ansible or Ansible Automation Platform and also release Salesforce through Copado; AI agents that must release through governed workflows |
+| Constraints | Solo; the CLI is in beta and changed three times during the build; Copado access only through a 30-day playground; no Robotic Testing or Copado AI licence; the deadline is 26 October 2026 (Central time), target 25 October |
+| Risks | Demand not validated with users; judges may not share the Ansible frame; CLI changes; playground expiry; a defect found live after submission |
+| Definition of success | Section 7.9, all met except the video (owner's recording) |
+| Project type | Hackathon entry with an agentic component (MCP server, Agent Skill, remediation driven by Copado AI) |
+
+Dimensions selected from the owner's framework, with their class and state:
+
+| Dimension | Class | State and evidence |
+| --- | --- | --- |
+| 1 Problem definition | Essential | README "Why" and "Why not just..."; gap: the problem is reasoned from the tools, not validated with users |
+| 3 Requirements and acceptance | Essential | Official Rules and rubric in section 3; definition of done 7.9 |
+| 5 Scope | Essential | Core box fixed on 10 October; stretch goals cut and named |
+| 9 Feasibility and risk | Essential | Playground path; CLI beta risk; section 9 |
+| 11, 15, 16 Architecture, modules, boundaries | Essential | Collection, plugin, MCP server and skill are separate pieces over one CLI contract; one helper for every CLI call |
+| 18 Interface contracts | Essential | Module arguments and returns validated by ansible-doc and sanity; MCP tool schemas; plugin flags with checks |
+| 20 Decision records | Recommended | Sections 1, 7 and 13 of this handbook |
+| 21 to 26 Code quality, typing, errors, input trust | Essential | pyflakes, ansible-lint production profile, sanity, TypeScript strict; CLI errors mapped with transaction id; timeouts; argument specs, zod schemas, flag checks |
+| 24 Dependencies and reproducible builds | Essential | uv, npm lockfiles, Make targets, CI on two ansible-core versions; audits in 14.4; gap: no Python lockfile (ranges only) |
+| 31 to 37 Data and storage | Not applicable | No database; the evidence folder holds JSON per run; Copado is the system of record |
+| 38 Privacy | Essential | Recordings scrubbed; identifiers out of the public tree and history (sections 11 and 13) |
+| 41 Threat model | Essential | 14.2 |
+| 43, 44 Least privilege, secrets | Essential | CLI key in the keychain or the environment only; plugin permission manifest; five MCP tools; no secret in tree or history |
+| 46 Supply chain | Recommended | npm audit and pip-audit clean (14.4); install scripts of the generator read before use |
+| 48 Rate limits and abuse | Not applicable | No network listener; MCP over stdio on the operator's machine |
+| 49 Audit trail | Essential | Evidence files with Copado transaction ids; Copado's own job and promotion records |
+| 51 to 60 Testing | Essential | 75 unit tests at 96 percent, 5 integration targets, 24 sanity tests, seven-step demo, rulebook demo, MCP 6, plugin 13, mutation checks, live rehearsals |
+| 61 to 70 Delivery | Essential subset | CI matrix, Make targets, Galaxy build and importer; containers and cloud resources not applicable |
+| 71 to 80 Reliability and operations | Recommended | Timeouts, bounded retries, idempotent modules, the remediation playbook as the runbook, the event source as the monitor |
+| 88 Agent permissions and approval | Essential | 14.3; the gate fails closed without a terminal |
+| 89 Untrusted input and prompt injection | Essential | 14.3; CLI output and job logs are data; AI answers are stored, never executed |
+| 90 Tracing and recovery | Essential | Evidence and logs per run; resume through the job modules; no rollback (the CLI has none) |
+| 81 to 87 Models and training | Not applicable | No model is trained or evaluated; Copado AI is called as a service |
+
+High-risk decisions and assumptions: story mode as the default (Copado refuses merge on validation promotions); polling instead of webhooks (the CLI offers none); MIT licence with the GPL header check ignored per module (allowed by ansible-lint's list); the assumption that teams on Ansible Automation Platform also release Salesforce through Copado.
+
+### 14.2 Threat model and surfaces
+
+Assets: the Copado CI/CD API key (keychain or environment, never in files); the Copado org and
+its metadata; the owner's identity; the integrity of the public repository. Actors: anyone on the
+internet reading the repository or installing from Galaxy; a judge running the code; an AI agent
+calling the MCP server; an operator running playbooks. Entry points: the CLI's own configuration;
+playbook variables; the MCP server over stdio (no network listener); plugin flags; GitHub Actions
+(no secrets configured); the Galaxy upload.
+
+| Surface | Who may call it | What it can do | Guard |
+| --- | --- | --- | --- |
+| MCP tools list_playbooks, list_evidence, release_status | Any local MCP client | Read file names and evidence JSON under the evidence root | Read only; paths under the project |
+| MCP tool run_release_playbook | Any local MCP client | Run the release playbook with story ids, repo_dir, approve | Approval gate fails closed; demo flag uses the fake CLI; nothing deploys without approve: true |
+| MCP tool run_playbook | Any local MCP client | Run nightly_validate or remediate_failed_job | Names restricted by an enum; no release |
+| Plugin commands scaffold and run | The operator through the Agentia CLI | Write one playbook file; run ansible-playbook | Permission manifest: files write, commands agentia and ansible-playbook, no network, no environment access |
+| Playbooks and modules | The operator or a job template | Everything the CLI allows with the operator's key | The key never leaves the CLI; check mode; the gate |
+| Event source | ansible-rulebook | Read job lists; the rulebook runs the remediation playbook | Read-only polling; the action is a playbook under version control |
+
+Secrets and identifiers: the scans of sections 11 and 13 (tracked tree, every blob in the
+history, PDFs and the .docx unpacked) found none of the listed patterns: the API key, OAuth
+signatures, the owner's email addresses, the company name, the tool and chat vocabulary. What
+remains by the owner's decision: the owner's name as author, the GitHub user name in the
+repository address, and Salesforce record ids inside scrubbed recordings.
+
+### 14.3 Agent safety
+
+Permission list: the MCP server may run `ansible-playbook` on the three collection playbooks
+only, with variables it validates, writing under the evidence root; it opens no network
+connection of its own (Copado is reached only through the CLI's own authentication). The
+plugin declares its permissions in package.json. Approval point: the release gate (a typed
+yes or approve: true), rehearsed with no terminal on the fake CLI and on the real org (promotion
+P00010 validated, nothing deployed). Isolation: everything runs on the operator's machine against
+the Copado org the operator is authorised for; the demo uses a playground, never a customer org.
+Untrusted input: CLI JSON is parsed and shape-checked; Copado job logs are passed to Copado AI as
+data and the answer is written to the incident file, never executed; MCP arguments are validated
+by schema. Budgets: 900 seconds per CLI call, 1800 seconds per job wait, 18 reads of a promotion
+before giving up, a poll interval of 15 seconds. Tracing: evidence JSON with transaction ids,
+ansible output, the fake's call log in tests. Recovery: idempotent story module, resume through
+the job modules, no rollback (Copado keeps it).
+
+| Guard | Test | Guard removed | Guard restored |
+| --- | --- | --- | --- |
+| Approval gate | Demo step 0, MCP test, live run without approval | Demo fails: "the gate did not fire" (15 October) | Green; live run stopped after validation |
+| Fake call log for sequenced polls | MCP end-to-end test | Fails after 60 seconds, job stuck "In Progress" (14 October) | Green |
+| Explicit story id that does not exist must fail | Unit test | Red (12 October) | Green |
+| Poll interval zero treated as zero | Unit test | Red, 60-second sleeps (12 October) | Green |
+
+Residual risks, to be accepted by the owner: a job log could carry text aimed at the AI
+diagnosis (the answer is advisory only); the CLI is in beta; the playground expires about
+13 November; a single maintainer.
+
+### 14.4 Dependency and document checks (22 October 2026)
+
+npm audit: mcp/ 0 findings; plugin/ 0 findings after removing the unused `oclif` dev tool, which
+carried 4 high findings (braces, micromatch) with no fix inside oclif 4. pip-audit on the Python
+environment: certifi 2026.7.22 (PYSEC-2026-4320) upgraded to 2026.10.19 and pinned as a minimum;
+clean afterwards. Document properties: the .docx names the owner as author (the writing library's
+stamp removed); both PDFs carry title and author only (the print pipeline's producer and the
+browser's user agent removed with `tools/pdf-metadata.py`).

@@ -49,3 +49,15 @@ The project document is built with python-docx (`uv pip install --python .venv-t
 
 `tools/quality-gates/agentia_quality_gates.sh` is the local quality gate for Copado Source Format
 projects; copy it to a project root as `.agentia_quality_gates.sh`.
+
+## Document properties
+
+After any PDF build, set the properties to the title and the owner's name only (the print
+pipeline otherwise stamps its producer and the browser's user agent):
+
+```sh
+.venv-tools/bin/python -I tools/pdf-metadata.py docs/agentia-ansible-deck.pdf "agentia-ansible" "Chaman Swami"
+.venv-tools/bin/python -I tools/pdf-metadata.py docs/hackathon-handbook.pdf "Copado Agentia Headless Hackathon: Project Handbook" "Chaman Swami"
+```
+
+`tools/build-project-doc.py` sets the same properties on the .docx (author, title, subject).

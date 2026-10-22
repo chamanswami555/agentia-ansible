@@ -168,6 +168,12 @@ bullets([
     "Next: demo video, Galaxy publish after the submission is final, an AWX job template and an ephemeral environment playbook as stretch goals.",
 ])
 
+# Document properties name the owner, not the library that wrote the file.
+doc.core_properties.author = "Chaman Swami"
+doc.core_properties.last_modified_by = "Chaman Swami"
+doc.core_properties.title = "agentia-ansible: project document"
+doc.core_properties.subject = "Copado releases as Ansible automation"
+doc.core_properties.comments = ""
 OUT.parent.mkdir(parents=True, exist_ok=True)
 doc.save(OUT)
 print("wrote", OUT)

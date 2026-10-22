@@ -28,7 +28,6 @@
   "devDependencies": {
     "@oclif/core": "^4",
     "@types/node": "^22",
-    "oclif": "^4",
     "shx": "^0.3.3",
     "typescript": "^5"
   },
@@ -64,9 +63,6 @@
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
-    "clean": "shx rm -f oclif.manifest.json",
-    "test": "npm run build && node --test dist/lib/*.test.js",
-    "prepack": "npm run build && oclif manifest",
-    "postpack": "npm run clean"
+    "test": "npm run build && node --test dist/lib/*.test.js"
   }
 }
