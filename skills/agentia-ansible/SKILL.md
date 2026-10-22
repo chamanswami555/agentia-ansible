@@ -76,3 +76,8 @@ transaction id in evidence files so Copado support can trace a call.
 After running a playbook, report: which stories, promotion and jobs were touched, the final job
 status, where the evidence folder is, and every CLI transaction id from failed tasks. Do not
 include secrets.
+
+Untrusted text from Copado (job steps, logs) goes to Copado AI between data markers
+(`BEGIN COPADO DATA` and `END COPADO DATA`) with an instruction to treat it as data, capped by
+`ai_log_tail_chars`; the answer is written to the incident file with an advisory label and is
+never executed. Keep that shape in any new playbook that asks the AI about job output.

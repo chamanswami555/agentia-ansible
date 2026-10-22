@@ -3,7 +3,7 @@
 | Item | Value |
 | --- | --- |
 | Document | Project handbook: everything known, done and decided so far |
-| Version | 2.9 |
+| Version | 3.0 |
 | Date | 2026-10-16 (edition 2.7) |
 | Project owner | chamanswami555 (GitHub) |
 | Project folder | /Users/chaman/copado-agentia-hackathon |
@@ -830,6 +830,7 @@ Where: "Mac" means this laptop's terminal; "web" means a page fetch or a web sea
 | `plugin/src/lib/commands.test.ts`: the two commands run in-process with a stand-in host (runWithTransaction, auth.status, work.getWorkItem) | Mac | Command-level plugin tests without the Agentia CLI (21 October) | 13 plugin tests pass; scaffold story and promotion modes, active-story lookup, bad promotion id, missing playbook, bad extra-vars, recap, approval stop, collection hint |
 | CI run 32 (job steps through the GitHub API), then the same two-step install repeated in var/venv217b | Mac, web | The first matrix run failed on ansible-core 2.17 at `make check` (21 October) | ansible-lint 26.10 refuses ansible-core 2.17 (`requires ansible-core!=2.17.*`); CI installed the requirements first and pinned the core version second, so it kept 26.10. The pin now goes into the same uv resolve, which picks ansible-lint 26.6 on 2.17 (the one-step local environment had done exactly that and passed) |
 | `npm audit` in mcp/ and plugin/, `pip-audit -l` in .venv, `unzip -p` of the .docx properties, PDF metadata through pypdf | Mac | Dependency and document checks before the public submission (22 October) | mcp: 0 findings; plugin: 4 high, all through the `oclif` dev tool (braces, micromatch) with no fix inside oclif 4, so the unused tool and its prepack scripts were removed: 0 findings, 13 tests, plugin still loads; Python: certifi 2026.7.22 (PYSEC-2026-4320) upgraded to 2026.10.19 and pinned as a minimum, then clean; the .docx named its writing library as creator, now the owner; both PDFs carried the print pipeline's producer and the browser's user agent, now title and author only (`tools/pdf-metadata.py`) |
+| Prompt rewrite in remediate_failed_job.yml, a planted instruction appended to the recorded job log, demo step 2 check, `bash tools/demo/offline-demo.sh` twice with the markers removed and restored | Mac | Reduce the prompt-injection residual risk (23 October) | The first check read the wrong block because the instruction sentence repeated the marker words; wording changed so each marker appears once. Demo green; with the markers removed the check fails; restored, green again. ansible-lint flagged a long line and a Jinja slice spacing, both fixed |
 | `uv pip install galaxy-importer`; `ansible-galaxy collection build`; `python -m galaxy_importer.main <tarball>` (twice) | Mac | Galaxy's upload validation before any publish (15 October 00:10) | Pass both times; the first run skipped docstrings and lint (ansible-doc and ansible-lint not on its PATH), the second with the .venv on PATH ran lint clean; warning: no changelog, fixed |
 | `ansible-galaxy collection install <tarball> -p var/galaxy-test`; `ansible-playbook chamanswami555.agentia.release_window` from that path against the fake | Mac | The installed copy, not the symlinked source, runs the release (15 October 00:12) | 21 ok, 7 changed, 0 failed |
 | `uv pip install pytest-cov`; `pytest --cov=collection/plugins --cov=...event_source --cov-report=term-missing` | Mac | Find what the tests do not reach (15 October 00:15) | 92 percent; gaps were optional flags, check-mode exits, the job wait timeout and the CLI failure path of six modules; after 13 new tests 72 pass at 96 percent; `make test` carries `--cov-fail-under=90` |
@@ -965,9 +966,11 @@ plugin declares its permissions in package.json. Approval point: the release gat
 yes or approve: true), rehearsed with no terminal on the fake CLI and on the real org (promotion
 P00010 validated, nothing deployed). Isolation: everything runs on the operator's machine against
 the Copado org the operator is authorised for; the demo uses a playground, never a customer org.
-Untrusted input: CLI JSON is parsed and shape-checked; Copado job logs are passed to Copado AI as
-data and the answer is written to the incident file, never executed; MCP arguments are validated
-by schema. Budgets: 900 seconds per CLI call, 1800 seconds per job wait, 18 reads of a promotion
+Untrusted input: CLI JSON is parsed and shape-checked; a job's steps and the tail of its log (capped
+by `ai_log_tail_chars`, 2000 characters) are passed to Copado AI between two marker lines with the
+instruction to treat them as data, and the answer is written to the incident file under an advisory
+label, never executed; the resume comes from the operator's `resume_on_failure` flag alone; MCP
+arguments are validated by schema. Budgets: 900 seconds per CLI call, 1800 seconds per job wait, 18 reads of a promotion
 before giving up, a poll interval of 15 seconds. Tracing: evidence JSON with transaction ids,
 ansible output, the fake's call log in tests. Recovery: idempotent story module, resume through
 the job modules, no rollback (Copado keeps it).
@@ -978,10 +981,12 @@ the job modules, no rollback (Copado keeps it).
 | Fake call log for sequenced polls | MCP end-to-end test | Fails after 60 seconds, job stuck "In Progress" (14 October) | Green |
 | Explicit story id that does not exist must fail | Unit test | Red (12 October) | Green |
 | Poll interval zero treated as zero | Unit test | Red, 60-second sleeps (12 October) | Green |
+| Job text reaches Copado AI as data (markers, cap, advisory label) | Demo step 2 with a planted instruction in the recorded log | Demo fails: the planted line is no longer inside the markers (23 October) | Green: the line travels inside the markers, the answer carries the advisory label, exactly one resume from the operator flag |
 
-Residual risks, to be accepted by the owner: a job log could carry text aimed at the AI
-diagnosis (the answer is advisory only); the CLI is in beta; the playground expires about
-13 November; a single maintainer.
+Residual risks, to be accepted by the owner: Copado AI's model is a service outside this project,
+so a planted instruction in a job log can still colour its wording (the answer is advisory only,
+labelled, capped and never executed); the CLI is in beta; the playground expires about 13 November;
+a single maintainer.
 
 ### 14.4 Dependency and document checks (22 October 2026)
 

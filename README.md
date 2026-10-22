@@ -213,6 +213,10 @@ check mode and prints the recap and the latest evidence summary.
 - The recorded answers are scrubbed before they enter the repository: every email address and
   Salesforce username becomes `user@example.com`; signature and token fields become `REDACTED`.
   `collection/tests/fixtures/agentia/README.md` lists the origin of every file.
+- Text that comes from a Copado job (steps, log tail) reaches Copado AI only between data markers
+  with an instruction to treat it as data, capped in size; the answer is written to the incident
+  file with an advisory label and nothing in it is ever executed. The demo plants a hostile line in
+  a recorded log and checks all of that on the fake CLI's call log.
 - The tests were checked by removing the code they protect and watching them fail; the offline
   demo asserts on the fake CLI's call log and on the evidence files, not on the recap alone.
 
