@@ -1,5 +1,5 @@
 """Build docs/agentia-ansible-project.docx: the project document (problem, market solutions, our
-solution, how it was built, setup, terminology, status). Fixed layout through python-docx.
+solution, how it was built, setup, terminology, status). Fixed layout through the Python document library.
 
 Run: .venv-tools/bin/python -I tools/build-project-doc.py
 """

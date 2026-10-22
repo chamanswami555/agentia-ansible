@@ -952,7 +952,7 @@ playbook variables; the MCP server over stdio (no network listener); plugin flag
 
 Secrets and identifiers: the scans of sections 11 and 13 (tracked tree, every blob in the
 history, PDFs and the .docx unpacked) found none of the listed patterns: the API key, OAuth
-signatures, the owner's email addresses, the company name, the tool and chat vocabulary. What
+signatures, the owner's email addresses, the company name, and process vocabulary. What
 remains by the owner's decision: the owner's name as author, the GitHub user name in the
 repository address, and Salesforce record ids inside scrubbed recordings.
 

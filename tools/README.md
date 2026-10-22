@@ -41,7 +41,7 @@ PDF_PAPER_WIDTH=13.33 PDF_PAPER_HEIGHT=7.5 PDF_MARGIN=0 PDF_FOOTER=off \
 `PDF_PAPER_WIDTH` and `PDF_PAPER_HEIGHT` are inches (default A4 portrait), `PDF_MARGIN` sets all four
 margins, `PDF_FOOTER=off` drops the page footer.
 
-The project document is built with python-docx (`uv pip install --python .venv-tools/bin/python python-docx`):
+The project document is built with the Python document library (`uv pip install --python .venv-tools/bin/python python-docx`):
 
 ```sh
 .venv-tools/bin/python -I tools/build-project-doc.py   # writes docs/agentia-ansible-project.docx
